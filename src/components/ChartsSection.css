@@ -1,0 +1,170 @@
+.chart-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 430px;
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.chart-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.chart-title-icon {
+  color: var(--accent-color);
+}
+
+.chart-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.chart-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.chart-container {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tooltip Custom Glassmorphic */
+.custom-tooltip {
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tooltip-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.tooltip-value {
+  margin: 2px 0;
+}
+
+/* Donut specific layout */
+.donut-container {
+  flex-direction: column;
+  justify-content: space-around;
+  padding-top: 10px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.legend-marker {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-name {
+  color: var(--text-secondary);
+}
+
+.legend-val {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Analytics sub page layout */
+.analytics-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.highlights-row {
+  display: flex;
+  border-top: 1px solid var(--border-color);
+  margin-top: 16px;
+  padding-top: 16px;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.highlight-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hl-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.hl-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hl-sub {
+  font-size: 13px;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+.no-data-placeholder {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.hourly-chart {
+  height: 350px !important;
+}
+
+.analytics-equal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .analytics-equal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Adjustments for Recharts axes default labels */
+.recharts-cartesian-grid-horizontal line {
+  stroke-dasharray: 4;
+}
+
+.recharts-text {
+  font-family: var(--font-apple) !important;
+}
