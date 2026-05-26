@@ -41,7 +41,7 @@ export default function SettingsModal({ rates, onSave, onClose, exchangeSource, 
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="settings-title-wrapper">
             <Sliders size={20} className="settings-title-icon" />

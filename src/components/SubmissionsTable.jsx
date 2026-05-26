@@ -273,7 +273,7 @@ export default function SubmissionsTable({ submissions }) {
       {/* Slide-out Modal para Detalhes (iOS style card/bottom sheet modal) */}
       {selectedSub && (
         <div className="modal-backdrop" onClick={() => setSelectedSub(null)}>
-          <div className="modal-content glass-panel" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="sheet-handle"></div>
             
             <div className="modal-header">

@@ -231,7 +231,7 @@ export default function App() {
                 </button>
                 
                 {showProfilePopover && (
-                  <div className="profile-popover glass-panel">
+                  <div className="profile-popover">
                     <div className="popover-header">
                       <div className="popover-avatar">I</div>
                       <div className="popover-info">

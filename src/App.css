@@ -364,6 +364,9 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
   background: #ffffff !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-widget);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .dark .profile-popover {
