@@ -3,7 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell, PieChart, Pie, Legend
 } from 'recharts';
-import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign } from 'lucide-react';
+import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign, Coins } from 'lucide-react';
 import './ChartsSection.css';
 import './KPICards.css';
 
@@ -105,43 +105,49 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
           </div>
         </div>
 
-        {/* Gráfico Secundário: Proporção de Status */}
+        {/* Gráfico Secundário: Origem dos Ganhos */}
         <div className="chart-card glass-panel donut-chart" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
-              <CheckCircle size={18} className="chart-title-icon" />
-              <h3>Distribuição de Status</h3>
+              <Coins size={18} className="chart-title-icon" />
+              <h3>Ganhos por Moeda (BRL)</h3>
             </div>
-            <span className="chart-subtitle">Proporção dos envios cadastrados</span>
+            <span className="chart-subtitle">Origem do faturamento histórico aprovado</span>
           </div>
           <div className="chart-container donut-container">
-            <ResponsiveContainer width="100%" height={230}>
+            <ResponsiveContainer width="100%" height={210}>
               <PieChart>
                 <Pie
-                  data={chartsData.status}
+                  data={chartsData.moeda}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
                   outerRadius={80}
-                  paddingAngle={4}
+                  paddingAngle={6}
                   dataKey="value"
                 >
-                  {chartsData.status.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name] || '#ccc'} />
-                  ))}
+                  <Cell fill="#007aff" /> {/* Libra GBP */}
+                  <Cell fill="#34c759" /> {/* Dólar USD */}
                 </Pie>
-                <Tooltip content={<CustomTooltip prefix="" />} />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
             
             <div className="donut-legend">
-              {chartsData.status.map((item, index) => (
-                <div key={index} className="legend-item">
-                  <div className="legend-marker" style={{ backgroundColor: STATUS_COLORS[item.name] }}></div>
-                  <span className="legend-name">{item.name}</span>
-                  <span className="legend-val">{item.value} ({((item.value / kpis.totalEstudos) * 100).toFixed(0)}%)</span>
-                </div>
-              ))}
+              {chartsData.moeda.map((item, index) => {
+                const totalGanhos = kpis.ganhosAprovadosBRL || 1;
+                const percentage = ((item.value / totalGanhos) * 100).toFixed(0);
+                const markerColor = index === 0 ? '#007aff' : '#34c759';
+                return (
+                  <div key={index} className="legend-item">
+                    <div className="legend-marker" style={{ backgroundColor: markerColor }}></div>
+                    <span className="legend-name">{item.name}</span>
+                    <span className="legend-val">
+                      {formatBRL(item.value)} ({percentage}%)
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

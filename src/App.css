@@ -362,6 +362,9 @@
   transform-origin: top right;
   animation: popoverOpen 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+  background: var(--bg-tertiary) !important;
+  backdrop-filter: blur(40px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(210%) !important;
 }
 
 .dark .profile-popover {

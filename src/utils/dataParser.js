@@ -193,6 +193,8 @@ export function calculateDashboardMetrics(submissions) {
   let totalRejeitados = 0;
 
   let ganhosAprovadosBRL = 0;
+  let ganhosGBP_BRL = 0;
+  let ganhosUSD_BRL = 0;
   let valorTotalGeralBRL = 0;
   let valorRepresadoBRL = 0; // Em review
   let ganhosHojeBRL = 0;
@@ -221,6 +223,11 @@ export function calculateDashboardMetrics(submissions) {
     if (sub.statusResumo === 'Aprovado') {
       totalAprovados++;
       ganhosAprovadosBRL += sub.valorTotalBRL;
+      if (sub.moeda === 'USD') {
+        ganhosUSD_BRL += sub.valorTotalBRL;
+      } else {
+        ganhosGBP_BRL += sub.valorTotalBRL;
+      }
     } else if (sub.statusResumo === 'Retornado') {
       totalRetornados++;
     } else if (sub.statusResumo === 'Em review') {
@@ -380,6 +387,11 @@ export function calculateDashboardMetrics(submissions) {
       valor: porMesAno[ordKey].valor
     }));
 
+  const graficoMoedaData = [
+    { name: 'Libra (GBP)', value: ganhosGBP_BRL },
+    { name: 'Dólar (USD)', value: ganhosUSD_BRL }
+  ];
+
   return {
     kpis: {
       totalEstudos,
@@ -408,6 +420,7 @@ export function calculateDashboardMetrics(submissions) {
       diaSemanaPeriodo: graficoDiaSemanaPeriodoData,
       faixaHoraria: graficoFaixaHorariaData,
       status: graficoStatusData,
+      moeda: graficoMoedaData,
       mensal: graficoMensalData
     }
   };

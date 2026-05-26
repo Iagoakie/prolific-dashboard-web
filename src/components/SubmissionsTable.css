@@ -327,6 +327,9 @@
   border: 1px solid var(--border-hover);
   animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   position: relative;
+  background: var(--bg-tertiary) !important;
+  backdrop-filter: blur(40px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(210%) !important;
 }
 
 .sheet-handle {
