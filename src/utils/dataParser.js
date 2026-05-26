@@ -203,6 +203,7 @@ export function calculateDashboardMetrics(submissions) {
 
   const ganhosPorDia = {}; // { 'YYYY-MM-DD': { brl: 0, dateObj: Date } }
   const porDiaSemana = WEEKDAYS.reduce((acc, cur) => ({ ...acc, [cur]: { total: 0, approved: 0 } }), {});
+  const porDiaSemanaFaturamento = WEEKDAYS.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {});
   const porDiaSemanaPeriodo = WEEKDAYS.reduce((acc, cur) => ({
     ...acc,
     [cur]: { Madrugada: 0, Manhã: 0, Tarde: 0, Noite: 0 }
@@ -262,6 +263,7 @@ export function calculateDashboardMetrics(submissions) {
       porDiaSemana[sub.diaSemanaStr].total++;
       if (sub.statusResumo === 'Aprovado') {
         porDiaSemana[sub.diaSemanaStr].approved++;
+        porDiaSemanaFaturamento[sub.diaSemanaStr] += sub.valorTotalBRL;
       }
       
       if (sub.horaInicio !== null) {
@@ -357,6 +359,12 @@ export function calculateDashboardMetrics(submissions) {
     approved: porDiaSemana[day].approved
   }));
 
+  // 2.2 Gráfico de faturamento por dia da semana
+  const graficoFaturamentoDiaSemanaData = WEEKDAYS.map((day) => ({
+    name: day,
+    valor: porDiaSemanaFaturamento[day]
+  }));
+
   // 2.5 Gráfico por dia da semana e período
   const graficoDiaSemanaPeriodoData = WEEKDAYS.map((day) => ({
     name: day,
@@ -417,6 +425,7 @@ export function calculateDashboardMetrics(submissions) {
     charts: {
       acumulado: graficoAcumuladoData,
       diaSemana: graficoDiaSemanaData,
+      faturamentoDiaSemana: graficoFaturamentoDiaSemanaData,
       diaSemanaPeriodo: graficoDiaSemanaPeriodoData,
       faixaHoraria: graficoFaixaHorariaData,
       status: graficoStatusData,

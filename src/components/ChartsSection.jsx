@@ -58,9 +58,9 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
 
   if (activeTab === 'overview') {
     return (
-      <div className="charts-grid animate-fade-in">
+      <div className="overview-layout-stack animate-fade-in">
         {/* Gráfico Principal: Ganhos Acumulados */}
-        <div className="chart-card glass-panel main-chart" onMouseMove={handleMouseMove}>
+        <div className="chart-card glass-panel main-chart-full" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <TrendingUp size={18} className="chart-title-icon" />
@@ -105,50 +105,52 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
           </div>
         </div>
 
-        {/* Gráfico Secundário: Origem dos Ganhos */}
-        <div className="chart-card glass-panel donut-chart" onMouseMove={handleMouseMove}>
+        {/* Gráfico Secundário: Faturamento por Dia da Semana */}
+        <div className="chart-card glass-panel secondary-chart-full" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
-              <Coins size={18} className="chart-title-icon" />
-              <h3>Ganhos por Moeda (BRL)</h3>
+              <Calendar size={18} className="chart-title-icon" />
+              <h3>Faturamento por Dia da Semana</h3>
             </div>
-            <span className="chart-subtitle">Origem do faturamento histórico aprovado</span>
+            <span className="chart-subtitle">Ganhos acumulados em BRL para cada dia da semana</span>
           </div>
-          <div className="chart-container donut-container">
-            <ResponsiveContainer width="100%" height={210}>
-              <PieChart>
-                <Pie
-                  data={chartsData.moeda}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={6}
-                  dataKey="value"
-                >
-                  <Cell fill="#007aff" /> {/* Libra GBP */}
-                  <Cell fill="#34c759" /> {/* Dólar USD */}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-            
-            <div className="donut-legend">
-              {chartsData.moeda.map((item, index) => {
-                const totalGanhos = kpis.ganhosAprovadosBRL || 1;
-                const percentage = ((item.value / totalGanhos) * 100).toFixed(0);
-                const markerColor = index === 0 ? '#007aff' : '#34c759';
-                return (
-                  <div key={index} className="legend-item">
-                    <div className="legend-marker" style={{ backgroundColor: markerColor }}></div>
-                    <span className="legend-name">{item.name}</span>
-                    <span className="legend-val">
-                      {formatBRL(item.value)} ({percentage}%)
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+          <div className="chart-container">
+            {!chartsData.faturamentoDiaSemana || chartsData.faturamentoDiaSemana.length === 0 ? (
+              <div className="no-data-placeholder">Nenhum faturamento registrado ainda.</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#30d158" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#30d158" stopOpacity={0.25}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tickFormatter={(val) => `R$ ${val}`} 
+                    tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar 
+                    dataKey="valor" 
+                    name="Faturamento" 
+                    fill="url(#colorFaturamentoDia)" 
+                    stroke="#30d158"
+                    strokeWidth={1}
+                    radius={[8, 8, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>
