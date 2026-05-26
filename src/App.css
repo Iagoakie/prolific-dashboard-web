@@ -574,11 +574,11 @@
   position: fixed;
   top: 12px;
   left: 50%;
-  transform: translateX(-50%) scale(0.85);
+  transform: translateX(-50%) scale(0.9);
   z-index: 10005;
   opacity: 0;
   pointer-events: none;
-  transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .dynamic-island-container.show {
@@ -589,16 +589,44 @@
 }
 
 .dynamic-island-bubble {
+  background: #09090b;
+  color: #ffffff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
   display: flex;
   align-items: center;
-  background: #000000;
-  color: #ffffff;
-  padding: 10px 22px;
+  justify-content: center;
+}
+
+.dynamic-island-bubble.state-compact {
+  width: 140px;
+  height: 32px;
   border-radius: 99px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  min-width: 260px;
-  max-width: 400px;
+  padding: 0 14px;
+}
+
+.dynamic-island-bubble.state-compact:hover {
+  width: 155px;
+  background: #18181b;
+}
+
+.dynamic-island-bubble.state-expanded {
+  width: 330px;
+  height: 54px;
+  border-radius: 99px;
+  padding: 0 20px;
+  justify-content: flex-start;
+}
+
+.dynamic-island-bubble.state-menu {
+  width: 270px;
+  height: 125px;
+  border-radius: 24px;
+  padding: 14px 18px;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .dynamic-island-icon {
@@ -632,7 +660,28 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 280px;
+  max-width: 260px;
+}
+
+/* Green dot pulse */
+.pulse-green {
+  box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7);
+  animation: pulse-dot 1.6s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(48, 209, 88, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(48, 209, 88, 0);
+  }
 }
 
 @keyframes bounceMini {
