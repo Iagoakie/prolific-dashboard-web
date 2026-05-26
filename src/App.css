@@ -361,13 +361,14 @@
   z-index: 9999;
   transform-origin: top right;
   animation: popoverOpen 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
-  background: var(--bg-tertiary) !important;
-  backdrop-filter: blur(40px) saturate(210%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(210%) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .dark .profile-popover {
+  background: #1c1c1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(255, 255, 255, 0.01);
 }
 
