@@ -139,7 +139,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
                     tickFormatter={(val) => `R$ ${val}`} 
                     tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                   <Bar 
                     dataKey="valor" 
                     name="Faturamento" 
@@ -249,7 +249,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
                     tickFormatter={(val) => `R$ ${val}`} 
                     tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                   <Bar dataKey="valor" name="Ganhos no Mês" radius={[8, 8, 0, 0]}>
                     {chartsData.mensal.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill="var(--accent-color)" />
@@ -285,7 +285,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
                   tickLine={false} 
                   tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                 />
-                <Tooltip content={<CustomTooltip prefix="" />} />
+                <Tooltip content={<CustomTooltip prefix="" />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                 <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="total" name="Total Concluídos" fill="var(--border-hover)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="approved" name="Aprovados" fill="var(--color-approved)" radius={[4, 4, 0, 0]} />
@@ -321,7 +321,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
                   tickLine={false} 
                   tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                 />
-                <Tooltip content={<CustomTooltip prefix="" />} />
+                <Tooltip content={<CustomTooltip prefix="" />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                 <Bar dataKey="approved" name="Estudos Aprovados" fill="var(--accent-color)" radius={[4, 4, 0, 0]}>
                   {chartsData.faixaHoraria.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.approved > 0 ? 'var(--accent-color)' : 'var(--border-color)'} />
@@ -356,7 +356,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
                   tickLine={false} 
                   tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                 />
-                <Tooltip content={<CustomTooltip prefix="" />} />
+                <Tooltip content={<CustomTooltip prefix="" />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                 <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 11, paddingTop: 10 }} />
                 <Bar dataKey="Madrugada" name="Madrugada (00h-06h)" stackId="a" fill="#5e5ce6" />
                 <Bar dataKey="Manhã" name="Manhã (06h-12h)" stackId="a" fill="#30d158" />
