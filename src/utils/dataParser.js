@@ -198,8 +198,16 @@ export function calculateDashboardMetrics(submissions) {
   let valorTotalGeralBRL = 0;
   let valorRepresadoBRL = 0; // Em review
   let ganhosHojeBRL = 0;
+  let ganhosSemanaBRL = 0;
   let ganhosHojeOriginalUSD = 0;
   let ganhosHojeOriginalGBP = 0;
+
+  const nowTime = new Date();
+  const startOfWeek = new Date(nowTime.getFullYear(), nowTime.getMonth(), nowTime.getDate());
+  const currentDay = startOfWeek.getDay();
+  const distanceToMonday = currentDay === 0 ? 6 : currentDay - 1;
+  startOfWeek.setDate(startOfWeek.getDate() - distanceToMonday);
+  startOfWeek.setHours(0, 0, 0, 0);
 
   const ganhosPorDia = {}; // { 'YYYY-MM-DD': { brl: 0, dateObj: Date } }
   const porDiaSemana = WEEKDAYS.reduce((acc, cur) => ({ ...acc, [cur]: { total: 0, approved: 0 } }), {});
@@ -248,6 +256,11 @@ export function calculateDashboardMetrics(submissions) {
       } else {
         ganhosHojeOriginalGBP += sub.valorTotalOriginal;
       }
+    }
+
+    // Ganhos da semana atual
+    if (sub.statusResumo === 'Aprovado' && sub.completedAt && sub.completedAt >= startOfWeek) {
+      ganhosSemanaBRL += sub.valorTotalBRL;
     }
 
     // Agregações por dia de conclusão
@@ -411,6 +424,7 @@ export function calculateDashboardMetrics(submissions) {
       valorTotalGeralBRL,
       valorRepresadoBRL,
       ganhosHojeBRL,
+      ganhosSemanaBRL,
       ganhosHojeOriginalUSD,
       ganhosHojeOriginalGBP,
       mediaPorEstudoBRL,

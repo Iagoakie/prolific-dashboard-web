@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell, PieChart, Pie, Legend
 } from 'recharts';
-import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign, Coins } from 'lucide-react';
+import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign, Coins, Target } from 'lucide-react';
 import './ChartsSection.css';
 import './KPICards.css';
 
@@ -39,7 +39,16 @@ const CustomTooltip = ({ active, payload, label, prefix = 'R$ ' }) => {
   return null;
 };
 
-export default function ChartsSection({ activeTab, chartsData, kpis }) {
+export default function ChartsSection({ 
+  activeTab, 
+  chartsData, 
+  kpis, 
+  dailyGoal, 
+  setDailyGoal, 
+  weeklyGoal, 
+  setWeeklyGoal 
+}) {
+  const [showGoalSettings, setShowGoalSettings] = useState(false);
   const formatBRL = (val) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -57,6 +66,22 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
   };
 
   if (activeTab === 'overview') {
+    const dailyProgress = Math.min(1.5, Math.max(0, (kpis.ganhosHojeBRL || 0) / (dailyGoal || 25)));
+    const weeklyProgress = Math.min(1.5, Math.max(0, (kpis.ganhosSemanaBRL || 0) / (weeklyGoal || 150)));
+
+    // Anéis SVG
+    const ringsSize = 150;
+    const strokeWidth = 14;
+    const center = ringsSize / 2;
+
+    const r1 = 58;
+    const c1 = 2 * Math.PI * r1;
+    const offset1 = c1 * (1 - Math.min(1, dailyProgress));
+
+    const r2 = 41;
+    const c2 = 2 * Math.PI * r2;
+    const offset2 = c2 * (1 - Math.min(1, weeklyProgress));
+
     return (
       <div className="overview-layout-stack animate-fade-in">
         {/* Gráfico Principal: Ganhos Acumulados */}
@@ -105,52 +130,204 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
           </div>
         </div>
 
-        {/* Gráfico Secundário: Faturamento por Dia da Semana */}
-        <div className="chart-card glass-panel secondary-chart-full" onMouseMove={handleMouseMove}>
-          <div className="chart-header">
-            <div className="chart-header-left">
-              <Calendar size={18} className="chart-title-icon" />
-              <h3>Faturamento por Dia da Semana</h3>
+        {/* Linha 2 dividida */}
+        <div className="overview-row-two">
+          {/* Faturamento por Dia da Semana */}
+          <div className="chart-card glass-panel secondary-chart-split" onMouseMove={handleMouseMove}>
+            <div className="chart-header">
+              <div className="chart-header-left">
+                <Calendar size={18} className="chart-title-icon" />
+                <h3>Faturamento por Dia da Semana</h3>
+              </div>
+              <span className="chart-subtitle">Ganhos acumulados em BRL para cada dia da semana</span>
             </div>
-            <span className="chart-subtitle">Ganhos acumulados em BRL para cada dia da semana</span>
+            <div className="chart-container">
+              {!chartsData.faturamentoDiaSemana || chartsData.faturamentoDiaSemana.length === 0 ? (
+                <div className="no-data-placeholder">Nenhum faturamento registrado ainda.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#30d158" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#30d158" stopOpacity={0.25}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                    <XAxis 
+                      dataKey="name" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tickFormatter={(val) => `R$ ${val}`} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                    />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
+                    <Bar 
+                      dataKey="valor" 
+                      name="Faturamento" 
+                      fill="url(#colorFaturamentoDia)" 
+                      stroke="#30d158"
+                      strokeWidth={1}
+                      radius={[8, 8, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
-          <div className="chart-container">
-            {!chartsData.faturamentoDiaSemana || chartsData.faturamentoDiaSemana.length === 0 ? (
-              <div className="no-data-placeholder">Nenhum faturamento registrado ainda.</div>
-            ) : (
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+
+          {/* Anéis de Meta Apple (iCloud Pacing Hub) */}
+          <div className="chart-card glass-panel pacing-rings-card" onMouseMove={handleMouseMove}>
+            <div className="chart-header">
+              <div className="chart-header-left">
+                <Target size={18} className="chart-title-icon" />
+                <h3>Metas de Atividade</h3>
+              </div>
+              <span className="chart-subtitle">Progresso em tempo real das suas metas</span>
+            </div>
+
+            <div className="pacing-rings-content">
+              <div className="rings-container">
+                <svg width={ringsSize} height={ringsSize} viewBox={`0 0 ${ringsSize} ${ringsSize}`} className="activity-rings-svg">
+                  {/* Defs de gradiente */}
                   <defs>
-                    <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#30d158" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#30d158" stopOpacity={0.25}/>
+                    <linearGradient id="gradientDaily" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#30d158" />
+                      <stop offset="100%" stopColor="#34c759" />
+                    </linearGradient>
+                    <linearGradient id="gradientWeekly" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#0a84ff" />
+                      <stop offset="100%" stopColor="#007aff" />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
-                  <XAxis 
-                    dataKey="name" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+
+                  {/* Sombra de fundo Diário */}
+                  <circle
+                    cx={center}
+                    cy={center}
+                    r={r1}
+                    fill="none"
+                    stroke="rgba(48, 209, 88, 0.12)"
+                    strokeWidth={strokeWidth}
                   />
-                  <YAxis 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tickFormatter={(val) => `R$ ${val}`} 
-                    tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                  {/* Anel Diário (Verde) */}
+                  <circle
+                    cx={center}
+                    cy={center}
+                    r={r1}
+                    fill="none"
+                    stroke="url(#gradientDaily)"
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={c1}
+                    strokeDashoffset={offset1}
+                    strokeLinecap="round"
+                    transform={`rotate(-90 ${center} ${center})`}
+                    className="ring-circle"
                   />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
-                  <Bar 
-                    dataKey="valor" 
-                    name="Faturamento" 
-                    fill="url(#colorFaturamentoDia)" 
-                    stroke="#30d158"
-                    strokeWidth={1}
-                    radius={[8, 8, 0, 0]}
+
+                  {/* Sombra de fundo Semanal */}
+                  <circle
+                    cx={center}
+                    cy={center}
+                    r={r2}
+                    fill="none"
+                    stroke="rgba(10, 132, 255, 0.12)"
+                    strokeWidth={strokeWidth}
                   />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
+                  {/* Anel Semanal (Azul) */}
+                  <circle
+                    cx={center}
+                    cy={center}
+                    r={r2}
+                    fill="none"
+                    stroke="url(#gradientWeekly)"
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={c2}
+                    strokeDashoffset={offset2}
+                    strokeLinecap="round"
+                    transform={`rotate(-90 ${center} ${center})`}
+                    className="ring-circle"
+                  />
+                </svg>
+
+                <div className="rings-legend-percentage">
+                  <span className="legend-p-daily" style={{ color: '#30d158' }}>{(dailyProgress * 100).toFixed(0)}%</span>
+                  <span className="legend-p-weekly" style={{ color: '#0a84ff' }}>{(weeklyProgress * 100).toFixed(0)}%</span>
+                </div>
+              </div>
+
+              <div className="rings-text-legend">
+                <div className="ring-legend-item">
+                  <span className="ring-marker-bullet" style={{ backgroundColor: '#30d158' }}></span>
+                  <div className="ring-item-data">
+                    <span className="ring-item-title">Hoje</span>
+                    <span className="ring-item-vals">
+                      <strong>{formatBRL(kpis.ganhosHojeBRL)}</strong>
+                      <span className="subtext">/ {formatBRL(dailyGoal)}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="ring-legend-item">
+                  <span className="ring-marker-bullet" style={{ backgroundColor: '#0a84ff' }}></span>
+                  <div className="ring-item-data">
+                    <span className="ring-item-title">Semana</span>
+                    <span className="ring-item-vals">
+                      <strong>{formatBRL(kpis.ganhosSemanaBRL)}</strong>
+                      <span className="subtext">/ {formatBRL(weeklyGoal)}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                type="button" 
+                className="adjust-goals-btn spring-click"
+                onClick={() => setShowGoalSettings(!showGoalSettings)}
+              >
+                Ajustar Metas
+              </button>
+
+              {showGoalSettings && (
+                <div className="goal-settings-popover glass-panel animate-fade-in">
+                  <div className="goal-settings-header">
+                    <h4>Ajustar Metas (R$)</h4>
+                    <button type="button" className="close-mini-btn" onClick={() => setShowGoalSettings(false)}>×</button>
+                  </div>
+                  <div className="goal-slider-group">
+                    <div className="slider-header">
+                      <span>Meta Diária: R$ {dailyGoal}</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="5" 
+                      max="100" 
+                      step="5"
+                      value={dailyGoal} 
+                      onChange={(e) => setDailyGoal(parseInt(e.target.value))}
+                    />
+                  </div>
+                  <div className="goal-slider-group">
+                    <div className="slider-header">
+                      <span>Meta Semanal: R$ {weeklyGoal}</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="25" 
+                      max="500" 
+                      step="25"
+                      value={weeklyGoal} 
+                      onChange={(e) => setWeeklyGoal(parseInt(e.target.value))}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

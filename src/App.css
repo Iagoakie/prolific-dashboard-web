@@ -539,3 +539,103 @@
   font-size: 11px;
   border-radius: 8px;
 }
+
+/* ==========================================================================
+   UPGRADES PREMIUM - SIMULATOR & DYNAMIC ISLAND
+   ========================================================================== */
+
+.simulate-study-header-btn {
+  background: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--border-radius-pill);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.15);
+  transition: var(--transition-smooth);
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.simulate-study-header-btn:hover {
+  box-shadow: 0 6px 14px rgba(0, 122, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.simulate-study-header-btn:active {
+  transform: scale(0.96) translateY(0);
+}
+
+/* Dynamic Island CSS */
+.dynamic-island-container {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+  z-index: 10005;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+}
+
+.dynamic-island-container.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
+  top: 20px;
+}
+
+.dynamic-island-bubble {
+  display: flex;
+  align-items: center;
+  background: #000000;
+  color: #ffffff;
+  padding: 10px 22px;
+  border-radius: 99px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 260px;
+  max-width: 400px;
+}
+
+.dynamic-island-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounceMini 1s infinite alternate;
+}
+
+.dynamic-island-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.dynamic-island-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.dynamic-island-message {
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 1px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+@keyframes bounceMini {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2px); }
+}

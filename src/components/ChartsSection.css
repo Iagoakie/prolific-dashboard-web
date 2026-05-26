@@ -177,8 +177,233 @@
   margin-bottom: 24px;
 }
 
-.main-chart-full,
-.secondary-chart-full {
+.main-chart-full {
   width: 100%;
   height: 430px;
+}
+
+/* Row 2 layout split */
+.overview-row-two {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .overview-row-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.secondary-chart-split {
+  height: 430px;
+}
+
+.pacing-rings-card {
+  height: 430px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.pacing-rings-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 18px;
+}
+
+.rings-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-rings-svg {
+  transform: rotate(0deg);
+}
+
+.ring-circle {
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rings-legend-percentage {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+  font-family: var(--font-apple);
+}
+
+.legend-p-daily {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.legend-p-weekly {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Legend items below rings */
+.rings-text-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.ring-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.ring-marker-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ring-item-data {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ring-item-title {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.ring-item-vals {
+  color: var(--text-primary);
+}
+
+.ring-item-vals strong {
+  font-weight: 700;
+}
+
+.ring-item-vals .subtext {
+  color: var(--text-secondary);
+  font-size: 11px;
+  margin-left: 3px;
+}
+
+/* Adjust goals button */
+.adjust-goals-btn {
+  background: var(--border-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  width: 100%;
+  margin-top: 4px;
+}
+
+.adjust-goals-btn:hover {
+  background: var(--border-hover);
+}
+
+/* Adjust Goals Popover */
+.goal-settings-popover {
+  position: absolute;
+  bottom: 50px;
+  left: 10px;
+  right: 10px;
+  padding: 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+}
+
+.dark .goal-settings-popover {
+  background: #1c1c1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.goal-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goal-settings-header h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.close-mini-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+.close-mini-btn:hover {
+  color: var(--text-primary);
+}
+
+.goal-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.goal-slider-group input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-color);
+  outline: none;
+}
+
+.goal-slider-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.goal-slider-group input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.2);
 }

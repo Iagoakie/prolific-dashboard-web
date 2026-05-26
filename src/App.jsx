@@ -25,6 +25,194 @@ export default function App() {
   const [showProfilePopover, setShowProfilePopover] = useState(false);
   const dragCounter = useRef(0);
 
+  // Metas do Usuário
+  const [dailyGoal, setDailyGoal] = useState(25); // Meta diária em BRL
+  const [weeklyGoal, setWeeklyGoal] = useState(150); // Meta semanal em BRL
+
+  // Estado da Dynamic Island
+  const [dynamicIsland, setDynamicIsland] = useState({
+    show: false,
+    title: '',
+    message: '',
+    type: 'success' // 'success', 'rate', 'goal'
+  });
+
+  // Som Sintetizado via Web Audio API (iOS Chime)
+  const playiOSChime = (type = 'success') => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const gainNode = ctx.createGain();
+      gainNode.connect(ctx.destination);
+      const now = ctx.currentTime;
+      
+      gainNode.gain.setValueAtTime(0, now);
+      
+      if (type === 'goal') {
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // Acorde C-E-G-C em cascata
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          const oscGain = ctx.createGain();
+          oscGain.connect(gainNode);
+          
+          oscGain.gain.setValueAtTime(0, now + idx * 0.08);
+          oscGain.gain.linearRampToValueAtTime(0.2, now + idx * 0.08 + 0.02);
+          oscGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.5);
+          
+          osc.connect(oscGain);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.6);
+        });
+        gainNode.gain.linearRampToValueAtTime(0.8, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+      } else if (type === 'rate') {
+        const notes = [880, 1318.51]; // Dois tons agudos
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+          const oscGain = ctx.createGain();
+          oscGain.connect(gainNode);
+          
+          oscGain.gain.setValueAtTime(0, now + idx * 0.07);
+          oscGain.gain.linearRampToValueAtTime(0.15, now + idx * 0.07 + 0.01);
+          oscGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.3);
+          
+          osc.connect(oscGain);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.4);
+        });
+        gainNode.gain.linearRampToValueAtTime(0.6, now + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+      } else {
+        const notes = [783.99, 1046.50]; // G5 -> C6
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          const oscGain = ctx.createGain();
+          oscGain.connect(gainNode);
+          
+          oscGain.gain.setValueAtTime(0, now + idx * 0.1);
+          oscGain.gain.linearRampToValueAtTime(0.2, now + idx * 0.1 + 0.02);
+          oscGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.1 + 0.4);
+          
+          osc.connect(oscGain);
+          osc.start(now + idx * 0.1);
+          osc.stop(now + idx * 0.1 + 0.5);
+        });
+        gainNode.gain.linearRampToValueAtTime(0.7, now + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      }
+    } catch (e) {
+      console.warn('Web Audio API not supported:', e);
+    }
+  };
+
+  // Dispara Dynamic Island Alert
+  const triggerNotification = (title, message, type = 'success') => {
+    setDynamicIsland({ show: true, title, message, type });
+    playiOSChime(type);
+    
+    // Auto-hide
+    setTimeout(() => {
+      setDynamicIsland(prev => ({ ...prev, show: false }));
+    }, 4500);
+  };
+
+  // Simulador de novo estudo recebido/aprovado
+  const simulateStudy = () => {
+    const studyNames = [
+      'Social Interactions & Decision Making',
+      'AI Trustworthiness Survey',
+      'Consumer Habits & Technology Usage',
+      'Cognitive Performance Under Pressure',
+      'Language Comprehension Task',
+      'Financial Risk Assessment Experiment',
+      'Visual Perception & Memory Study',
+      'Workspace Preferences Survey',
+      'Virtual Reality UX Evaluation'
+    ];
+
+    const isUSD = Math.random() < 0.3;
+    const currency = isUSD ? 'USD' : 'GBP';
+    
+    const rewardVal = parseFloat((Math.random() * 7 + 1.5).toFixed(2));
+    const bonusVal = Math.random() < 0.4 ? parseFloat((Math.random() * 3).toFixed(2)) : 0;
+    const rewardStr = currency === 'USD' ? `$${rewardVal.toFixed(2)}` : `£${rewardVal.toFixed(2)}`;
+    const bonusStr = bonusVal > 0 ? (currency === 'USD' ? `$${bonusVal.toFixed(2)}` : `£${bonusVal.toFixed(2)}`) : '';
+    
+    const rate = isUSD ? exchangeRates.usd : exchangeRates.gbp;
+    const totalOriginal = rewardVal + bonusVal;
+    const totalBRL = totalOriginal * rate;
+
+    const completionCode = 'C' + Math.floor(1000000 + Math.random() * 9000000);
+    const studyName = studyNames[Math.floor(Math.random() * studyNames.length)];
+
+    const now = new Date();
+    const duration = Math.floor(Math.random() * 25 + 5);
+    const started = new Date(now.getTime() - duration * 60000);
+
+    const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    const jsDay = now.getDay();
+    const weekdayOrder = jsDay === 0 ? 7 : jsDay;
+    const weekdayStr = weekdays[weekdayOrder - 1];
+
+    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const monthStr = months[now.getMonth()];
+    const mesAnoStr = `${monthStr}/${String(now.getFullYear()).slice(-2)}`;
+    const anoMesOrdem = now.getFullYear() * 100 + (now.getMonth() + 1);
+
+    const completedDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const hora = now.getHours();
+    const hourStr = `${String(hora).padStart(2, '0')}:00`;
+
+    const newSubmission = {
+      study: studyName,
+      reward: rewardStr,
+      bonus: bonusStr,
+      startedAt: started,
+      completedAt: now,
+      completionCode,
+      statusRaw: 'APPROVED',
+      statusResumo: 'Aprovado',
+      moeda: currency,
+      rewardNumeric: rewardVal,
+      bonusNumeric: bonusVal,
+      valorTotalOriginal: totalOriginal,
+      valorTotalBRL: totalBRL,
+      dataConclusaoDiaStr: completedDateStr,
+      mesAnoStr,
+      anoMesOrdem,
+      diaSemanaStr: weekdayStr,
+      diaSemanaOrdem: weekdayOrder,
+      duracaoMinutos: duration,
+      horaInicio: started.getHours(),
+      faixaHoraria: hourStr
+    };
+
+    setSubmissions(prev => {
+      const updated = [newSubmission, ...prev];
+      const computed = calculateDashboardMetrics(updated);
+      setMetrics(computed);
+
+      const valueFormatted = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalBRL);
+      triggerNotification('Estudo Concluído!', `Ganho: + ${valueFormatted} (${currency === 'USD' ? '$' : '£'}${totalOriginal.toFixed(2)})`, 'success');
+      
+      // Checa se bateu a meta diária de hoje
+      if (computed.kpis.ganhosHojeBRL >= dailyGoal && (computed.kpis.ganhosHojeBRL - totalBRL) < dailyGoal) {
+        setTimeout(() => {
+          triggerNotification('Meta Diária Batida! 🎉', `Você atingiu sua meta diária de ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(dailyGoal)}!`, 'goal');
+        }, 1500);
+      }
+
+      return updated;
+    });
+  };
+
   const fetchRealTimeRates = async () => {
     try {
       const response = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL,GBP-BRL');
@@ -41,6 +229,9 @@ export default function App() {
         const formattedTime = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(now);
         setLastExchangeFetch(formattedTime);
         console.log(`Câmbio atualizado com sucesso via API: USD=${usdBid}, GBP=${gbpBid} às ${formattedTime}`);
+        
+        triggerNotification('Câmbio Sincronizado', `Dólar: R$ ${usdBid.toFixed(2)} | Libra: R$ ${gbpBid.toFixed(2)}`, 'rate');
+        
         return ratesObj;
       }
     } catch (error) {
@@ -216,6 +407,13 @@ export default function App() {
               </span>
             </div>
             <div className="header-actions">
+              <button 
+                type="button"
+                className="simulate-study-header-btn spring-click"
+                onClick={simulateStudy}
+              >
+                Simular Estudo
+              </button>
               <span className="last-updated">
                 Atualizado às {new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
               </span>
@@ -277,6 +475,19 @@ export default function App() {
                     </div>
 
                     <div className="popover-menu-list">
+                      <button 
+                        type="button" 
+                        className="popover-menu-btn"
+                        onClick={() => { setShowProfilePopover(false); simulateStudy(); }}
+                        style={{ borderBottom: '1px solid var(--border-color)', borderRadius: '10px 10px 0 0' }}
+                      >
+                        <div className="popover-menu-btn-left">
+                          <RefreshCw size={14} />
+                          <span>Simular Estudo</span>
+                        </div>
+                        <ChevronRight size={14} />
+                      </button>
+                      
                       <button 
                         type="button" 
                         className="popover-menu-btn"
@@ -356,12 +567,28 @@ export default function App() {
             {activeTab === 'overview' && (
               <>
                 <KPICards kpis={metrics.kpis} />
-                <ChartsSection activeTab="overview" chartsData={metrics.charts} kpis={metrics.kpis} />
+                <ChartsSection 
+                  activeTab="overview" 
+                  chartsData={metrics.charts} 
+                  kpis={metrics.kpis} 
+                  dailyGoal={dailyGoal}
+                  setDailyGoal={setDailyGoal}
+                  weeklyGoal={weeklyGoal}
+                  setWeeklyGoal={setWeeklyGoal}
+                />
               </>
             )}
 
             {activeTab === 'analytics' && (
-              <ChartsSection activeTab="analytics" chartsData={metrics.charts} kpis={metrics.kpis} />
+              <ChartsSection 
+                activeTab="analytics" 
+                chartsData={metrics.charts} 
+                kpis={metrics.kpis} 
+                dailyGoal={dailyGoal}
+                setDailyGoal={setDailyGoal}
+                weeklyGoal={weeklyGoal}
+                setWeeklyGoal={setWeeklyGoal}
+              />
             )}
 
             {activeTab === 'submissions' && (
@@ -381,6 +608,19 @@ export default function App() {
           onFetchRates={fetchRealTimeRates}
         />
       )}
+
+      {/* Dynamic Island */}
+      <div className={`dynamic-island-container ${dynamicIsland.show ? 'show' : ''} type-${dynamicIsland.type}`}>
+        <div className="dynamic-island-bubble">
+          <div className="dynamic-island-icon">
+            {dynamicIsland.type === 'goal' ? '🎉' : dynamicIsland.type === 'rate' ? '⚡' : '💰'}
+          </div>
+          <div className="dynamic-island-info">
+            <span className="dynamic-island-title">{dynamicIsland.title}</span>
+            <span className="dynamic-island-message">{dynamicIsland.message}</span>
+          </div>
+        </div>
+      </div>
 
       {/* Overlay global para Drag and Drop */}
       {isDraggingFile && (
