@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import KPICards from './components/KPICards';
 import ChartsSection from './components/ChartsSection';
@@ -7,6 +7,43 @@ import SettingsModal from './components/SettingsModal';
 import { parseProlificCSV, calculateDashboardMetrics } from './utils/dataParser';
 import { CloudUpload, User, Sun, Moon, Sliders, RefreshCw, ChevronRight } from 'lucide-react';
 import './App.css';
+
+// === FLOATING EMOJIS COMPONENT ===
+const FLOAT_EMOJIS = ['💰', '📊', '🎯', '🚀', '💎', '⭐', '🔥', '💸', '📈', '🏆'];
+
+function FloatingEmojis() {
+  const emojis = useMemo(() => {
+    return Array.from({ length: 12 }).map((_, i) => ({
+      id: i,
+      emoji: FLOAT_EMOJIS[i % FLOAT_EMOJIS.length],
+      left: `${Math.random() * 90 + 5}%`,
+      size: Math.random() * 18 + 16,
+      duration: Math.random() * 15 + 20,
+      delay: Math.random() * 20,
+      drift: Math.random() * 60 - 30
+    }));
+  }, []);
+
+  return (
+    <div className="floating-emojis-container" aria-hidden="true">
+      {emojis.map((e) => (
+        <span
+          key={e.id}
+          className="floating-emoji"
+          style={{
+            left: e.left,
+            fontSize: `${e.size}px`,
+            animationDuration: `${e.duration}s`,
+            animationDelay: `${e.delay}s`,
+            '--drift': `${e.drift}px`
+          }}
+        >
+          {e.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -37,6 +74,9 @@ export default function App() {
     message: '',
     type: 'success' // 'success', 'rate', 'goal'
   });
+
+  // Estado dos confetes
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Som Sintetizado via Web Audio API (iOS Chime)
   const playiOSChime = (type = 'success') => {
@@ -208,6 +248,9 @@ export default function App() {
       if (computed.kpis.ganhosHojeBRL >= dailyGoal && (computed.kpis.ganhosHojeBRL - totalBRL) < dailyGoal) {
         setTimeout(() => {
           triggerNotification('Meta Diária Batida! 🎉', `Você atingiu sua meta diária de ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(dailyGoal)}!`, 'goal');
+          // Dispara confetes!
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 4000);
         }, 1500);
       }
 
@@ -400,6 +443,31 @@ export default function App() {
         <div className="aurora aurora-2"></div>
         <div className="aurora aurora-3"></div>
       </div>
+
+      {/* Emojis Flutuantes Animados */}
+      <FloatingEmojis />
+
+      {/* Confetes de Celebração */}
+      {showConfetti && (
+        <div className="confetti-container" aria-hidden="true">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <div
+              key={i}
+              className="confetti-piece"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 0.5}s`,
+                animationDuration: `${Math.random() * 2 + 2}s`,
+                backgroundColor: ['#ff2d55', '#007aff', '#30d158', '#ff9500', '#5856d6', '#ffcc00', '#00c7be'][i % 7],
+                width: `${Math.random() * 8 + 4}px`,
+                height: `${Math.random() * 12 + 6}px`,
+                '--confetti-rotate': `${Math.random() * 720 - 360}deg`,
+                '--confetti-drift': `${Math.random() * 200 - 100}px`
+              }}
+            />
+          ))}
+        </div>
+      )}
       
       <Sidebar 
         activeTab={activeTab} 
@@ -410,6 +478,7 @@ export default function App() {
         onFileUpload={handleFileUpload}
         loadedCount={submissions.length}
         csvSource={csvSource}
+        kpis={metrics?.kpis}
       />
 
       <main className="main-content-area">
@@ -418,7 +487,7 @@ export default function App() {
             <div className="header-info">
               <h1>{getPageTitle()}</h1>
               <span className="period-label">
-                Período: {metrics.kpis.melhorDiaLabel !== '-' ? metrics.kpis.melhorDiaLabel.split(' • ')[0] : 'N/A'}
+                Período: {metrics.kpis.dataRangeLabel || 'N/A'}
               </span>
             </div>
             <div className="header-actions">

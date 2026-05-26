@@ -413,6 +413,50 @@ export function calculateDashboardMetrics(submissions) {
     { name: 'Dólar (USD)', value: ganhosUSD_BRL }
   ];
 
+  // === STREAK DE DIAS CONSECUTIVOS ===
+  let streak = 0;
+  if (sortedDays.length > 0) {
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    // Verifica se hoje tem ganhos, senão começa de ontem
+    let checkDate = new Date(todayDate);
+    if (!ganhosPorDia[todayStr]) {
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+    while (true) {
+      const checkStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+      if (ganhosPorDia[checkStr]) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+  }
+
+  // === RANGE DE DATAS DO DATASET ===
+  let dataRangeLabel = 'N/A';
+  if (sortedDays.length > 0) {
+    const firstDay = sortedDays[0];
+    const lastDay = sortedDays[sortedDays.length - 1];
+    const fd = new Date(firstDay + 'T00:00:00');
+    const ld = new Date(lastDay + 'T00:00:00');
+    const fmtDate = (d) => {
+      const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      return `${months[d.getMonth()]}/${d.getFullYear()}`;
+    };
+    dataRangeLabel = `${fmtDate(fd)} — ${fmtDate(ld)}`;
+  }
+
+  // === CONQUISTAS DESBLOQUEÁVEIS ===
+  const achievements = [
+    { id: 'first', emoji: '🥉', label: '1ª Aprovação', unlocked: totalAprovados >= 1 },
+    { id: '100brl', emoji: '🥈', label: 'R$ 100+', unlocked: ganhosAprovadosBRL >= 100 },
+    { id: '500brl', emoji: '🥇', label: 'R$ 500+', unlocked: ganhosAprovadosBRL >= 500 },
+    { id: '1000brl', emoji: '💎', label: 'R$ 1.000+', unlocked: ganhosAprovadosBRL >= 1000 },
+    { id: 'streak7', emoji: '🔥', label: '7 dias seguidos', unlocked: streak >= 7 },
+    { id: '50studies', emoji: '🎓', label: '50 estudos', unlocked: totalAprovados >= 50 },
+  ];
+
   return {
     kpis: {
       totalEstudos,
@@ -434,7 +478,10 @@ export function calculateDashboardMetrics(submissions) {
       melhorMesBRL,
       melhorMesLabel,
       mediaDiariaBRL,
-      mediaMensalBRL
+      mediaMensalBRL,
+      streak,
+      dataRangeLabel,
+      achievements
     },
     charts: {
       acumulado: graficoAcumuladoData,

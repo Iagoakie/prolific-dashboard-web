@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, UploadCloud } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, UploadCloud, ExternalLink } from 'lucide-react';
 import './Sidebar.css';
 
 export default function Sidebar({ 
@@ -10,7 +10,8 @@ export default function Sidebar({
   onSettingsOpen, 
   onFileUpload, 
   loadedCount,
-  csvSource
+  csvSource,
+  kpis
 }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -18,6 +19,18 @@ export default function Sidebar({
       onFileUpload(file);
     }
   };
+
+  const formatBRL = (val) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 0
+    }).format(val || 0);
+  };
+
+  const streak = kpis?.streak || 0;
+  const ganhosHoje = kpis?.ganhosHojeBRL || 0;
+  const achievements = kpis?.achievements || [];
 
   return (
     <aside className="sidebar glass-panel">
@@ -31,6 +44,26 @@ export default function Sidebar({
           {csvSource === 'uploaded' ? 'CSV Importado' : 'CSV Padrão'}
         </div>
       </div>
+
+      {/* Quick Stats Section */}
+      {kpis && (
+        <div className="sidebar-quick-stats">
+          <div className="quick-stat-row">
+            <span className="quick-stat-icon fire-icon">🔥</span>
+            <div className="quick-stat-info">
+              <span className="quick-stat-value">{streak} {streak === 1 ? 'dia' : 'dias'}</span>
+              <span className="quick-stat-label">Streak</span>
+            </div>
+          </div>
+          <div className="quick-stat-row">
+            <span className="quick-stat-icon">💰</span>
+            <div className="quick-stat-info">
+              <span className="quick-stat-value">{formatBRL(ganhosHoje)}</span>
+              <span className="quick-stat-label">Ganhos Hoje</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <nav className="sidebar-nav">
         <button 
@@ -58,7 +91,37 @@ export default function Sidebar({
         </button>
       </nav>
 
+      {/* Achievements Section */}
+      {kpis && achievements.length > 0 && (
+        <div className="sidebar-achievements">
+          <span className="achievements-title">🏅 Conquistas</span>
+          <div className="achievements-grid">
+            {achievements.map((ach) => (
+              <div 
+                key={ach.id} 
+                className={`achievement-badge ${ach.unlocked ? 'unlocked' : 'locked'}`}
+                title={`${ach.label}${ach.unlocked ? ' ✓' : ' (bloqueada)'}`}
+              >
+                <span className="achievement-emoji">{ach.unlocked ? ach.emoji : '🔒'}</span>
+                <span className="achievement-label">{ach.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="sidebar-footer">
+        {/* Atalho Rápido - Prolific */}
+        <a 
+          href="https://app.prolific.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="nav-item spring-click prolific-link"
+        >
+          <ExternalLink size={20} />
+          <span>Ir para Prolific</span>
+        </a>
+
         <label className="upload-btn nav-item spring-click">
           <UploadCloud size={20} />
           <span>Atualizar CSV</span>
