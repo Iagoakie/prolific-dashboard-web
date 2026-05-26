@@ -2,22 +2,41 @@ import React, { useState } from 'react';
 import { X, RefreshCw, Save, Sliders } from 'lucide-react';
 import './SettingsModal.css';
 
-export default function SettingsModal({ rates, onSave, onClose }) {
+export default function SettingsModal({ rates, onSave, onClose, exchangeSource, lastExchangeFetch, onFetchRates }) {
   const [usd, setUsd] = useState(rates.usd);
   const [gbp, setGbp] = useState(rates.gbp);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSave = (e) => {
     e.preventDefault();
     onSave({
       usd: parseFloat(usd) || 4.9128,
       gbp: parseFloat(gbp) || 6.6638
-    });
+    }, 'manual');
     onClose();
+  };
+
+  const handleSync = async () => {
+    setIsLoading(true);
+    setErrorMsg('');
+    const result = await onFetchRates();
+    setIsLoading(false);
+    if (result) {
+      setUsd(result.usd);
+      setGbp(result.gbp);
+    } else {
+      setErrorMsg('Não foi possível obter a cotação em tempo real. Verifique sua conexão.');
+    }
   };
 
   const handleReset = () => {
     setUsd(4.9128);
     setGbp(6.6638);
+    onSave({
+      usd: 4.9128,
+      gbp: 6.6638
+    }, 'default');
   };
 
   return (
@@ -37,6 +56,41 @@ export default function SettingsModal({ rates, onSave, onClose }) {
           <p className="settings-desc">
             Defina as taxas cambiais para converter as recompensas originais em Libra (£) e Dólar ($) para Real (R$).
           </p>
+
+          <div className="settings-status-box">
+            {exchangeSource === 'api' && (
+              <span className="status-badge success">
+                🟢 Câmbio automático atualizado em tempo real ({lastExchangeFetch})
+              </span>
+            )}
+            {exchangeSource === 'fallback' && (
+              <span className="status-badge warning">
+                ⚠️ Falha ao buscar cotação. Usando valores fixos do Power BI
+              </span>
+            )}
+            {exchangeSource === 'default' && (
+              <span className="status-badge info">
+                ℹ️ Usando cotações fixas padrão do Power BI (4.91 / 6.66)
+              </span>
+            )}
+            {exchangeSource === 'manual' && (
+              <span className="status-badge manual">
+                ✍️ Taxas ajustadas manualmente por você
+              </span>
+            )}
+          </div>
+
+          <button 
+            type="button" 
+            className="sync-rates-btn spring-click" 
+            onClick={handleSync}
+            disabled={isLoading}
+          >
+            <RefreshCw size={14} className={isLoading ? 'spinning' : ''} />
+            <span>{isLoading ? 'Sincronizando cotações...' : 'Sincronizar Câmbio em Tempo Real'}</span>
+          </button>
+
+          {errorMsg && <p className="error-message">{errorMsg}</p>}
 
           <div className="ios-settings-group">
             <div className="ios-settings-row">
@@ -79,7 +133,7 @@ export default function SettingsModal({ rates, onSave, onClose }) {
           <div className="settings-actions">
             <button type="button" className="reset-btn spring-click" onClick={handleReset}>
               <RefreshCw size={16} />
-              <span>Restaurar</span>
+              <span>Restaurar Padrão</span>
             </button>
             <button type="submit" className="save-btn spring-click">
               <Save size={16} />

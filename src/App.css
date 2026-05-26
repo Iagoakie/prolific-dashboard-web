@@ -135,3 +135,400 @@
 .dark .user-profile-avatar {
   border-color: rgba(0, 0, 0, 0.3);
 }
+
+/* ==========================================================================
+   UPGRADES PREMIUM - DRAG-AND-DROP GLOBAL OVERLAY
+   ========================================================================== */
+.drag-drop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 245, 247, 0.4);
+  backdrop-filter: blur(40px) saturate(220%);
+  -webkit-backdrop-filter: blur(40px) saturate(220%);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  pointer-events: none;
+}
+
+.dark .drag-drop-overlay {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.drag-drop-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border: 2px dashed var(--accent-color);
+  animation: floatOverlayCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.drag-drop-icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  margin-bottom: 8px;
+  animation: pulseCloud 2s infinite ease-in-out;
+}
+
+.drag-drop-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.drag-drop-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+@keyframes floatOverlayCard {
+  from { transform: scale(0.9) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes pulseCloud {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.03); }
+}
+
+/* ==========================================================================
+   UPGRADES PREMIUM - SHIMMER SKELETON SCREEN
+   ========================================================================== */
+.skeleton-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.skeleton-card {
+  height: 130px;
+  border-radius: var(--border-radius-widget);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.skeleton-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skeleton-bar {
+  background: linear-gradient(
+    90deg,
+    rgba(120, 120, 128, 0.08) 25%,
+    rgba(120, 120, 128, 0.16) 37%,
+    rgba(120, 120, 128, 0.08) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+}
+
+.dark .skeleton-bar {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 37%,
+    rgba(255, 255, 255, 0.04) 63%
+  );
+  background-size: 200% 100%;
+}
+
+.skeleton-title {
+  width: 60%;
+  height: 12px;
+}
+
+.skeleton-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.skeleton-value {
+  width: 75%;
+  height: 24px;
+  margin-bottom: 4px;
+}
+
+.skeleton-subtext {
+  width: 45%;
+  height: 10px;
+}
+
+.skeleton-charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .skeleton-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeleton-chart-card {
+  height: 430px;
+  border-radius: var(--border-radius-widget);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.skeleton-chart-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-chart-title {
+  width: 180px;
+  height: 16px;
+}
+
+.skeleton-chart-sub {
+  width: 240px;
+  height: 12px;
+}
+
+.skeleton-chart-body {
+  flex-grow: 1;
+  width: 100%;
+  border-radius: 12px;
+  background: rgba(120, 120, 128, 0.04);
+}
+
+.dark .skeleton-chart-body {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   UPGRADES PREMIUM - ICLOUD PROFILE POPOVER
+   ========================================================================== */
+.avatar-popover-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-popover {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 290px;
+  padding: 20px;
+  z-index: 9999;
+  transform-origin: top right;
+  animation: popoverOpen 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.dark .profile-popover {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(255, 255, 255, 0.01);
+}
+
+@keyframes popoverOpen {
+  from { transform: scale(0.92) translateY(-10px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+.popover-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9500, #ff2d55);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(255, 45, 85, 0.2);
+}
+
+.popover-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.popover-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.popover-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+
+.popover-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.popover-stat-item {
+  background: rgba(120, 120, 128, 0.06);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dark .popover-stat-item {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.popover-stat-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.popover-stat-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.popover-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popover-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.popover-menu-btn:hover {
+  background: var(--border-color);
+}
+
+.popover-menu-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.popover-menu-btn svg {
+  color: var(--text-secondary);
+}
+
+.popover-menu-btn:hover svg {
+  color: var(--text-primary);
+}
+
+/* Popover toggle theme custom style */
+.theme-popover-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(120, 120, 128, 0.05);
+  margin-bottom: 8px;
+}
+
+.dark .theme-popover-row {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.theme-popover-lbl {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-popover-lbl svg {
+  color: var(--text-secondary);
+}
+
+.theme-segmented {
+  padding: 2px;
+  border-radius: 10px;
+}
+
+.theme-segmented .segmented-button {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 8px;
+}

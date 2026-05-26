@@ -167,3 +167,95 @@
     width: 100%;
   }
 }
+
+/* Badges de Câmbio */
+.settings-status-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: var(--border-radius-button);
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.status-badge.success {
+  background: rgba(52, 199, 89, 0.08);
+  color: #34c759;
+  border: 1px solid rgba(52, 199, 89, 0.15);
+}
+
+.status-badge.warning {
+  background: rgba(255, 59, 48, 0.08);
+  color: #ff3b30;
+  border: 1px solid rgba(255, 59, 48, 0.15);
+}
+
+.status-badge.info {
+  background: rgba(0, 122, 255, 0.08);
+  color: var(--accent-color);
+  border: 1px solid rgba(0, 122, 255, 0.15);
+}
+
+.status-badge.manual {
+  background: rgba(255, 149, 0, 0.08);
+  color: #ff9500;
+  border: 1px solid rgba(255, 149, 0, 0.15);
+}
+
+/* Sync Rates Button */
+.sync-rates-btn {
+  background: rgba(120, 120, 128, 0.08);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: var(--border-radius-button);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+  width: 100%;
+  margin-top: 4px;
+}
+
+.dark .sync-rates-btn {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sync-rates-btn:hover:not(:disabled) {
+  background: var(--border-color);
+  border-color: var(--border-hover);
+}
+
+.sync-rates-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  font-size: 11px;
+  color: #ff3b30;
+  margin-top: -4px;
+  padding-left: 4px;
+}
+
+/* Spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}

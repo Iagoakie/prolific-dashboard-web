@@ -48,11 +48,19 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
     }).format(val);
   };
 
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
+
   if (activeTab === 'overview') {
     return (
       <div className="charts-grid animate-fade-in">
         {/* Gráfico Principal: Ganhos Acumulados */}
-        <div className="chart-card glass-panel main-chart">
+        <div className="chart-card glass-panel main-chart" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <TrendingUp size={18} className="chart-title-icon" />
@@ -98,7 +106,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
         </div>
 
         {/* Gráfico Secundário: Proporção de Status */}
-        <div className="chart-card glass-panel donut-chart">
+        <div className="chart-card glass-panel donut-chart" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <CheckCircle size={18} className="chart-title-icon" />
@@ -185,7 +193,11 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
       {/* Cards de Destaque Temporal */}
       <div className="kpi-grid">
         {temporalCards.map((card, idx) => (
-          <div key={idx} className="kpi-card glass-panel spring-click">
+          <div 
+            key={idx} 
+            className="kpi-card glass-panel spring-click"
+            onMouseMove={handleMouseMove}
+          >
             <div className="kpi-card-header">
               <span className="kpi-card-title">{card.title}</span>
               <div className={`kpi-card-icon-container ${card.bgClass}`}>
@@ -202,7 +214,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
 
       <div className="charts-grid">
         {/* Gráfico Mensal */}
-        <div className="chart-card glass-panel main-chart">
+        <div className="chart-card glass-panel main-chart" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <TrendingUp size={18} className="chart-title-icon" />
@@ -242,7 +254,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
         </div>
 
         {/* Gráfico por Dia da Semana */}
-        <div className="chart-card glass-panel">
+        <div className="chart-card glass-panel" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <Calendar size={18} className="chart-title-icon" />
@@ -278,7 +290,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
       {/* Gráficos Horários e Distribuições */}
       <div className="analytics-equal-grid">
         {/* Gráfico 1: Distribuição Horária */}
-        <div className="chart-card glass-panel hourly-chart">
+        <div className="chart-card glass-panel hourly-chart" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <Clock size={18} className="chart-title-icon" />
@@ -313,7 +325,7 @@ export default function ChartsSection({ activeTab, chartsData, kpis }) {
         </div>
 
         {/* Gráfico 2: Distribuição por Dia da Semana e Período */}
-        <div className="chart-card glass-panel hourly-chart">
+        <div className="chart-card glass-panel hourly-chart" onMouseMove={handleMouseMove}>
           <div className="chart-header">
             <div className="chart-header-left">
               <Calendar size={18} className="chart-title-icon" />

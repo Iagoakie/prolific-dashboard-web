@@ -62,10 +62,22 @@ export default function KPICards({ kpis }) {
     }
   ];
 
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
+
   return (
     <div className="kpi-grid animate-fade-in">
       {cards.map((card, idx) => (
-        <div key={idx} className="kpi-card glass-panel spring-click">
+        <div 
+          key={idx} 
+          className="kpi-card glass-panel spring-click"
+          onMouseMove={handleMouseMove}
+        >
           <div className="kpi-card-header">
             <span className="kpi-card-title">{card.title}</span>
             <div className={`kpi-card-icon-container ${card.bgClass}`}>
