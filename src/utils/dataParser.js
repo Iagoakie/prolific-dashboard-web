@@ -147,7 +147,7 @@ export function parseProlificCSV(csvText, rates = { usd: 4.9128, gbp: 6.6638 }, 
 
       if (startedAt) {
         const diffMs = completedAt - startedAt;
-        duracaoMinutos = Math.max(0, Math.floor(diffMs / 1000 / 60));
+        duracaoMinutos = Math.max(0, diffMs / 1000 / 60);
       }
     }
 

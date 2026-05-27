@@ -516,7 +516,7 @@ export default function ChartsSection({
                     <tr key={i} style={{ borderBottom: '1px solid rgba(120, 120, 128, 0.1)' }}>
                       <td style={{ padding: '10px 8px', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{estudo.study}</td>
                       <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{estudo.data}</td>
-                      <td style={{ padding: '10px 8px' }}>{estudo.duracao} min</td>
+                      <td style={{ padding: '10px 8px' }}>{Math.round(estudo.duracao)} min</td>
                       <td style={{ padding: '10px 8px' }}>R$ {estudo.valor.toFixed(2)}</td>
                       <td style={{ padding: '10px 8px', fontWeight: '600', color: 'var(--accent-color)' }}>R$ {estudo.rpHora.toFixed(2)}/h</td>
                     </tr>
