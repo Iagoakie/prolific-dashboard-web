@@ -60,7 +60,6 @@ export default function KPICards({ kpis }) {
   const cards = [
     {
       title: 'Ganhos Aprovados',
-      emoji: '✅',
       value: formatBRL(kpis.ganhosAprovadosBRL),
       subtext: `Total de ${kpis.totalAprovados} estudos aprovados`,
       icon: <CheckCircle size={22} className="icon-approved" />,
@@ -68,7 +67,6 @@ export default function KPICards({ kpis }) {
     },
     {
       title: 'Ganhos Hoje',
-      emoji: '📅',
       value: formatBRL(kpis.ganhosHojeBRL),
       subtext: `USD: $${kpis.ganhosHojeOriginalUSD.toFixed(2)} • GBP: £${kpis.ganhosHojeOriginalGBP.toFixed(2)}`,
       icon: <Calendar size={22} className="icon-today" />,
@@ -76,7 +74,6 @@ export default function KPICards({ kpis }) {
     },
     {
       title: 'Valor Represado',
-      emoji: '⏳',
       value: formatBRL(kpis.valorRepresadoBRL),
       subtext: `${kpis.totalEmReview} estudos em revisão`,
       icon: <Clock size={22} className="icon-pending" />,
@@ -84,7 +81,6 @@ export default function KPICards({ kpis }) {
     },
     {
       title: 'Média por Estudo',
-      emoji: '💵',
       value: formatBRL(kpis.mediaPorEstudoBRL),
       subtext: 'Valor médio por envio aprovado',
       icon: <DollarSign size={22} className="icon-average" />,
@@ -92,7 +88,6 @@ export default function KPICards({ kpis }) {
     },
     {
       title: 'Taxa de Aprovação',
-      emoji: '📊',
       value: `${(kpis.taxaAprovacao * 100).toFixed(1)}%`,
       subtext: `Rejeitados: ${kpis.totalRejeitados} • Retornados: ${kpis.totalRetornados}`,
       icon: <Percent size={22} className="icon-percent" />,
@@ -100,7 +95,6 @@ export default function KPICards({ kpis }) {
     },
     {
       title: 'Melhor Dia',
-      emoji: '🏆',
       value: kpis.melhorDiaBRL > 0 ? formatBRL(kpis.melhorDiaBRL) : 'R$ 0,00',
       subtext: kpis.melhorDiaLabel !== '-' ? kpis.melhorDiaLabel.split(' • ')[0] : 'Sem registro',
       icon: <Calendar size={22} className="icon-best-day" />,
@@ -108,7 +102,6 @@ export default function KPICards({ kpis }) {
     },
     {
       title: 'Melhor Mês',
-      emoji: '📈',
       value: kpis.melhorMesBRL > 0 ? formatBRL(kpis.melhorMesBRL) : 'R$ 0,00',
       subtext: kpis.melhorMesLabel !== '-' ? kpis.melhorMesLabel.split(' • ')[0].toUpperCase() : 'Sem registro',
       icon: <TrendingUp size={22} className="icon-best-month" />,
@@ -135,7 +128,6 @@ export default function KPICards({ kpis }) {
         >
           <div className="kpi-card-header">
             <span className="kpi-card-title">
-              <span className="kpi-emoji">{card.emoji}</span>
               {card.title}
             </span>
             <div className={`kpi-card-icon-container ${card.bgClass}`}>
