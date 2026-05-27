@@ -576,6 +576,7 @@ export function calculateDashboardMetrics(submissions) {
       reaisPorHora,
       tempoMedioEstudoMinutos,
       estudosPorDia,
+      currentMonthEarnings,
       projecaoMensalBRL
     },
     charts: {

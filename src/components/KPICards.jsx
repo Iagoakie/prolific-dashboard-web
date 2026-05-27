@@ -94,17 +94,10 @@ export default function KPICards({ kpis }) {
       bgClass: 'card-teal'
     },
     {
-      title: 'Melhor Dia',
-      value: kpis.melhorDiaBRL > 0 ? formatBRL(kpis.melhorDiaBRL) : 'R$ 0,00',
-      subtext: kpis.melhorDiaLabel !== '-' ? kpis.melhorDiaLabel.split(' • ')[0] : 'Sem registro',
-      icon: <Calendar size={22} className="icon-best-day" />,
-      bgClass: 'card-pink'
-    },
-    {
-      title: 'Melhor Mês',
-      value: kpis.melhorMesBRL > 0 ? formatBRL(kpis.melhorMesBRL) : 'R$ 0,00',
-      subtext: kpis.melhorMesLabel !== '-' ? kpis.melhorMesLabel.split(' • ')[0].toUpperCase() : 'Sem registro',
-      icon: <TrendingUp size={22} className="icon-best-month" />,
+      title: 'Mês Atual',
+      value: formatBRL(kpis.currentMonthEarnings || 0),
+      subtext: 'Ganhos acumulados no mês vigente',
+      icon: <Calendar size={22} className="icon-best-month" />,
       bgClass: 'card-indigo'
     },
     {
