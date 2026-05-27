@@ -350,6 +350,7 @@
 .avatar-popover-container {
   position: relative;
   display: inline-block;
+  z-index: 99; /* Garante que o popover fique acima dos cards e gráficos do dashboard */
 }
 
 .profile-popover {
@@ -363,6 +364,7 @@
   animation: popoverOpen 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
   background: #ffffff !important;
+  opacity: 1 !important; /* Garante opacidade total */
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--border-radius-widget);
   backdrop-filter: none !important;
@@ -371,6 +373,7 @@
 
 .dark .profile-popover {
   background: #1c1c1e !important;
+  opacity: 1 !important; /* Garante opacidade total */
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 16px 56px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
