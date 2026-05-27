@@ -327,7 +327,7 @@ export default function App() {
       // Checar se o usuário subiu de nível na atualização do csv
       if (metrics && computed && computed.kpis.gamification.currentLevel > metrics.kpis.gamification.currentLevel) {
         audioManager.playLevelUp();
-        triggerIsland('Parabéns! Nível Subiu', `Você alcançou o Nível ${computed.kpis.gamification.currentLevel}`, 'goal');
+        triggerNotification('Parabéns! Nível Subiu', `Você alcançou o Nível ${computed.kpis.gamification.currentLevel}`, 'goal');
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 5000);
       }
@@ -358,7 +358,7 @@ export default function App() {
       setCsvText(e.target.result);
       setCsvSource('uploaded');
       audioManager.playCoin();
-      triggerIsland('Importação Concluída', 'Seus ganhos foram atualizados', 'success');
+      triggerNotification('Importação Concluída', 'Seus ganhos foram atualizados', 'success');
     };
     reader.readAsText(file);
   };
@@ -374,7 +374,7 @@ export default function App() {
       link.href = canvas.toDataURL('image/png');
       link.click();
       audioManager.playSuccess();
-      triggerIsland('Exportação Concluída', 'Relatório salvo com sucesso!', 'success');
+      triggerNotification('Exportação Concluída', 'Relatório salvo com sucesso!', 'success');
     } catch (err) {
       console.error('Erro ao exportar:', err);
     }
