@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   width: 100%;
 }
 
@@ -19,11 +19,11 @@
 }
 
 .kpi-card {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 130px;
+  min-height: 110px;
   cursor: pointer;
   border: 1px solid var(--border-color);
 }

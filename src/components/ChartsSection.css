@@ -1,8 +1,8 @@
 .chart-card {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  height: 330px;
+  height: 290px;
 }
 
 .chart-header {
@@ -145,7 +145,7 @@
 }
 
 .hourly-chart {
-  height: 290px !important;
+  height: 250px !important;
 }
 
 .analytics-equal-grid {
@@ -179,7 +179,7 @@
 
 .main-chart-full {
   width: 100%;
-  height: 330px;
+  height: 290px;
 }
 
 /* Row 2 layout split */
@@ -197,11 +197,11 @@
 }
 
 .secondary-chart-split {
-  height: 330px;
+  height: 290px;
 }
 
 .pacing-rings-card {
-  height: 330px;
+  height: 290px;
   position: relative;
   display: flex;
   flex-direction: column;
