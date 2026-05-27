@@ -350,7 +350,7 @@
 .avatar-popover-container {
   position: relative;
   display: inline-block;
-  z-index: 99; /* Garante que o popover fique acima dos cards e gráficos do dashboard */
+  z-index: 999999; /* Garante que o popover fique acima dos cards e gráficos do dashboard */
 }
 
 .profile-popover {
@@ -359,7 +359,7 @@
   right: 0;
   width: 290px;
   padding: 20px;
-  z-index: 9999;
+  z-index: 999999;
   transform-origin: top right;
   animation: popoverOpen 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -541,35 +541,6 @@
   padding: 4px 8px;
   font-size: 11px;
   border-radius: 8px;
-}
-
-/* ==========================================================================
-   UPGRADES PREMIUM - SIMULATOR & DYNAMIC ISLAND
-   ========================================================================== */
-
-.simulate-study-header-btn {
-  background: var(--accent-color);
-  color: #ffffff;
-  border: none;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: var(--border-radius-pill);
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.15);
-  transition: var(--transition-smooth);
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-}
-
-.simulate-study-header-btn:hover {
-  box-shadow: 0 6px 14px rgba(0, 122, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.simulate-study-header-btn:active {
-  transform: scale(0.96) translateY(0);
 }
 
 /* Dynamic Island CSS */

@@ -130,9 +130,6 @@ export default function KPICards({ kpis }) {
             <span className="kpi-card-title">
               {card.title}
             </span>
-            <div className={`kpi-card-icon-container ${card.bgClass}`}>
-              {card.icon}
-            </div>
           </div>
           <div className="kpi-card-body">
             <span className="kpi-card-value">{card.value}</span>
