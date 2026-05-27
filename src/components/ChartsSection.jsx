@@ -542,18 +542,11 @@ export default function ChartsSection({
 
   const temporalCards = [
     {
-      title: 'Melhor Dia Histórico',
-      value: kpis.melhorDiaBRL > 0 ? formatBRL2(kpis.melhorDiaBRL) : 'R$ 0,00',
-      subtext: kpis.melhorDiaLabel !== '-' ? `Recorde em ${kpis.melhorDiaLabel.split(' • ')[0]}` : 'Sem registro',
+      title: 'Mês Atual',
+      value: kpis.currentMonthEarnings > 0 ? formatBRL2(kpis.currentMonthEarnings) : 'R$ 0,00',
+      subtext: 'Ganhos acumulados no mês vigente',
       icon: <Calendar size={22} className="icon-best-day" />,
       bgClass: 'card-pink'
-    },
-    {
-      title: 'Melhor Mês',
-      value: kpis.melhorMesBRL > 0 ? formatBRL2(kpis.melhorMesBRL) : 'R$ 0,00',
-      subtext: kpis.melhorMesLabel !== '-' ? `Recorde em ${kpis.melhorMesLabel.split(' • ')[0].toUpperCase()}` : 'Sem registro',
-      icon: <TrendingUp size={22} className="icon-best-month" />,
-      bgClass: 'card-indigo'
     },
     {
       title: 'Média Diária',

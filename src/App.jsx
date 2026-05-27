@@ -336,6 +336,7 @@ export default function App() {
       setMetrics(computed);
     } catch (err) {
       console.error('Erro no processamento dos dados:', err);
+      triggerNotification('Erro ao processar CSV', err.message, 'goal');
     }
   }, [csvText, exchangeRates, taxes]);
 
