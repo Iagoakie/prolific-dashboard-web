@@ -94,7 +94,7 @@ export default function ChartsSection({
             <span className="chart-subtitle">Progresso em BRL ao longo do tempo</span>
           </div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={320}>
+            <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={chartsData.acumulado} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAcumulado" x1="0" y1="0" x2="0" y2="1">
@@ -145,7 +145,7 @@ export default function ChartsSection({
               {!chartsData.faturamentoDiaSemana || chartsData.faturamentoDiaSemana.length === 0 ? (
                 <div className="no-data-placeholder">Nenhum faturamento registrado ainda.</div>
               ) : (
-                <ResponsiveContainer width="100%" height={320}>
+                <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
@@ -412,7 +412,7 @@ export default function ChartsSection({
               {!chartsData.eficienciaMensal || chartsData.eficienciaMensal.length === 0 ? (
                 <div className="no-data-placeholder">Nenhum dado de duração registrado nos estudos.</div>
               ) : (
-                <ResponsiveContainer width="100%" height={320}>
+                <ResponsiveContainer width="100%" height={240}>
                   <AreaChart data={chartsData.eficienciaMensal} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorEficMensal" x1="0" y1="0" x2="0" y2="1">
@@ -462,7 +462,7 @@ export default function ChartsSection({
               {!chartsData.faixaHorariaEficiencia || chartsData.faixaHorariaEficiencia.length === 0 ? (
                 <div className="no-data-placeholder">Nenhum dado por faixa horária disponível.</div>
               ) : (
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={230}>
                   <BarChart data={chartsData.faixaHorariaEficiencia} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                     <XAxis 
@@ -570,7 +570,7 @@ export default function ChartsSection({
             {chartsData.mensal.length === 0 ? (
               <div className="no-data-placeholder">Nenhum ganho mensal registrado ainda.</div>
             ) : (
-              <ResponsiveContainer width="100%" height={320}>
+              <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={chartsData.mensal} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                   <XAxis 
@@ -607,7 +607,7 @@ export default function ChartsSection({
             <span className="chart-subtitle">Volume de estudos concluídos/aprovados</span>
           </div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={230}>
               <BarChart data={chartsData.diaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis 
@@ -643,7 +643,7 @@ export default function ChartsSection({
             <span className="chart-subtitle">Horário de início das pesquisas realizadas</span>
           </div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={210}>
               <BarChart data={chartsData.faixaHoraria} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis 
@@ -678,7 +678,7 @@ export default function ChartsSection({
             <span className="chart-subtitle">Volume de tarefas por período do dia e dia da semana</span>
           </div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={210}>
               <BarChart data={chartsData.diaSemanaPeriodo} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis 
