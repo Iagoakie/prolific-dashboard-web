@@ -491,7 +491,7 @@ export default function ChartsSection({
         </div>
 
         {/* Top 5 Estudos Eficientes */}
-        <div className="chart-card glass-panel" style={{ marginTop: '20px' }}>
+        <div className="chart-card glass-panel top-studies-card">
           <div className="chart-header">
             <div className="chart-header-left">
               <CheckCircle size={18} className="chart-title-icon" />
