@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap, UploadCloud } from 'lucide-react';
 import './Sidebar.css';
 
 export default function Sidebar({ 
@@ -8,6 +8,7 @@ export default function Sidebar({
   theme, 
   toggleTheme, 
   onSettingsOpen, 
+  onFileUpload,
   loadedCount,
   csvSource,
   kpis
@@ -122,6 +123,22 @@ export default function Sidebar({
       })()}
 
       <div className="sidebar-footer">
+        <label className="upload-btn nav-item spring-click">
+          <UploadCloud size={20} />
+          <span>Atualizar CSV</span>
+          <input 
+            type="file" 
+            accept=".csv" 
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                onFileUpload(file);
+              }
+            }} 
+            style={{ display: 'none' }} 
+          />
+        </label>
+
         <button className="nav-item spring-click" onClick={onSettingsOpen}>
           <Settings size={20} />
           <span>Ajustes</span>

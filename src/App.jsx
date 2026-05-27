@@ -385,6 +385,7 @@ export default function App() {
         theme={theme}
         toggleTheme={toggleTheme}
         onSettingsOpen={() => setShowSettings(true)}
+        onFileUpload={handleFileUpload}
         loadedCount={submissions.length}
         csvSource={csvSource}
         kpis={metrics?.kpis}
