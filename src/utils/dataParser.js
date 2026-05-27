@@ -62,7 +62,7 @@ function parseDateTime(val) {
   }
 }
 
-export function parseProlificCSV(csvText, rates = { usd: 4.9128, gbp: 6.6638 }) {
+export function parseProlificCSV(csvText, rates = { usd: 4.9128, gbp: 6.6638 }, taxes = { spread: 0, iof: 0 }) {
   const parsed = Papa.parse(csvText, {
     header: true,
     skipEmptyLines: true,
@@ -84,12 +84,17 @@ export function parseProlificCSV(csvText, rates = { usd: 4.9128, gbp: 6.6638 }) 
     const valorTotalOriginal = rewardNumeric + bonusNumeric;
 
     // Conversão para BRL
-    let valorTotalBRL = 0;
+    let valorTotalBRLBruto = 0;
     if (moeda === 'USD') {
-      valorTotalBRL = valorTotalOriginal * rates.usd;
+      valorTotalBRLBruto = valorTotalOriginal * rates.usd;
     } else {
-      valorTotalBRL = valorTotalOriginal * rates.gbp;
+      valorTotalBRLBruto = valorTotalOriginal * rates.gbp;
     }
+
+    // Aplicar taxas (Spread + IOF) para obter a Liquidez Real
+    const spreadDesconto = valorTotalBRLBruto * ((taxes.spread || 0) / 100);
+    const iofDesconto = valorTotalBRLBruto * ((taxes.iof || 0) / 100);
+    const valorTotalBRL = Math.max(0, valorTotalBRLBruto - spreadDesconto - iofDesconto);
 
     const startedAt = parseDateTime(row['Started At']);
     const completedAt = parseDateTime(row['Completed At']);
@@ -469,15 +474,31 @@ export function calculateDashboardMetrics(submissions) {
     dataRangeLabel = `${fmtDate(fd)} — ${fmtDate(ld)}`;
   }
 
-  // === CONQUISTAS DESBLOQUEÁVEIS ===
-  const achievements = [
-    { id: 'first', emoji: '🥉', label: '1ª Aprovação', unlocked: totalAprovados >= 1 },
-    { id: '100brl', emoji: '🥈', label: 'R$ 100+', unlocked: ganhosAprovadosBRL >= 100 },
-    { id: '500brl', emoji: '🥇', label: 'R$ 500+', unlocked: ganhosAprovadosBRL >= 500 },
-    { id: '1000brl', emoji: '💎', label: 'R$ 1.000+', unlocked: ganhosAprovadosBRL >= 1000 },
-    { id: 'streak7', emoji: '🔥', label: '7 dias seguidos', unlocked: streak >= 7 },
-    { id: '50studies', emoji: '🎓', label: '50 estudos', unlocked: totalAprovados >= 50 },
-  ];
+  // === GAMIFICAÇÃO: SISTEMA DE NÍVEIS E XP ===
+  // 50 XP por estudo aprovado + 10 XP por cada R$ 1 ganho
+  const totalXP = (totalAprovados * 50) + Math.floor(ganhosAprovadosBRL * 10);
+  const currentLevel = Math.floor(Math.sqrt(totalXP / 50)) + 1;
+  const nextLevelXP = Math.pow(currentLevel, 2) * 50;
+  const currentLevelBaseXP = Math.pow(currentLevel - 1, 2) * 50;
+  
+  const xpIntoCurrentLevel = totalXP - currentLevelBaseXP;
+  const xpNeededForNext = nextLevelXP - currentLevelBaseXP;
+  const levelProgress = xpNeededForNext > 0 ? (xpIntoCurrentLevel / xpNeededForNext) * 100 : 100;
+
+  let levelTitle = 'Iniciante';
+  if (currentLevel >= 5) levelTitle = 'Explorador';
+  if (currentLevel >= 15) levelTitle = 'Pesquisador';
+  if (currentLevel >= 30) levelTitle = 'Especialista';
+  if (currentLevel >= 50) levelTitle = 'Elite';
+  if (currentLevel >= 80) levelTitle = 'Lenda do Prolific';
+
+  const gamification = {
+    totalXP,
+    currentLevel,
+    nextLevelXP,
+    levelProgress,
+    levelTitle
+  };
 
   // === EFICIÊNCIA METRICS ===
   const totalHorasAprovadas = totalMinutosAprovados / 60;
@@ -485,15 +506,19 @@ export function calculateDashboardMetrics(submissions) {
   const tempoMedioEstudoMinutos = totalAprovados > 0 ? (totalMinutosAprovados / totalAprovados) : 0;
   const estudosPorDia = totalDiasAtivos > 0 ? (totalAprovados / totalDiasAtivos) : 0;
 
-  // Projeção Mensal
+  // Projeção Mensal (Inteligente)
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const currentDayOfMonth = today.getDate();
   const remainingDays = Math.max(0, lastDayOfMonth - currentDayOfMonth);
+  
   const currentMonthKey = `${currentYear}${String(currentMonth + 1).padStart(2, '0')}`;
   const currentMonthEarnings = porMesAno[currentMonthKey]?.valor || 0;
-  const projecaoMensalBRL = currentMonthEarnings + (mediaDiariaBRL * remainingDays);
+  
+  // Calcular média diária apenas do mês atual (ganhos do mês / dia atual)
+  const mediaDiariaMesAtual = currentDayOfMonth > 0 ? (currentMonthEarnings / currentDayOfMonth) : 0;
+  const projecaoMensalBRL = currentMonthEarnings + (mediaDiariaMesAtual * remainingDays);
 
   // Gráfico Eficiência Mensal (Evolução do R$/Hora)
   const graficoEficienciaMensal = Object.keys(porMesAnoEficiencia)
@@ -547,7 +572,7 @@ export function calculateDashboardMetrics(submissions) {
       mediaMensalBRL,
       streak,
       dataRangeLabel,
-      achievements,
+      gamification,
       reaisPorHora,
       tempoMedioEstudoMinutos,
       estudosPorDia,

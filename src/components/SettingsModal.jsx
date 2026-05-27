@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { X, RefreshCw, Save, Sliders, UploadCloud } from 'lucide-react';
 import './SettingsModal.css';
 
-export default function SettingsModal({ rates, onSave, onClose, exchangeSource, lastExchangeFetch, onFetchRates, onFileUpload, csvSource }) {
+export default function SettingsModal({ rates, taxes, onSave, onSaveTaxes, onClose, exchangeSource, lastExchangeFetch, onFetchRates, onFileUpload, csvSource }) {
   const [usd, setUsd] = useState(rates.usd);
   const [gbp, setGbp] = useState(rates.gbp);
+  const [spread, setSpread] = useState(taxes?.spread || 0);
+  const [iof, setIof] = useState(taxes?.iof || 0);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -14,6 +16,12 @@ export default function SettingsModal({ rates, onSave, onClose, exchangeSource, 
       usd: parseFloat(usd) || 4.9128,
       gbp: parseFloat(gbp) || 6.6638
     }, 'manual');
+    if (onSaveTaxes) {
+      onSaveTaxes({
+        spread: parseFloat(spread) || 0,
+        iof: parseFloat(iof) || 0
+      });
+    }
     onClose();
   };
 
@@ -33,10 +41,15 @@ export default function SettingsModal({ rates, onSave, onClose, exchangeSource, 
   const handleReset = () => {
     setUsd(4.9128);
     setGbp(6.6638);
+    setSpread(0);
+    setIof(0);
     onSave({
       usd: 4.9128,
       gbp: 6.6638
     }, 'default');
+    if (onSaveTaxes) {
+      onSaveTaxes({ spread: 0, iof: 0 });
+    }
   };
 
   return (
@@ -125,6 +138,44 @@ export default function SettingsModal({ rates, onSave, onClose, exchangeSource, 
                   value={usd} 
                   onChange={(e) => setUsd(e.target.value)} 
                   required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="ios-settings-group" style={{ marginTop: '20px' }}>
+            <div className="ios-settings-row">
+              <label htmlFor="spread-rate">
+                <span className="currency-flag-label">🏦</span>
+                <span>Spread Bancário (%)</span>
+              </label>
+              <div className="input-wrapper">
+                <span className="input-prefix">%</span>
+                <input 
+                  id="spread-rate"
+                  type="number" 
+                  step="0.01" 
+                  value={spread} 
+                  onChange={(e) => setSpread(e.target.value)} 
+                  placeholder="Ex: 2.00"
+                />
+              </div>
+            </div>
+
+            <div className="ios-settings-row">
+              <label htmlFor="iof-rate">
+                <span className="currency-flag-label">🧾</span>
+                <span>IOF (%)</span>
+              </label>
+              <div className="input-wrapper">
+                <span className="input-prefix">%</span>
+                <input 
+                  id="iof-rate"
+                  type="number" 
+                  step="0.01" 
+                  value={iof} 
+                  onChange={(e) => setIof(e.target.value)} 
+                  placeholder="Ex: 0.38"
                 />
               </div>
             </div>

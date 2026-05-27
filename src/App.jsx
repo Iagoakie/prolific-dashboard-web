@@ -5,7 +5,9 @@ import ChartsSection from './components/ChartsSection';
 import SubmissionsTable from './components/SubmissionsTable';
 import SettingsModal from './components/SettingsModal';
 import { parseProlificCSV, calculateDashboardMetrics } from './utils/dataParser';
-import { CloudUpload, User, Sun, Moon, Sliders, RefreshCw, ChevronRight, Sparkles } from 'lucide-react';
+import { audioManager } from './utils/audio';
+import html2canvas from 'html2canvas';
+import { CloudUpload, User, Sun, Moon, Sliders, RefreshCw, ChevronRight, Sparkles, DownloadCloud } from 'lucide-react';
 import './App.css';
 
 // === FLOATING EMOJIS COMPONENT ===
@@ -57,6 +59,9 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [submissions, setSubmissions] = useState([]);
   const [metrics, setMetrics] = useState(null);
+  
+  // Taxas e Spread para Calculadora de Liquidez
+  const [taxes, setTaxes] = useState({ spread: 0, iof: 0 });
 
   // Estados dos Upgrades Premium
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -316,19 +321,29 @@ export default function App() {
   useEffect(() => {
     if (!csvText) return;
     try {
-      const parsed = parseProlificCSV(csvText, exchangeRates);
+      const parsed = parseProlificCSV(csvText, exchangeRates, taxes);
       const computed = calculateDashboardMetrics(parsed);
+      
+      // Checar se o usuário subiu de nível na atualização do csv
+      if (metrics && computed && computed.kpis.gamification.currentLevel > metrics.kpis.gamification.currentLevel) {
+        audioManager.playLevelUp();
+        triggerIsland('Parabéns! Nível Subiu', `Você alcançou o Nível ${computed.kpis.gamification.currentLevel}`, 'goal');
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 5000);
+      }
+
       setSubmissions(parsed);
       setMetrics(computed);
     } catch (err) {
       console.error('Erro no processamento dos dados:', err);
     }
-  }, [csvText, exchangeRates]);
+  }, [csvText, exchangeRates, taxes]);
 
   // Alterna o tema
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
+    audioManager.playToggle();
     if (nextTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -342,8 +357,27 @@ export default function App() {
     reader.onload = (e) => {
       setCsvText(e.target.result);
       setCsvSource('uploaded');
+      audioManager.playCoin();
+      triggerIsland('Importação Concluída', 'Seus ganhos foram atualizados', 'success');
     };
     reader.readAsText(file);
+  };
+
+  // Exportar Relatório (Screenshot)
+  const handleExportImage = async () => {
+    try {
+      const element = document.querySelector('.main-content-area');
+      if (!element) return;
+      const canvas = await html2canvas(element, { backgroundColor: theme === 'dark' ? '#09090b' : '#f9f9fb', scale: 2 });
+      const link = document.createElement('a');
+      link.download = `ProlificDash_Resumo_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      audioManager.playSuccess();
+      triggerIsland('Exportação Concluída', 'Relatório salvo com sucesso!', 'success');
+    } catch (err) {
+      console.error('Erro ao exportar:', err);
+    }
   };
 
   const getPageTitle = () => {
@@ -399,6 +433,7 @@ export default function App() {
         loadedCount={submissions.length}
         csvSource={csvSource}
         kpis={metrics?.kpis}
+        onExport={handleExportImage}
       />
 
       <main className="main-content-area">
@@ -642,6 +677,8 @@ export default function App() {
           onFetchRates={fetchRealTimeRates}
           onFileUpload={handleFileUpload}
           csvSource={csvSource}
+          taxes={taxes}
+          onSaveTaxes={setTaxes}
         />
       )}
 

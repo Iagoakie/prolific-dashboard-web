@@ -106,6 +106,12 @@ export default function KPICards({ kpis }) {
       subtext: kpis.melhorMesLabel !== '-' ? kpis.melhorMesLabel.split(' • ')[0].toUpperCase() : 'Sem registro',
       icon: <TrendingUp size={22} className="icon-best-month" />,
       bgClass: 'card-indigo'
+    },
+    {
+      title: 'Projeção (Fim do Mês)',
+      value: kpis.projecaoMensalBRL > 0 ? formatBRL(kpis.projecaoMensalBRL) : 'R$ 0,00',
+      subtext: 'Projeção baseada na média diária atual',
+      bgClass: 'card-green'
     }
   ];
 

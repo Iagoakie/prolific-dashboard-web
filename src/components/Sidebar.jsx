@@ -11,7 +11,8 @@ export default function Sidebar({
   onFileUpload,
   loadedCount,
   csvSource,
-  kpis
+  kpis,
+  onExport
 }) {
   const formatBRL = (val) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -23,7 +24,7 @@ export default function Sidebar({
 
   const streak = kpis?.streak || 0;
   const ganhosHoje = kpis?.ganhosHojeBRL || 0;
-  const achievements = kpis?.achievements || [];
+  const gamification = kpis?.gamification || null;
 
   return (
     <aside className="sidebar glass-panel">
@@ -92,35 +93,28 @@ export default function Sidebar({
         </button>
       </nav>
 
-      {/* Achievements Section */}
-      {kpis && achievements.length > 0 && (() => {
-        const totalAchievements = achievements.length;
-        const unlockedCount = achievements.filter(a => a.unlocked).length;
-        const unlockedPercent = Math.round((unlockedCount / totalAchievements) * 100);
-
-        return (
-          <div className="sidebar-achievements-linear">
-            <div className="achievements-progress-header">
-              <span className="achievements-title">🏅 Conquistas</span>
-              <span className="achievements-count">{unlockedCount}/{totalAchievements}</span>
-            </div>
-            <div className="achievements-progress-bar-bg">
-              <div className="achievements-progress-bar-fill" style={{ width: `${unlockedPercent}%` }}></div>
-            </div>
-            <div className="achievements-emojis-row">
-              {achievements.map((ach) => (
-                <span 
-                  key={ach.id} 
-                  className={`achievement-emoji-item ${ach.unlocked ? 'unlocked' : 'locked'}`}
-                  title={`${ach.label}: ${ach.unlocked ? 'Desbloqueada' : 'Bloqueada'}`}
-                >
-                  {ach.unlocked ? ach.emoji : '🔒'}
-                </span>
-              ))}
-            </div>
+      {/* Gamification / Níveis */}
+      {kpis && gamification && (
+        <div className="sidebar-achievements-linear" style={{ padding: '12px' }}>
+          <div className="achievements-progress-header" style={{ marginBottom: '6px' }}>
+            <span className="achievements-title" style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
+              ⭐ Lvl {gamification.currentLevel} • {gamification.levelTitle}
+            </span>
+            <span className="achievements-count" style={{ color: '#ff9500', fontWeight: 'bold' }}>
+              {gamification.totalXP.toLocaleString('pt-BR')} XP
+            </span>
           </div>
-        );
-      })()}
+          <div className="achievements-progress-bar-bg" style={{ height: '8px' }}>
+            <div 
+              className="achievements-progress-bar-fill" 
+              style={{ width: `${Math.min(100, gamification.levelProgress)}%`, background: 'linear-gradient(90deg, #ff9500, #ffcc00)' }}
+            ></div>
+          </div>
+          <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '6px', textAlign: 'right', fontWeight: '500' }}>
+            Faltam {(gamification.nextLevelXP - gamification.totalXP).toLocaleString('pt-BR')} XP para o Nível {gamification.currentLevel + 1}
+          </div>
+        </div>
+      )}
 
       <div className="sidebar-footer">
         <label className="upload-btn nav-item spring-click">
@@ -142,6 +136,11 @@ export default function Sidebar({
         <button className="nav-item spring-click" onClick={onSettingsOpen}>
           <Settings size={20} />
           <span>Ajustes</span>
+        </button>
+
+        <button className="nav-item spring-click" onClick={onExport} style={{ color: 'var(--accent-color)' }}>
+          <UploadCloud size={20} style={{ transform: 'rotate(180deg)' }} />
+          <span>Exportar Resumo</span>
         </button>
 
         <button className="nav-item theme-toggle spring-click" onClick={toggleTheme}>
