@@ -165,98 +165,7 @@ export default function App() {
     }, 4500);
   };
 
-  // Simulador de novo estudo recebido/aprovado
-  const simulateStudy = () => {
-    const studyNames = [
-      'Social Interactions & Decision Making',
-      'AI Trustworthiness Survey',
-      'Consumer Habits & Technology Usage',
-      'Cognitive Performance Under Pressure',
-      'Language Comprehension Task',
-      'Financial Risk Assessment Experiment',
-      'Visual Perception & Memory Study',
-      'Workspace Preferences Survey',
-      'Virtual Reality UX Evaluation'
-    ];
 
-    const isUSD = Math.random() < 0.3;
-    const currency = isUSD ? 'USD' : 'GBP';
-    
-    const rewardVal = parseFloat((Math.random() * 7 + 1.5).toFixed(2));
-    const bonusVal = Math.random() < 0.4 ? parseFloat((Math.random() * 3).toFixed(2)) : 0;
-    const rewardStr = currency === 'USD' ? `$${rewardVal.toFixed(2)}` : `£${rewardVal.toFixed(2)}`;
-    const bonusStr = bonusVal > 0 ? (currency === 'USD' ? `$${bonusVal.toFixed(2)}` : `£${bonusVal.toFixed(2)}`) : '';
-    
-    const rate = isUSD ? exchangeRates.usd : exchangeRates.gbp;
-    const totalOriginal = rewardVal + bonusVal;
-    const totalBRL = totalOriginal * rate;
-
-    const completionCode = 'C' + Math.floor(1000000 + Math.random() * 9000000);
-    const studyName = studyNames[Math.floor(Math.random() * studyNames.length)];
-
-    const now = new Date();
-    const duration = Math.floor(Math.random() * 25 + 5);
-    const started = new Date(now.getTime() - duration * 60000);
-
-    const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-    const jsDay = now.getDay();
-    const weekdayOrder = jsDay === 0 ? 7 : jsDay;
-    const weekdayStr = weekdays[weekdayOrder - 1];
-
-    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-    const monthStr = months[now.getMonth()];
-    const mesAnoStr = `${monthStr}/${String(now.getFullYear()).slice(-2)}`;
-    const anoMesOrdem = now.getFullYear() * 100 + (now.getMonth() + 1);
-
-    const completedDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    const hora = now.getHours();
-    const hourStr = `${String(hora).padStart(2, '0')}:00`;
-
-    const newSubmission = {
-      study: studyName,
-      reward: rewardStr,
-      bonus: bonusStr,
-      startedAt: started,
-      completedAt: now,
-      completionCode,
-      statusRaw: 'APPROVED',
-      statusResumo: 'Aprovado',
-      moeda: currency,
-      rewardNumeric: rewardVal,
-      bonusNumeric: bonusVal,
-      valorTotalOriginal: totalOriginal,
-      valorTotalBRL: totalBRL,
-      dataConclusaoDiaStr: completedDateStr,
-      mesAnoStr,
-      anoMesOrdem,
-      diaSemanaStr: weekdayStr,
-      diaSemanaOrdem: weekdayOrder,
-      duracaoMinutos: duration,
-      horaInicio: started.getHours(),
-      faixaHoraria: hourStr
-    };
-
-    setSubmissions(prev => {
-      const updated = [newSubmission, ...prev];
-      const computed = calculateDashboardMetrics(updated);
-      setMetrics(computed);
-
-      const valueFormatted = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalBRL);
-      triggerNotification('Estudo Concluído!', `Ganho: + ${valueFormatted} (${currency === 'USD' ? '$' : '£'}${totalOriginal.toFixed(2)})`, 'success');
-      
-      // Checa se bateu a meta diária de hoje
-      if (computed.kpis.ganhosHojeBRL >= dailyGoal && (computed.kpis.ganhosHojeBRL - totalBRL) < dailyGoal) {
-        setTimeout(() => {
-          triggerNotification('Meta Diária Batida! 🎉', `Você atingiu sua meta diária de ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(dailyGoal)}!`, 'goal');
-          // Dispara confetes!
-          setShowConfetti(true);
-          setTimeout(() => setShowConfetti(false), 4000);
-        }, 1500);
-      }
-
-      return updated;
-    });
-  };
 
   const fetchRealTimeRates = async () => {
     try {
@@ -432,6 +341,7 @@ export default function App() {
       case 'overview': return 'Visão Geral';
       case 'analytics': return 'Análise Temporal';
       case 'submissions': return 'Lista de Estudos';
+      case 'efficiency': return 'Eficiência';
       default: return 'Dashboard';
     }
   };
@@ -475,7 +385,6 @@ export default function App() {
         theme={theme}
         toggleTheme={toggleTheme}
         onSettingsOpen={() => setShowSettings(true)}
-        onFileUpload={handleFileUpload}
         loadedCount={submissions.length}
         csvSource={csvSource}
         kpis={metrics?.kpis}
@@ -491,13 +400,6 @@ export default function App() {
               </span>
             </div>
             <div className="header-actions">
-              <button 
-                type="button"
-                className="simulate-study-header-btn spring-click"
-                onClick={simulateStudy}
-              >
-                Simular Estudo
-              </button>
               <span className="last-updated">
                 Atualizado às {new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
               </span>
@@ -559,23 +461,25 @@ export default function App() {
                     </div>
 
                     <div className="popover-menu-list">
-                      <button 
-                        type="button" 
+                      <a 
+                        href="https://app.prolific.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
                         className="popover-menu-btn"
-                        onClick={() => { setShowProfilePopover(false); simulateStudy(); }}
-                        style={{ borderBottom: '1px solid var(--border-color)', borderRadius: '10px 10px 0 0' }}
+                        style={{ borderBottom: '1px solid var(--border-color)', borderRadius: '10px 10px 0 0', textDecoration: 'none' }}
                       >
                         <div className="popover-menu-btn-left">
-                          <RefreshCw size={14} />
-                          <span>Simular Estudo</span>
+                          <ChevronRight size={14} style={{ transform: 'rotate(-45deg)' }} />
+                          <span>Ir para Prolific</span>
                         </div>
                         <ChevronRight size={14} />
-                      </button>
+                      </a>
                       
                       <button 
                         type="button" 
                         className="popover-menu-btn"
                         onClick={() => { setShowProfilePopover(false); setShowSettings(true); }}
+                        style={{ borderBottom: '1px solid var(--border-color)' }}
                       >
                         <div className="popover-menu-btn-left">
                           <Sliders size={14} />
@@ -678,6 +582,18 @@ export default function App() {
             {activeTab === 'submissions' && (
               <SubmissionsTable submissions={submissions} />
             )}
+
+            {activeTab === 'efficiency' && (
+              <ChartsSection 
+                activeTab="efficiency" 
+                chartsData={metrics.charts} 
+                kpis={metrics.kpis} 
+                dailyGoal={dailyGoal}
+                setDailyGoal={setDailyGoal}
+                weeklyGoal={weeklyGoal}
+                setWeeklyGoal={setWeeklyGoal}
+              />
+            )}
           </div>
         )}
       </main>
@@ -690,6 +606,8 @@ export default function App() {
           exchangeSource={exchangeSource}
           lastExchangeFetch={lastExchangeFetch}
           onFetchRates={fetchRealTimeRates}
+          onFileUpload={handleFileUpload}
+          csvSource={csvSource}
         />
       )}
 
@@ -761,34 +679,6 @@ export default function App() {
                     ></div>
                   </div>
                 </div>
-                
-                <button 
-                  type="button"
-                  className="island-action-btn spring-click"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    simulateStudy();
-                  }}
-                  style={{
-                    background: '#30d158',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '6px 12px',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                    width: '100%',
-                    boxShadow: '0 2px 6px rgba(48,209,88,0.3)'
-                  }}
-                >
-                  <RefreshCw size={10} />
-                  <span>Simular Novo Estudo</span>
-                </button>
               </div>
             </div>
           )}

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { X, RefreshCw, Save, Sliders } from 'lucide-react';
+import { X, RefreshCw, Save, Sliders, UploadCloud } from 'lucide-react';
 import './SettingsModal.css';
 
-export default function SettingsModal({ rates, onSave, onClose, exchangeSource, lastExchangeFetch, onFetchRates }) {
+export default function SettingsModal({ rates, onSave, onClose, exchangeSource, lastExchangeFetch, onFetchRates, onFileUpload, csvSource }) {
   const [usd, setUsd] = useState(rates.usd);
   const [gbp, setGbp] = useState(rates.gbp);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +45,7 @@ export default function SettingsModal({ rates, onSave, onClose, exchangeSource, 
         <div className="modal-header">
           <div className="settings-title-wrapper">
             <Sliders size={20} className="settings-title-icon" />
-            <h3>Ajustes de Câmbio</h3>
+            <h3>Ajustes e Importação</h3>
           </div>
           <button className="close-btn spring-click" onClick={onClose}>
             <X size={20} />
@@ -127,6 +127,47 @@ export default function SettingsModal({ rates, onSave, onClose, exchangeSource, 
                   required
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Importação do CSV Consolidada */}
+          <div className="ios-settings-group" style={{ marginTop: '20px' }}>
+            <div className="ios-settings-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-primary)' }}>Importar Dados (CSV)</span>
+                <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
+                  {csvSource === 'uploaded' ? 'Usando CSV importado por você' : 'Usando conjunto de dados padrão'}
+                </span>
+              </div>
+              
+              <label className="upload-btn spring-click" style={{ 
+                background: 'rgba(120, 120, 128, 0.08)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)',
+                padding: '6px 12px', 
+                borderRadius: '10px', 
+                fontSize: '12px', 
+                fontWeight: '600', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'var(--transition-smooth)'
+              }}>
+                <UploadCloud size={14} style={{ color: 'var(--text-secondary)' }} />
+                <span>Atualizar CSV</span>
+                <input 
+                  type="file" 
+                  accept=".csv" 
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      onFileUpload(file);
+                    }
+                  }} 
+                  style={{ display: 'none' }} 
+                />
+              </label>
             </div>
           </div>
 

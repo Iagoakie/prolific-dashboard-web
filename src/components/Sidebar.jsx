@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, UploadCloud, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap } from 'lucide-react';
 import './Sidebar.css';
 
 export default function Sidebar({ 
@@ -8,18 +8,10 @@ export default function Sidebar({
   theme, 
   toggleTheme, 
   onSettingsOpen, 
-  onFileUpload, 
   loadedCount,
   csvSource,
   kpis
 }) {
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      onFileUpload(file);
-    }
-  };
-
   const formatBRL = (val) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -83,6 +75,14 @@ export default function Sidebar({
         </button>
 
         <button 
+          className={`nav-item spring-click ${activeTab === 'efficiency' ? 'active' : ''}`}
+          onClick={() => setActiveTab('efficiency')}
+        >
+          <Zap size={20} />
+          <span>Eficiência</span>
+        </button>
+
+        <button 
           className={`nav-item spring-click ${activeTab === 'submissions' ? 'active' : ''}`}
           onClick={() => setActiveTab('submissions')}
         >
@@ -92,50 +92,39 @@ export default function Sidebar({
       </nav>
 
       {/* Achievements Section */}
-      {kpis && achievements.length > 0 && (
-        <div className="sidebar-achievements">
-          <span className="achievements-title">🏅 Conquistas</span>
-          <div className="achievements-grid">
-            {achievements.map((ach) => (
-              <div 
-                key={ach.id} 
-                className={`achievement-badge ${ach.unlocked ? 'unlocked' : 'locked'}`}
-                title={`${ach.label}${ach.unlocked ? ' ✓' : ' (bloqueada)'}`}
-              >
-                <span className="achievement-emoji">{ach.unlocked ? ach.emoji : '🔒'}</span>
-                <span className="achievement-label">{ach.label}</span>
-              </div>
-            ))}
+      {kpis && achievements.length > 0 && (() => {
+        const totalAchievements = achievements.length;
+        const unlockedCount = achievements.filter(a => a.unlocked).length;
+        const unlockedPercent = Math.round((unlockedCount / totalAchievements) * 100);
+
+        return (
+          <div className="sidebar-achievements-linear">
+            <div className="achievements-progress-header">
+              <span className="achievements-title">🏅 Conquistas</span>
+              <span className="achievements-count">{unlockedCount}/{totalAchievements}</span>
+            </div>
+            <div className="achievements-progress-bar-bg">
+              <div className="achievements-progress-bar-fill" style={{ width: `${unlockedPercent}%` }}></div>
+            </div>
+            <div className="achievements-emojis-row">
+              {achievements.map((ach) => (
+                <span 
+                  key={ach.id} 
+                  className={`achievement-emoji-item ${ach.unlocked ? 'unlocked' : 'locked'}`}
+                  title={`${ach.label}: ${ach.unlocked ? 'Desbloqueada' : 'Bloqueada'}`}
+                >
+                  {ach.unlocked ? ach.emoji : '🔒'}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       <div className="sidebar-footer">
-        {/* Atalho Rápido - Prolific */}
-        <a 
-          href="https://app.prolific.com" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="nav-item spring-click prolific-link"
-        >
-          <ExternalLink size={20} />
-          <span>Ir para Prolific</span>
-        </a>
-
-        <label className="upload-btn nav-item spring-click">
-          <UploadCloud size={20} />
-          <span>Atualizar CSV</span>
-          <input 
-            type="file" 
-            accept=".csv" 
-            onChange={handleFileChange} 
-            style={{ display: 'none' }} 
-          />
-        </label>
-
         <button className="nav-item spring-click" onClick={onSettingsOpen}>
           <Settings size={20} />
-          <span>Câmbio</span>
+          <span>Ajustes</span>
         </button>
 
         <button className="nav-item theme-toggle spring-click" onClick={toggleTheme}>

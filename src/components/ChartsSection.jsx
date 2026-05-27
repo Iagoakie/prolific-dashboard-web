@@ -334,6 +334,165 @@ export default function ChartsSection({
     );
   }
 
+  // ABA DE EFICIÊNCIA (Productivity / ROI)
+  if (activeTab === 'efficiency') {
+    const formatBRL2 = (val) => {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(val);
+    };
+
+    const efficiencyCards = [
+      {
+        title: 'Ganho por Hora',
+        value: kpis.reaisPorHora > 0 ? formatBRL2(kpis.reaisPorHora) : 'R$ 0,00',
+        subtext: 'Média de R$/hora trabalhada',
+        icon: <Clock size={22} className="icon-best-day" />,
+        bgClass: 'card-purple'
+      },
+      {
+        title: 'Tempo Médio',
+        value: kpis.tempoMedioEstudoMinutos > 0 ? `${Math.round(kpis.tempoMedioEstudoMinutos)} min` : '0 min',
+        subtext: 'Duração média por estudo',
+        icon: <Clock size={22} className="icon-best-month" />,
+        bgClass: 'card-indigo'
+      },
+      {
+        title: 'Estudos por Dia',
+        value: kpis.estudosPorDia > 0 ? `${kpis.estudosPorDia.toFixed(1)}` : '0',
+        subtext: 'Média de estudos por dia ativo',
+        icon: <Calendar size={22} className="icon-pending" />,
+        bgClass: 'card-pink'
+      },
+      {
+        title: 'Projeção Mensal',
+        value: kpis.projecaoMensalBRL > 0 ? formatBRL2(kpis.projecaoMensalBRL) : 'R$ 0,00',
+        subtext: 'Estimativa baseada no ritmo atual',
+        icon: <TrendingUp size={22} className="icon-average" />,
+        bgClass: 'card-orange'
+      }
+    ];
+
+    return (
+      <div className="analytics-layout animate-fade-in">
+        {/* Cards de Destaque de Eficiência */}
+        <div className="kpi-grid">
+          {efficiencyCards.map((card, idx) => (
+            <div 
+              key={idx} 
+              className="kpi-card glass-panel spring-click"
+              onMouseMove={handleMouseMove}
+            >
+              <div className="kpi-card-header">
+                <span className="kpi-card-title">{card.title}</span>
+                <div className={`kpi-card-icon-container ${card.bgClass}`}>
+                  {card.icon}
+                </div>
+              </div>
+              <div className="kpi-card-body">
+                <span className="kpi-card-value">{card.value}</span>
+                <span className="kpi-card-subtext">{card.subtext}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="charts-grid">
+          {/* Gráfico 1: Ganho por Hora Mensal */}
+          <div className="chart-card glass-panel main-chart" onMouseMove={handleMouseMove}>
+            <div className="chart-header">
+              <div className="chart-header-left">
+                <TrendingUp size={18} className="chart-title-icon" />
+                <h3>Evolução de Ganhos por Hora</h3>
+              </div>
+              <span className="chart-subtitle">Valor médio por hora trabalhada a cada mês</span>
+            </div>
+            <div className="chart-container">
+              {!chartsData.eficienciaMensal || chartsData.eficienciaMensal.length === 0 ? (
+                <div className="no-data-placeholder">Nenhum dado de duração registrado nos estudos.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <AreaChart data={chartsData.eficienciaMensal} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorEficMensal" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-color)" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="var(--accent-color)" stopOpacity={0.0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                    <XAxis 
+                      dataKey="name" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tickFormatter={(val) => `R$ ${val}`} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                    />
+                    <Tooltip content={<CustomTooltip prefix="R$ " />} cursor={{ stroke: 'var(--accent-color)', strokeWidth: 1 }} />
+                    <Area 
+                      type="monotone" 
+                      dataKey="rpHora" 
+                      name="R$/Hora" 
+                      stroke="var(--accent-color)" 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill="url(#colorEficMensal)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+
+          {/* Gráfico 2: Rentabilidade por Faixa Horária */}
+          <div className="chart-card glass-panel" onMouseMove={handleMouseMove}>
+            <div className="chart-header">
+              <div className="chart-header-left">
+                <Clock size={18} className="chart-title-icon" />
+                <h3>Rentabilidade por Faixa Horária</h3>
+              </div>
+              <span className="chart-subtitle">Valor de R$/hora médio gerado por faixa horária de início</span>
+            </div>
+            <div className="chart-container">
+              {!chartsData.faixaHorariaEficiencia || chartsData.faixaHorariaEficiencia.length === 0 ? (
+                <div className="no-data-placeholder">Nenhum dado por faixa horária disponível.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartsData.faixaHorariaEficiencia} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                    <XAxis 
+                      dataKey="name" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tickFormatter={(val) => `R$ ${val}`}
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                    />
+                    <Tooltip content={<CustomTooltip prefix="R$ " />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
+                    <Bar dataKey="rpHora" name="R$/Hora Estimado" fill="var(--color-approved)" radius={[4, 4, 0, 0]}>
+                      {chartsData.faixaHorariaEficiencia.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.rpHora > 0 ? 'var(--color-approved)' : 'var(--border-color)'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ABA DE ANALYTICS (Temporal / Detalhado)
   const formatBRL2 = (val) => {
     return new Intl.NumberFormat('pt-BR', {

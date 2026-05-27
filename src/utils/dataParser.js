@@ -223,6 +223,14 @@ export function calculateDashboardMetrics(submissions) {
   const porStatus = { 'Aprovado': 0, 'Em review': 0, 'Retornado': 0, 'Rejeitado': 0, 'Outro': 0 };
   const porMesAno = {}; // { '202605': { mesAno: 'mai/26', valor: 0 } }
 
+  // Variáveis de Eficiência
+  let totalMinutosAprovados = 0;
+  const porMesAnoEficiencia = {}; // { '202605': { label: 'mai/26', valor: 0, minutos: 0 } }
+  const porFaixaHorariaFaturamento = Array.from({ length: 24 }).reduce((acc, _, i) => {
+    const key = `${String(i).padStart(2, '0')}:00`;
+    return { ...acc, [key]: { valor: 0, total: 0, minutos: 0 } };
+  }, {});
+
   submissions.forEach((sub) => {
     totalEstudos++;
     
@@ -237,6 +245,7 @@ export function calculateDashboardMetrics(submissions) {
       } else {
         ganhosGBP_BRL += sub.valorTotalBRL;
       }
+      totalMinutosAprovados += (sub.duracaoMinutos || 0);
     } else if (sub.statusResumo === 'Retornado') {
       totalRetornados++;
     } else if (sub.statusResumo === 'Em review') {
@@ -300,6 +309,12 @@ export function calculateDashboardMetrics(submissions) {
           porFaixaHoraria[sub.faixaHoraria].approved++;
         }
       }
+      // Faturamento e eficiência por faixa horária
+      if (sub.statusResumo === 'Aprovado' && porFaixaHorariaFaturamento[sub.faixaHoraria]) {
+        porFaixaHorariaFaturamento[sub.faixaHoraria].valor += sub.valorTotalBRL;
+        porFaixaHorariaFaturamento[sub.faixaHoraria].total++;
+        porFaixaHorariaFaturamento[sub.faixaHoraria].minutos += (sub.duracaoMinutos || 0);
+      }
     }
 
     // Agregações por Mês/Ano
@@ -309,6 +324,13 @@ export function calculateDashboardMetrics(submissions) {
         porMesAno[ordKey] = { label: sub.mesAnoStr, valor: 0, key: sub.anoMesOrdem };
       }
       porMesAno[ordKey].valor += sub.valorTotalBRL;
+
+      // Agregação para eficiência mensal
+      if (!porMesAnoEficiencia[ordKey]) {
+        porMesAnoEficiencia[ordKey] = { label: sub.mesAnoStr, valor: 0, minutos: 0 };
+      }
+      porMesAnoEficiencia[ordKey].valor += sub.valorTotalBRL;
+      porMesAnoEficiencia[ordKey].minutos += (sub.duracaoMinutos || 0);
     }
   });
 
@@ -457,6 +479,50 @@ export function calculateDashboardMetrics(submissions) {
     { id: '50studies', emoji: '🎓', label: '50 estudos', unlocked: totalAprovados >= 50 },
   ];
 
+  // === EFICIÊNCIA METRICS ===
+  const totalHorasAprovadas = totalMinutosAprovados / 60;
+  const reaisPorHora = totalHorasAprovadas > 0 ? (ganhosAprovadosBRL / totalHorasAprovadas) : 0;
+  const tempoMedioEstudoMinutos = totalAprovados > 0 ? (totalMinutosAprovados / totalAprovados) : 0;
+  const estudosPorDia = totalDiasAtivos > 0 ? (totalAprovados / totalDiasAtivos) : 0;
+
+  // Projeção Mensal
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const currentDayOfMonth = today.getDate();
+  const remainingDays = Math.max(0, lastDayOfMonth - currentDayOfMonth);
+  const currentMonthKey = `${currentYear}${String(currentMonth + 1).padStart(2, '0')}`;
+  const currentMonthEarnings = porMesAno[currentMonthKey]?.valor || 0;
+  const projecaoMensalBRL = currentMonthEarnings + (mediaDiariaBRL * remainingDays);
+
+  // Gráfico Eficiência Mensal (Evolução do R$/Hora)
+  const graficoEficienciaMensal = Object.keys(porMesAnoEficiencia)
+    .sort((a, b) => parseInt(a) - parseInt(b))
+    .map((ordKey) => {
+      const item = porMesAnoEficiencia[ordKey];
+      const horas = item.minutos / 60;
+      const rpHora = horas > 0 ? (item.valor / horas) : 0;
+      return {
+        name: item.label,
+        rpHora: parseFloat(rpHora.toFixed(2)),
+        valor: parseFloat(item.valor.toFixed(2))
+      };
+    });
+
+  // Gráfico Faixas Horárias Mais Lucrativas (R$/Hora e Valor Médio por faixa)
+  const graficoFaixaHorariaEficiencia = Object.keys(porFaixaHorariaFaturamento).sort().map((faixa) => {
+    const item = porFaixaHorariaFaturamento[faixa];
+    const mediaValor = item.total > 0 ? (item.valor / item.total) : 0;
+    const horas = item.minutos / 60;
+    const rpHora = horas > 0 ? (item.valor / horas) : 0;
+    return {
+      name: faixa,
+      mediaValor: parseFloat(mediaValor.toFixed(2)),
+      rpHora: parseFloat(rpHora.toFixed(2)),
+      valor: parseFloat(item.valor.toFixed(2))
+    };
+  });
+
   return {
     kpis: {
       totalEstudos,
@@ -481,7 +547,11 @@ export function calculateDashboardMetrics(submissions) {
       mediaMensalBRL,
       streak,
       dataRangeLabel,
-      achievements
+      achievements,
+      reaisPorHora,
+      tempoMedioEstudoMinutos,
+      estudosPorDia,
+      projecaoMensalBRL
     },
     charts: {
       acumulado: graficoAcumuladoData,
@@ -491,7 +561,9 @@ export function calculateDashboardMetrics(submissions) {
       faixaHoraria: graficoFaixaHorariaData,
       status: graficoStatusData,
       moeda: graficoMoedaData,
-      mensal: graficoMensalData
+      mensal: graficoMensalData,
+      eficienciaMensal: graficoEficienciaMensal,
+      faixaHorariaEficiencia: graficoFaixaHorariaEficiencia
     }
   };
 }

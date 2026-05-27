@@ -142,68 +142,88 @@
 /* ==========================================================================
    ACHIEVEMENTS SECTION
    ========================================================================== */
-.sidebar-achievements {
-  padding: 10px 12px;
+.sidebar-achievements-linear {
+  padding: 12px 14px;
   margin: 0 4px 12px 4px;
   background: rgba(120, 120, 128, 0.06);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 18px;
   animation: fadeSlideIn 0.6s ease forwards;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.dark .sidebar-achievements {
+.dark .sidebar-achievements-linear {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.achievements-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .achievements-title {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  display: block;
-  margin-bottom: 8px;
-  padding: 0 4px;
+  margin: 0;
 }
 
-.achievements-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
+.achievements-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-color);
 }
 
-.achievement-badge {
+.achievements-progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(120, 120, 128, 0.12);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.dark .achievements-progress-bar-bg {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.achievements-progress-bar-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.achievements-emojis-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  padding: 4px 2px 0 2px;
+}
+
+.achievement-emoji-item {
+  font-size: 18px;
   cursor: default;
-}
-
-.achievement-badge.unlocked {
-  background: rgba(52, 199, 89, 0.08);
-}
-
-.achievement-badge.unlocked:hover {
-  background: rgba(52, 199, 89, 0.15);
-  transform: scale(1.03);
-}
-
-.achievement-badge.locked {
-  opacity: 0.4;
-  filter: grayscale(0.8);
-}
-
-.achievement-emoji {
-  font-size: 16px;
-  display: flex;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.achievement-badge.unlocked .achievement-emoji {
+.achievement-emoji-item.locked {
+  opacity: 0.25;
+  filter: grayscale(0.9);
+}
+
+.achievement-emoji-item.unlocked:hover {
+  transform: scale(1.3) rotate(8deg);
+}
+
+.achievement-emoji-item.unlocked.animate-pop {
   animation: achievePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -211,20 +231,6 @@
   0% { transform: scale(0); }
   70% { transform: scale(1.3); }
   100% { transform: scale(1); }
-}
-
-.achievement-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.achievement-badge.locked .achievement-label {
-  color: var(--text-secondary);
 }
 
 /* Prolific External Link */
