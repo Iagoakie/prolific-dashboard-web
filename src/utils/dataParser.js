@@ -548,6 +548,23 @@ export function calculateDashboardMetrics(submissions) {
     };
   });
 
+  // Top 5 Estudos Mais Eficientes (R$/Hora)
+  const topEstudosEficientes = submissions
+    .filter(s => s.statusResumo === 'Aprovado' && s.duracaoMinutos > 0 && s.valorTotalBRL > 0)
+    .map(s => ({
+      ...s,
+      rpHora: s.valorTotalBRL / (s.duracaoMinutos / 60)
+    }))
+    .sort((a, b) => b.rpHora - a.rpHora)
+    .slice(0, 5)
+    .map(s => ({
+      study: s.study,
+      valor: parseFloat(s.valorTotalBRL.toFixed(2)),
+      duracao: s.duracaoMinutos,
+      rpHora: parseFloat(s.rpHora.toFixed(2)),
+      data: s.dataConclusaoDiaStr
+    }));
+
   return {
     kpis: {
       totalEstudos,
@@ -589,7 +606,8 @@ export function calculateDashboardMetrics(submissions) {
       moeda: graficoMoedaData,
       mensal: graficoMensalData,
       eficienciaMensal: graficoEficienciaMensal,
-      faixaHorariaEficiencia: graficoFaixaHorariaEficiencia
+      faixaHorariaEficiencia: graficoFaixaHorariaEficiencia,
+      topEstudosEficientes: topEstudosEficientes
     }
   };
 }

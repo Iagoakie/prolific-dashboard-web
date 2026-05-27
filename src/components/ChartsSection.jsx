@@ -489,6 +489,45 @@ export default function ChartsSection({
             </div>
           </div>
         </div>
+
+        {/* Top 5 Estudos Eficientes */}
+        <div className="chart-card glass-panel" style={{ marginTop: '20px' }}>
+          <div className="chart-header">
+            <div className="chart-header-left">
+              <CheckCircle size={18} className="chart-title-icon" />
+              <h3>Top 5 Estudos Mais Eficientes</h3>
+            </div>
+            <span className="chart-subtitle">Estudos com maior rendimento por hora trabalhada</span>
+          </div>
+          <div className="chart-container" style={{ overflowX: 'auto', padding: '10px' }}>
+            {chartsData.topEstudosEficientes && chartsData.topEstudosEficientes.length > 0 ? (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '8px' }}>Estudo</th>
+                    <th style={{ padding: '8px' }}>Data</th>
+                    <th style={{ padding: '8px' }}>Duração</th>
+                    <th style={{ padding: '8px' }}>Ganho Total</th>
+                    <th style={{ padding: '8px', color: 'var(--accent-color)' }}>R$/Hora</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {chartsData.topEstudosEficientes.map((estudo, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid rgba(120, 120, 128, 0.1)' }}>
+                      <td style={{ padding: '10px 8px', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{estudo.study}</td>
+                      <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{estudo.data}</td>
+                      <td style={{ padding: '10px 8px' }}>{estudo.duracao} min</td>
+                      <td style={{ padding: '10px 8px' }}>R$ {estudo.valor.toFixed(2)}</td>
+                      <td style={{ padding: '10px 8px', fontWeight: '600', color: 'var(--accent-color)' }}>R$ {estudo.rpHora.toFixed(2)}/h</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="no-data-placeholder">Nenhum dado de eficiência disponível.</div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
