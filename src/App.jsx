@@ -5,7 +5,7 @@ import ChartsSection from './components/ChartsSection';
 import SubmissionsTable from './components/SubmissionsTable';
 import SettingsModal from './components/SettingsModal';
 import { parseProlificCSV, calculateDashboardMetrics } from './utils/dataParser';
-import { CloudUpload, User, Sun, Moon, Sliders, RefreshCw, ChevronRight } from 'lucide-react';
+import { CloudUpload, User, Sun, Moon, Sliders, RefreshCw, ChevronRight, Sparkles } from 'lucide-react';
 import './App.css';
 
 // === FLOATING EMOJIS COMPONENT ===
@@ -48,6 +48,7 @@ function FloatingEmojis() {
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [theme, setTheme] = useState('light');
+  const [rgbActive, setRgbActive] = useState(false);
   const [exchangeRates, setExchangeRates] = useState({ usd: 4.9128, gbp: 6.6638 });
   const [exchangeSource, setExchangeSource] = useState('default'); // 'default', 'api', 'fallback', 'manual'
   const [lastExchangeFetch, setLastExchangeFetch] = useState(null);
@@ -281,6 +282,15 @@ export default function App() {
     };
   }, [islandState]);
 
+  // Alterna o efeito RGB
+  useEffect(() => {
+    if (rgbActive) {
+      document.documentElement.classList.add('rgb-gaming-mode');
+    } else {
+      document.documentElement.classList.remove('rgb-gaming-mode');
+    }
+  }, [rgbActive]);
+
   const handleSaveRates = (newRates, source = 'manual') => {
     setExchangeRates(newRates);
     setExchangeSource(source);
@@ -455,6 +465,29 @@ export default function App() {
                           type="button" 
                           className={`segmented-button ${theme === 'dark' ? 'active' : ''}`}
                           onClick={() => { if (theme === 'light') toggleTheme(); }}
+                        >
+                          Sim
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="theme-popover-row" style={{ marginTop: '8px' }}>
+                      <div className="theme-popover-lbl">
+                        <Sparkles size={15} style={{ color: rgbActive ? '#ff007f' : 'var(--text-secondary)' }} />
+                        <span>Modo RGB</span>
+                      </div>
+                      <div className="segmented-control theme-segmented">
+                        <button 
+                          type="button" 
+                          className={`segmented-button ${!rgbActive ? 'active' : ''}`}
+                          onClick={() => setRgbActive(false)}
+                        >
+                          Não
+                        </button>
+                        <button 
+                          type="button" 
+                          className={`segmented-button ${rgbActive ? 'active' : ''}`}
+                          onClick={() => setRgbActive(true)}
                         >
                           Sim
                         </button>

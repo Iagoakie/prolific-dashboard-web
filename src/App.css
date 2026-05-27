@@ -769,3 +769,26 @@
   }
 }
 
+/* ==========================================================================
+   RGB GAMING MODE ANIMATION
+   ========================================================================== */
+@keyframes rgbBorder {
+  0% { border-color: #ff0000; box-shadow: 0 0 12px rgba(255, 0, 0, 0.25); }
+  17% { border-color: #ff7f00; box-shadow: 0 0 12px rgba(255, 127, 0, 0.25); }
+  33% { border-color: #ffff00; box-shadow: 0 0 12px rgba(255, 255, 0, 0.25); }
+  50% { border-color: #00ff00; box-shadow: 0 0 12px rgba(0, 255, 0, 0.25); }
+  67% { border-color: #0000ff; box-shadow: 0 0 12px rgba(0, 0, 255, 0.25); }
+  83% { border-color: #4b0082; box-shadow: 0 0 12px rgba(75, 0, 130, 0.25); }
+  100% { border-color: #8b00ff; box-shadow: 0 0 12px rgba(139, 0, 255, 0.25); }
+}
+
+.rgb-gaming-mode .glass-panel,
+.rgb-gaming-mode .kpi-card,
+.rgb-gaming-mode .profile-popover,
+.rgb-gaming-mode .modal-content,
+.rgb-gaming-mode .user-profile-avatar,
+.rgb-gaming-mode .dynamic-island-bubble {
+  animation: rgbBorder 6s linear infinite !important;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
