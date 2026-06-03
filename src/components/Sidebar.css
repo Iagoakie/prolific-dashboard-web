@@ -245,6 +245,127 @@
 }
 
 /* ==========================================================================
+   ACCOUNT HEALTH SECTION
+   ========================================================================== */
+.sidebar-account-health {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  margin: 0 4px 16px 4px;
+  background: rgba(120, 120, 128, 0.06);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  animation: fadeSlideIn 0.5s ease forwards;
+}
+
+.dark .sidebar-account-health {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.account-health-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  transition: var(--transition-smooth);
+}
+
+.account-health-badge.active {
+  background: rgba(52, 199, 89, 0.1);
+  color: #30d158;
+  border: 1px solid rgba(52, 199, 89, 0.2);
+}
+
+.account-health-badge.frozen {
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff3b30;
+  border: 1px solid rgba(255, 59, 48, 0.2);
+  animation: frozenPulse 2s ease-in-out infinite;
+}
+
+.account-health-badge.banned {
+  background: rgba(255, 59, 48, 0.15);
+  color: #ff3b30;
+  border: 1px solid rgba(255, 59, 48, 0.3);
+}
+
+.account-health-badge.disconnected {
+  background: rgba(120, 120, 128, 0.08);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+@keyframes frozenPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+  50% { box-shadow: 0 0 12px 2px rgba(255, 59, 48, 0.2); }
+}
+
+.health-badge-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.health-badge-text {
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.account-health-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+}
+
+.health-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.health-detail-row:hover {
+  background: rgba(120, 120, 128, 0.08);
+}
+
+.health-detail-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.health-detail-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.health-detail-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.health-detail-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ==========================================================================
    NAV & FOOTER (preserved)
    ========================================================================== */
 .sidebar-nav {
@@ -344,6 +465,7 @@
   .sidebar-footer .nav-item span,
   .sidebar-nav .nav-item span,
   .sidebar-quick-stats,
+  .sidebar-account-health,
   .sidebar-achievements,
   .prolific-link {
     display: none;

@@ -12,7 +12,8 @@ export default function Sidebar({
   loadedCount,
   csvSource,
   kpis,
-  onExport
+  onExport,
+  prolificAccount
 }) {
   const formatBRL = (val) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -38,6 +39,45 @@ export default function Sidebar({
           {csvSource === 'uploaded' ? 'CSV Importado' : 'CSV Padrão'}
         </div>
       </div>
+
+      {/* Saúde da Conta Prolific */}
+      {prolificAccount ? (
+        <div className="sidebar-account-health">
+          <div className={`account-health-badge ${prolificAccount.frozen ? 'frozen' : 'active'}`}>
+            <span className="health-badge-icon">{prolificAccount.frozen ? '❄️' : '✅'}</span>
+            <span className="health-badge-text">{prolificAccount.frozen ? 'Distribuição Congelada' : 'Distribuição Ativa'}</span>
+          </div>
+          {prolificAccount.banned && (
+            <div className="account-health-badge banned">
+              <span className="health-badge-icon">🚫</span>
+              <span className="health-badge-text">Conta Banida</span>
+            </div>
+          )}
+          <div className="account-health-details">
+            <div className="health-detail-row">
+              <span className="health-detail-icon">💰</span>
+              <div className="health-detail-info">
+                <span className="health-detail-value">£{(prolificAccount.balance / 100).toFixed(2)}</span>
+                <span className="health-detail-label">Disponível</span>
+              </div>
+            </div>
+            <div className="health-detail-row">
+              <span className="health-detail-icon">⏳</span>
+              <div className="health-detail-info">
+                <span className="health-detail-value">£{(prolificAccount.pendingBalance / 100).toFixed(2)}</span>
+                <span className="health-detail-label">Represado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="sidebar-account-health">
+          <div className="account-health-badge disconnected">
+            <span className="health-badge-icon">⚪</span>
+            <span className="health-badge-text">API não conectada</span>
+          </div>
+        </div>
+      )}
 
       {/* Quick Stats Section */}
       {kpis && (

@@ -1,14 +1,46 @@
 import React, { useState } from 'react';
-import { X, RefreshCw, Save, Sliders, UploadCloud } from 'lucide-react';
+import { X, RefreshCw, Save, Sliders, UploadCloud, Shield, Trash2, Key, User } from 'lucide-react';
 import './SettingsModal.css';
 
-export default function SettingsModal({ rates, taxes, onSave, onSaveTaxes, onClose, exchangeSource, lastExchangeFetch, onFetchRates, onFileUpload, csvSource }) {
+export default function SettingsModal({ 
+  rates, 
+  taxes, 
+  onSave, 
+  onSaveTaxes, 
+  onClose, 
+  exchangeSource, 
+  lastExchangeFetch, 
+  onFetchRates, 
+  onFileUpload, 
+  csvSource, 
+  prolificAccount, 
+  onSaveProlificData, 
+  onClearProlificData,
+  prolificUserId,
+  prolificToken,
+  prolificSyncing,
+  onSyncProlific
+}) {
   const [usd, setUsd] = useState(rates.usd);
   const [gbp, setGbp] = useState(rates.gbp);
   const [spread, setSpread] = useState(taxes?.spread || 0);
   const [iof, setIof] = useState(taxes?.iof || 0);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Prolific method tab: 'auto' or 'manual'
+  const [prolificTab, setProlificTab] = useState(prolificUserId && prolificToken ? 'auto' : 'auto');
+
+  // Prolific Automated configuration state
+  const [userIdVal, setUserIdVal] = useState(prolificUserId || '');
+  const [tokenVal, setTokenVal] = useState(prolificToken || '');
+  const [syncStatus, setSyncStatus] = useState(null); // null, 'success', 'error'
+  const [syncMsg, setSyncMsg] = useState('');
+
+  // Prolific JSON paste state
+  const [prolificJson, setProlificJson] = useState('');
+  const [prolificParseStatus, setProlificParseStatus] = useState(null); // null, 'success', 'error'
+  const [prolificParseMsg, setProlificParseMsg] = useState('');
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -50,6 +82,62 @@ export default function SettingsModal({ rates, taxes, onSave, onSaveTaxes, onClo
     if (onSaveTaxes) {
       onSaveTaxes({ spread: 0, iof: 0 });
     }
+  };
+
+  const handleAutoSync = async () => {
+    if (!userIdVal.trim() || !tokenVal.trim()) {
+      setSyncStatus('error');
+      setSyncMsg('Por favor, preencha o User ID e o Token.');
+      return;
+    }
+    setSyncStatus(null);
+    setSyncMsg('');
+    const result = await onSyncProlific(userIdVal.trim(), tokenVal.trim());
+    if (result.success) {
+      setSyncStatus('success');
+      setSyncMsg(`Sincronizado com sucesso! Olá, ${result.account.name || 'Pesquisador'}.`);
+    } else {
+      setSyncStatus('error');
+      setSyncMsg(result.error || 'Erro na sincronização de dados.');
+    }
+  };
+
+  const handleParseProlificJson = () => {
+    if (!prolificJson.trim()) {
+      setProlificParseStatus('error');
+      setProlificParseMsg('Cole o JSON do seu perfil Prolific acima.');
+      return;
+    }
+    const result = onSaveProlificData(prolificJson);
+    if (result.success) {
+      setProlificParseStatus('success');
+      setProlificParseMsg(`Dados de "${result.account.name}" importados com sucesso!`);
+      setProlificJson('');
+    } else {
+      setProlificParseStatus('error');
+      setProlificParseMsg(`Erro ao interpretar JSON: ${result.error}`);
+    }
+  };
+
+  const handleClearProlific = () => {
+    onClearProlificData();
+    setUserIdVal('');
+    setTokenVal('');
+    setProlificParseStatus(null);
+    setProlificParseMsg('');
+    setProlificJson('');
+    setSyncStatus(null);
+    setSyncMsg('');
+  };
+
+  const formatLastUpdated = () => {
+    if (!prolificAccount?.lastUpdated) return null;
+    try {
+      return new Intl.DateTimeFormat('pt-BR', { 
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit' 
+      }).format(new Date(prolificAccount.lastUpdated));
+    } catch { return null; }
   };
 
   return (
@@ -220,6 +308,151 @@ export default function SettingsModal({ rates, taxes, onSave, onSaveTaxes, onClo
                 />
               </label>
             </div>
+          </div>
+
+          {/* Integração Prolific API */}
+          <div className="prolific-integration-section">
+            <div className="prolific-section-header">
+              <div className="prolific-section-title-row">
+                <Shield size={16} className="prolific-section-icon" />
+                <span className="prolific-section-title">Saúde da Conta Prolific</span>
+              </div>
+              <span className="prolific-section-desc">
+                Monitore o status da conta Prolific de forma 100% automatizada e local.
+              </span>
+            </div>
+
+            {prolificAccount && (
+              <div className="prolific-current-status">
+                <div className={`prolific-status-indicator ${prolificAccount.frozen ? 'frozen' : 'active'}`}>
+                  <span>{prolificAccount.frozen ? '❄️' : '✅'}</span>
+                  <span>{prolificAccount.frozen ? 'Distribuição Congelada' : 'Distribuição Ativa'}</span>
+                </div>
+                <div className="prolific-status-details">
+                  <span>💰 £{(prolificAccount.balance / 100).toFixed(2)} disponível</span>
+                  <span>⏳ £{(prolificAccount.pendingBalance / 100).toFixed(2)} represado</span>
+                  {formatLastUpdated() && (
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>
+                      Atualizado em {formatLastUpdated()}
+                    </span>
+                  )}
+                </div>
+                <button 
+                  type="button" 
+                  className="prolific-clear-btn spring-click" 
+                  onClick={handleClearProlific}
+                >
+                  <Trash2 size={12} />
+                  <span>Desconectar e Limpar</span>
+                </button>
+              </div>
+            )}
+
+            {/* Segmented Control Method */}
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '4px 0 10px 0' }}>
+              <div className="segmented-control theme-segmented" style={{ width: '100%' }}>
+                <button 
+                  type="button" 
+                  className={`segmented-button ${prolificTab === 'auto' ? 'active' : ''}`}
+                  onClick={() => setProlificTab('auto')}
+                  style={{ flex: 1, padding: '6px' }}
+                >
+                  Automático (API)
+                </button>
+                <button 
+                  type="button" 
+                  className={`segmented-button ${prolificTab === 'manual' ? 'active' : ''}`}
+                  onClick={() => setProlificTab('manual')}
+                  style={{ flex: 1, padding: '6px' }}
+                >
+                  Manual (JSON)
+                </button>
+              </div>
+            </div>
+
+            {prolificTab === 'auto' && (
+              <div className="prolific-tab-content auto-config-grid">
+                <div className="prolific-input-wrapper">
+                  <div className="prolific-input-field">
+                    <User size={14} className="input-icon" />
+                    <input 
+                      type="text" 
+                      placeholder="Prolific User ID (Ex: 697a685...)" 
+                      value={userIdVal}
+                      onChange={(e) => {
+                        setUserIdVal(e.target.value);
+                        setSyncStatus(null);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="prolific-input-wrapper" style={{ marginTop: '8px' }}>
+                  <div className="prolific-input-field">
+                    <Key size={14} className="input-icon" />
+                    <input 
+                      type="password" 
+                      placeholder="Token de API Prolific..." 
+                      value={tokenVal}
+                      onChange={(e) => {
+                        setTokenVal(e.target.value);
+                        setSyncStatus(null);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {syncMsg && (
+                  <span className={`prolific-parse-feedback ${syncStatus}`} style={{ marginTop: '8px', display: 'block' }}>
+                    {syncStatus === 'success' ? '✅' : '❌'} {syncMsg}
+                  </span>
+                )}
+
+                <button 
+                  type="button" 
+                  className="prolific-import-btn spring-click" 
+                  onClick={handleAutoSync}
+                  disabled={prolificSyncing || !userIdVal.trim() || !tokenVal.trim()}
+                  style={{ marginTop: '12px' }}
+                >
+                  <RefreshCw size={14} className={prolificSyncing ? 'spinning' : ''} />
+                  <span>{prolificSyncing ? 'Sincronizando...' : 'Salvar e Sincronizar'}</span>
+                </button>
+              </div>
+            )}
+
+            {prolificTab === 'manual' && (
+              <div className="prolific-tab-content">
+                <textarea
+                  className="prolific-json-textarea"
+                  placeholder='Cole aqui o JSON do seu perfil Prolific...'
+                  value={prolificJson}
+                  onChange={(e) => {
+                    setProlificJson(e.target.value);
+                    setProlificParseStatus(null);
+                    setProlificParseMsg('');
+                  }}
+                  rows={4}
+                />
+
+                {prolificParseMsg && (
+                  <span className={`prolific-parse-feedback ${prolificParseStatus}`} style={{ marginTop: '8px', display: 'block' }}>
+                    {prolificParseStatus === 'success' ? '✅' : '❌'} {prolificParseMsg}
+                  </span>
+                )}
+
+                <button 
+                  type="button" 
+                  className="prolific-import-btn spring-click" 
+                  onClick={handleParseProlificJson}
+                  disabled={!prolificJson.trim()}
+                  style={{ marginTop: '10px' }}
+                >
+                  <Shield size={14} />
+                  <span>Importar JSON</span>
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="settings-actions">

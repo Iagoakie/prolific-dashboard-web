@@ -63,6 +63,129 @@ export default function App() {
   // Taxas e Spread para Calculadora de Liquidez
   const [taxes, setTaxes] = useState({ spread: 0, iof: 0 });
 
+  // Estado da Conta Prolific (dados salvos)
+  const [prolificAccount, setProlificAccount] = useState(() => {
+    try {
+      const saved = localStorage.getItem('prolific_account');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+
+  // Credenciais Prolific para Sincronização Automática
+  const [prolificUserId, setProlificUserId] = useState(() => localStorage.getItem('prolific_user_id') || '');
+  const [prolificToken, setProlificToken] = useState(() => localStorage.getItem('prolific_token') || '');
+  const [prolificSyncing, setProlificSyncing] = useState(false);
+
+  const handleSyncProlific = async (userId = prolificUserId, token = prolificToken) => {
+    if (!userId || !token) {
+      return { success: false, error: 'User ID e Token de API são obrigatórios para sincronizar.' };
+    }
+    
+    setProlificSyncing(true);
+    try {
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const url = isLocal 
+        ? `/api/prolific/api/v1/users/${userId.trim()}/` 
+        : `https://internal-api.prolific.com/api/v1/users/${userId.trim()}/`;
+
+      const res = await fetch(url, {
+        headers: {
+          'Authorization': `Token ${token.trim()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error('Token inválido ou expirado (Não autorizado 401).');
+        }
+        if (res.status === 404) {
+          throw new Error('Usuário não encontrado. Verifique seu Prolific User ID.');
+        }
+        throw new Error(`Erro na API Prolific: Código ${res.status}`);
+      }
+      
+      const data = await res.json();
+      
+      const account = {
+        name: data.name || null,
+        frozen: !!data.is_study_distribution_frozen,
+        banned: !!data.is_banned,
+        status: data.status || 'UNKNOWN',
+        onHold: !!data.on_hold,
+        balance: typeof data.balance === 'number' ? data.balance : 0,
+        pendingBalance: typeof data.pending_balance === 'number' ? data.pending_balance : 0,
+        currencyCode: data.currency_code || 'GBP',
+        minWithdraw: typeof data.min_balance_to_withdraw === 'number' ? data.min_balance_to_withdraw : 500,
+        canCashout: !!data.can_instant_cashout,
+        payeeStatus: data.payee_status || null,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      setProlificAccount(account);
+      localStorage.setItem('prolific_account', JSON.stringify(account));
+      
+      // Salva as credenciais se forem válidas
+      setProlificUserId(userId);
+      setProlificToken(token);
+      localStorage.setItem('prolific_user_id', userId);
+      localStorage.setItem('prolific_token', token);
+
+      if (account.frozen) {
+        triggerNotification('⚠️ Atenção', 'Sua distribuição de estudos está congelada!', 'goal');
+      } else {
+        triggerNotification('✅ Sincronizado', 'Dados do Prolific atualizados com sucesso!', 'success');
+      }
+      return { success: true, account };
+    } catch (err) {
+      console.error("Error syncing Prolific profile:", err);
+      triggerNotification('❌ Falha na Sincronização', err.message, 'rate');
+      return { success: false, error: err.message };
+    } finally {
+      setProlificSyncing(false);
+    }
+  };
+
+  const handleSaveProlificData = (jsonString) => {
+    try {
+      const data = JSON.parse(jsonString);
+      const account = {
+        name: data.name || null,
+        frozen: !!data.is_study_distribution_frozen,
+        banned: !!data.is_banned,
+        status: data.status || 'UNKNOWN',
+        onHold: !!data.on_hold,
+        balance: typeof data.balance === 'number' ? data.balance : 0,
+        pendingBalance: typeof data.pending_balance === 'number' ? data.pending_balance : 0,
+        currencyCode: data.currency_code || 'GBP',
+        minWithdraw: typeof data.min_balance_to_withdraw === 'number' ? data.min_balance_to_withdraw : 500,
+        canCashout: !!data.can_instant_cashout,
+        payeeStatus: data.payee_status || null,
+        lastUpdated: new Date().toISOString()
+      };
+      setProlificAccount(account);
+      localStorage.setItem('prolific_account', JSON.stringify(account));
+      
+      if (account.frozen) {
+        triggerNotification('⚠️ Atenção', 'Sua distribuição de estudos está congelada!', 'goal');
+      } else {
+        triggerNotification('✅ Conta OK', 'Distribuição de estudos ativa', 'success');
+      }
+      return { success: true, account };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  const handleClearProlificData = () => {
+    setProlificAccount(null);
+    setProlificUserId('');
+    setProlificToken('');
+    localStorage.removeItem('prolific_account');
+    localStorage.removeItem('prolific_user_id');
+    localStorage.removeItem('prolific_token');
+  };
+
   // Estados dos Upgrades Premium
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [showProfilePopover, setShowProfilePopover] = useState(false);
@@ -204,6 +327,18 @@ export default function App() {
   // Carrega cotações de câmbio automáticas na inicialização
   useEffect(() => {
     fetchRealTimeRates();
+  }, []);
+
+  // Auto-sync Prolific Account on mount if credentials exist
+  useEffect(() => {
+    const savedUserId = localStorage.getItem('prolific_user_id');
+    const savedToken = localStorage.getItem('prolific_token');
+    if (savedUserId && savedToken) {
+      const timer = setTimeout(() => {
+        handleSyncProlific(savedUserId, savedToken);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   // Gerenciamento do Drag-and-Drop Global
@@ -435,6 +570,7 @@ export default function App() {
         csvSource={csvSource}
         kpis={metrics?.kpis}
         onExport={handleExportImage}
+        prolificAccount={prolificAccount}
       />
 
       <main className="main-content-area">
@@ -680,6 +816,13 @@ export default function App() {
           csvSource={csvSource}
           taxes={taxes}
           onSaveTaxes={setTaxes}
+          prolificAccount={prolificAccount}
+          onSaveProlificData={handleSaveProlificData}
+          onClearProlificData={handleClearProlificData}
+          prolificUserId={prolificUserId}
+          prolificToken={prolificToken}
+          prolificSyncing={prolificSyncing}
+          onSyncProlific={handleSyncProlific}
         />
       )}
 
