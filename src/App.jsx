@@ -88,9 +88,19 @@ export default function App() {
         ? `/api/prolific/api/v1/users/${userId.trim()}/` 
         : `https://internal-api.prolific.com/api/v1/users/${userId.trim()}/`;
 
+      // Formata o header de autorização dinamicamente (suporta Bearer JWT e Token)
+      let authHeader = token.trim();
+      if (!authHeader.startsWith('Bearer ') && !authHeader.startsWith('Token ')) {
+        if (authHeader.startsWith('eyJ')) {
+          authHeader = `Bearer ${authHeader}`;
+        } else {
+          authHeader = `Token ${authHeader}`;
+        }
+      }
+
       const res = await fetch(url, {
         headers: {
-          'Authorization': `Token ${token.trim()}`,
+          'Authorization': authHeader,
           'Content-Type': 'application/json'
         }
       });
