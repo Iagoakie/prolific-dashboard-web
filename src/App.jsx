@@ -351,6 +351,26 @@ export default function App() {
     }
   }, []);
 
+  // Verifica se há dados importados via URL (Atalho/Bookmarklet)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const importData = params.get('import_data');
+    if (importData) {
+      try {
+        const decoded = decodeURIComponent(importData);
+        const result = handleSaveProlificData(decoded);
+        if (result.success) {
+          triggerNotification('✅ Sincronizado', 'Dados do Prolific importados via Atalho!', 'success');
+        }
+        // Limpa a URL sem recarregar a página
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      } catch (err) {
+        console.error("Falha ao importar dados via URL:", err);
+      }
+    }
+  }, []);
+
   // Gerenciamento do Drag-and-Drop Global
   useEffect(() => {
     const handleDragEnter = (e) => {
