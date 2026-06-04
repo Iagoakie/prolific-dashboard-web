@@ -329,6 +329,17 @@
   color: #ff3b30;
 }
 
+.prolific-status-indicator.idle {
+  color: #e6a800;
+}
+
+.prolific-status-indicator.expert {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
 .prolific-status-details {
   display: flex;
   flex-direction: column;

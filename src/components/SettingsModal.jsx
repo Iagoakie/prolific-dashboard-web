@@ -318,15 +318,21 @@ export default function SettingsModal({
                 <span className="prolific-section-title">Saúde da Conta Prolific</span>
               </div>
               <span className="prolific-section-desc">
-                Monitore o status da conta Prolific de forma 100% automatizada e local.
+                Sincronize sua conta e histórico de estudos com 1 clique via Bookmarklet.
               </span>
             </div>
 
             {prolificAccount && (
               <div className="prolific-current-status">
-                <div className={`prolific-status-indicator ${prolificAccount.frozen ? 'frozen' : 'active'}`}>
-                  <span>{prolificAccount.frozen ? '❄️' : '✅'}</span>
-                  <span>{prolificAccount.frozen ? 'Distribuição Congelada' : 'Distribuição Ativa'}</span>
+                {prolificAccount.isSpecialised && (
+                  <div className="prolific-status-indicator expert" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,165,0,0.08))', color: '#e6a800', border: '1px solid rgba(255,215,0,0.3)' }}>
+                    <span>⭐</span>
+                    <span>Domain Expert</span>
+                  </div>
+                )}
+                <div className={`prolific-status-indicator ${prolificAccount.frozen && prolificAccount.status === 'OK' && !prolificAccount.banned ? 'idle' : prolificAccount.frozen ? 'frozen' : 'active'}`}>
+                  <span>{prolificAccount.frozen && prolificAccount.status === 'OK' && !prolificAccount.banned ? '⏸️' : prolificAccount.frozen ? '❄️' : '✅'}</span>
+                  <span>{prolificAccount.frozen && prolificAccount.status === 'OK' && !prolificAccount.banned ? 'Sem estudos no momento' : prolificAccount.frozen ? 'Distribuição Congelada' : 'Distribuição Ativa'}</span>
                 </div>
                 <div className="prolific-status-details">
                   <span>💰 £{(prolificAccount.balance / 100).toFixed(2)} disponível</span>
@@ -357,7 +363,7 @@ export default function SettingsModal({
                   onClick={() => setProlificTab('auto')}
                   style={{ flex: 1, padding: '6px' }}
                 >
-                  Automático (API)
+                  📎 Bookmarklet
                 </button>
                 <button 
                   type="button" 
@@ -372,52 +378,65 @@ export default function SettingsModal({
 
             {prolificTab === 'auto' && (
               <div className="prolific-tab-content auto-config-grid">
-                <div className="prolific-input-wrapper">
-                  <div className="prolific-input-field">
-                    <User size={14} className="input-icon" />
-                    <input 
-                      type="text" 
-                      placeholder="Prolific User ID (Ex: 697a685...)" 
-                      value={userIdVal}
-                      onChange={(e) => {
-                        setUserIdVal(e.target.value);
-                        setSyncStatus(null);
-                      }}
-                    />
-                  </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '10px' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Como usar:</strong><br/>
+                  1. Arraste o botão abaixo para a barra de favoritos<br/>
+                  2. Acesse <a href="https://app.prolific.com/submissions" target="_blank" rel="noopener" style={{ color: 'var(--accent-color)' }}>app.prolific.com</a> e faça login<br/>
+                  3. Clique no favorito — seus dados serão importados automaticamente!
                 </div>
 
-                <div className="prolific-input-wrapper" style={{ marginTop: '8px' }}>
-                  <div className="prolific-input-field">
-                    <Key size={14} className="input-icon" />
-                    <input 
-                      type="password" 
-                      placeholder="Token de API Prolific..." 
-                      value={tokenVal}
-                      onChange={(e) => {
-                        setTokenVal(e.target.value);
-                        setSyncStatus(null);
-                      }}
-                    />
-                  </div>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  padding: '12px',
+                  background: 'rgba(120, 120, 128, 0.06)',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border-color)'
+                }}>
+                  <a 
+                    href={`javascript:void(function(){var DASH_URL='${typeof window !== 'undefined' ? window.location.origin : 'https://prolific-dashboard-web.vercel.app'}';try{var tk=null;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);var v=localStorage.getItem(k);if(v&&v.indexOf('eyJ')===0&&v.length>100){tk=v;break}}if(!tk){var cookies=document.cookie.split(';');for(var j=0;j<cookies.length;j++){var c=cookies[j].trim();if(c.indexOf('eyJ')!==-1){var parts=c.split('=');tk=parts.slice(1).join('=');break}}}if(!tk){alert('Token não encontrado. Faça login no Prolific primeiro.');return}var uid=null;try{var payload=JSON.parse(atob(tk.split('.')[1]));uid=payload.externalUserId||payload.sub}catch(e){}if(!uid){alert('Não foi possível extrair o User ID do token.');return}var headers={'Authorization':'Bearer '+tk,'Content-Type':'application/json'};var accountData=null;var csvData=null;fetch('https://internal-api.prolific.com/api/v1/users/'+uid+'/',{headers:headers}).then(function(r){return r.json()}).then(function(data){accountData=JSON.stringify(data);return fetch('https://internal-api.prolific.com/api/v1/users/'+uid+'/submissions/',{headers:headers})}).then(function(r){if(!r.ok)throw new Error('sub1');return r.json()}).then(function(subData){var results=subData.results||subData;var csv='Study,Reward,Bonus,Started At,Completed At,Completion Code,Status\\n';results.forEach(function(s){var study=(s.study_name||s.experiment_name||s.study||'Unknown').replace(/,/g,' ');var reward=s.reward||s.reward_amount||0;var curr=s.currency_code||'GBP';var sym=curr==='USD'?'$':'£';var rewardStr=sym+(Number(reward)/100).toFixed(2);var bonus=s.bonus_payments||s.bonus||0;var bonusStr=sym+(Number(bonus)/100).toFixed(2);var started=s.started_at||s.date_started||'';var completed=s.completed_at||s.date_completed||'';var code=s.study_code||s.completion_code||'';var status=(s.status||'').replace(/_/g,' ');csv+='"'+study+'",'+rewardStr+','+bonusStr+','+started+','+completed+','+code+','+status+'\\n'});csvData=csv}).catch(function(){csvData=null}).finally(function(){var url=DASH_URL+'/?import_data='+encodeURIComponent(accountData);if(csvData){url+='&import_csv='+encodeURIComponent(csvData)}window.open(url,'_blank')})}catch(e){alert('Erro: '+e.message)}}())`}
+                    onClick={(e) => e.preventDefault()}
+                    draggable="true"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 16px',
+                      background: 'var(--accent-gradient)',
+                      color: '#fff',
+                      borderRadius: '10px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textDecoration: 'none',
+                      cursor: 'grab',
+                      boxShadow: '0 2px 8px rgba(0,122,255,0.3)',
+                      transition: 'var(--transition-smooth)'
+                    }}
+                  >
+                    🔄 Sync ProlificDash
+                  </a>
                 </div>
 
-                {syncMsg && (
-                  <span className={`prolific-parse-feedback ${syncStatus}`} style={{ marginTop: '8px', display: 'block' }}>
-                    {syncStatus === 'success' ? '✅' : '❌'} {syncMsg}
-                  </span>
+                <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '8px', textAlign: 'center', lineHeight: '1.4' }}>
+                  Arraste o botão acima para sua barra de favoritos.
+                  <br/>
+                  Sincroniza: <strong>Conta</strong> + <strong>Histórico CSV</strong> automaticamente.
+                </div>
+
+                {localStorage.getItem('prolific_csv_date') && (
+                  <div style={{ 
+                    marginTop: '10px', 
+                    padding: '6px 10px', 
+                    background: 'var(--color-approved-bg)', 
+                    borderRadius: '8px', 
+                    fontSize: '10px', 
+                    color: 'var(--color-approved)',
+                    fontWeight: '600',
+                    textAlign: 'center'
+                  }}>
+                    ✅ Último sync do CSV: {new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(localStorage.getItem('prolific_csv_date')))}
+                  </div>
                 )}
-
-                <button 
-                  type="button" 
-                  className="prolific-import-btn spring-click" 
-                  onClick={handleAutoSync}
-                  disabled={prolificSyncing || !userIdVal.trim() || !tokenVal.trim()}
-                  style={{ marginTop: '12px' }}
-                >
-                  <RefreshCw size={14} className={prolificSyncing ? 'spinning' : ''} />
-                  <span>{prolificSyncing ? 'Sincronizando...' : 'Salvar e Sincronizar'}</span>
-                </button>
               </div>
             )}
 

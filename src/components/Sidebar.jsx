@@ -43,10 +43,30 @@ export default function Sidebar({
       {/* Saúde da Conta Prolific */}
       {prolificAccount ? (
         <div className="sidebar-account-health">
-          <div className={`account-health-badge ${prolificAccount.frozen ? 'frozen' : 'active'}`}>
-            <span className="health-badge-icon">{prolificAccount.frozen ? '❄️' : '✅'}</span>
-            <span className="health-badge-text">{prolificAccount.frozen ? 'Distribuição Congelada' : 'Distribuição Ativa'}</span>
-          </div>
+          {/* Domain Expert Badge */}
+          {prolificAccount.isSpecialised && (
+            <div className="account-health-badge expert">
+              <span className="health-badge-icon">⭐</span>
+              <span className="health-badge-text">Domain Expert</span>
+            </div>
+          )}
+          {/* Smart Frozen Logic */}
+          {prolificAccount.frozen && prolificAccount.status === 'OK' && !prolificAccount.banned ? (
+            <div className="account-health-badge idle">
+              <span className="health-badge-icon">⏸️</span>
+              <span className="health-badge-text">Sem estudos no momento</span>
+            </div>
+          ) : prolificAccount.frozen ? (
+            <div className="account-health-badge frozen">
+              <span className="health-badge-icon">❄️</span>
+              <span className="health-badge-text">Distribuição Congelada</span>
+            </div>
+          ) : (
+            <div className="account-health-badge active">
+              <span className="health-badge-icon">✅</span>
+              <span className="health-badge-text">Distribuição Ativa</span>
+            </div>
+          )}
           {prolificAccount.banned && (
             <div className="account-health-badge banned">
               <span className="health-badge-icon">🚫</span>

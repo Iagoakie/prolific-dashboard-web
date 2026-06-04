@@ -129,6 +129,7 @@ export default function App() {
         minWithdraw: typeof data.min_balance_to_withdraw === 'number' ? data.min_balance_to_withdraw : 500,
         canCashout: !!data.can_instant_cashout,
         payeeStatus: data.payee_status || null,
+        isSpecialised: !!data.is_specialised_participant,
         lastUpdated: new Date().toISOString()
       };
       
@@ -171,6 +172,7 @@ export default function App() {
         minWithdraw: typeof data.min_balance_to_withdraw === 'number' ? data.min_balance_to_withdraw : 500,
         canCashout: !!data.can_instant_cashout,
         payeeStatus: data.payee_status || null,
+        isSpecialised: !!data.is_specialised_participant,
         lastUpdated: new Date().toISOString()
       };
       setProlificAccount(account);
@@ -355,19 +357,40 @@ export default function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const importData = params.get('import_data');
+    const importCsv = params.get('import_csv');
+    let hadData = false;
+
     if (importData) {
       try {
         const decoded = decodeURIComponent(importData);
         const result = handleSaveProlificData(decoded);
-        if (result.success) {
+        hadData = true;
+        if (!importCsv && result.success) {
           triggerNotification('✅ Sincronizado', 'Dados do Prolific importados via Atalho!', 'success');
         }
-        // Limpa a URL sem recarregar a página
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        window.history.pushState({ path: newUrl }, '', newUrl);
       } catch (err) {
-        console.error("Falha ao importar dados via URL:", err);
+        console.error("Falha ao importar dados da conta via URL:", err);
       }
+    }
+
+    if (importCsv) {
+      try {
+        const decodedCsv = decodeURIComponent(importCsv);
+        setCsvText(decodedCsv);
+        setCsvSource('uploaded');
+        localStorage.setItem('prolific_csv_cache', decodedCsv);
+        localStorage.setItem('prolific_csv_date', new Date().toISOString());
+        hadData = true;
+        triggerNotification('🔄 Sync Completo', 'Conta + CSV atualizados via Bookmarklet!', 'success');
+      } catch (err) {
+        console.error("Falha ao importar CSV via URL:", err);
+      }
+    }
+
+    if (hadData) {
+      // Limpa a URL sem recarregar a página
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.pushState({ path: newUrl }, '', newUrl);
     }
   }, []);
 
@@ -466,8 +489,14 @@ export default function App() {
     setExchangeSource(source);
   };
 
-  // Carrega o CSV padrão
+  // Carrega o CSV (prioridade: cache do bookmarklet > padrão)
   useEffect(() => {
+    const cachedCsv = localStorage.getItem('prolific_csv_cache');
+    if (cachedCsv) {
+      setCsvText(cachedCsv);
+      setCsvSource('uploaded');
+      return;
+    }
     fetch('/default_data.csv')
       .then((res) => {
         if (!res.ok) throw new Error('Não foi possível carregar o CSV padrão.');
