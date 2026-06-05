@@ -128,6 +128,8 @@ export default function App() {
         currencyCode: data.currency_code || 'GBP',
         minWithdraw: typeof data.min_balance_to_withdraw === 'number' ? data.min_balance_to_withdraw : 500,
         canCashout: !!data.can_instant_cashout,
+        canInstantCashoutEnabled: typeof data.can_instant_cashout_enabled !== 'undefined' ? !!data.can_instant_cashout_enabled : true,
+        canCashoutEnabled: typeof data.can_cashout_enabled !== 'undefined' ? !!data.can_cashout_enabled : true,
         payeeStatus: data.payee_status || null,
         isSpecialised: !!data.is_specialised_participant,
         lastUpdated: new Date().toISOString()
@@ -201,6 +203,8 @@ export default function App() {
         currencyCode: data.currency_code || 'GBP',
         minWithdraw: typeof data.min_balance_to_withdraw === 'number' ? data.min_balance_to_withdraw : 500,
         canCashout: !!data.can_instant_cashout,
+        canInstantCashoutEnabled: typeof data.can_instant_cashout_enabled !== 'undefined' ? !!data.can_instant_cashout_enabled : true,
+        canCashoutEnabled: typeof data.can_cashout_enabled !== 'undefined' ? !!data.can_cashout_enabled : true,
         payeeStatus: data.payee_status || null,
         isSpecialised: !!data.is_specialised_participant,
         lastUpdated: new Date().toISOString()

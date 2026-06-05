@@ -97,7 +97,8 @@ export default function Sidebar({
             const balancePounds = prolificAccount.balance / 100;
             const minWithdraw = (prolificAccount.minWithdraw || 500) / 100;
             const progress = Math.min(100, (balancePounds / minWithdraw) * 100);
-            const canCashout = prolificAccount.canCashout || balancePounds >= minWithdraw;
+            const reachedMinimum = balancePounds >= minWithdraw;
+            const isCashedOutToday = prolificAccount.canInstantCashoutEnabled === false;
             return (
               <div className="cashout-progress-section">
                 <div className="cashout-progress-header">
@@ -106,15 +107,22 @@ export default function Sidebar({
                 </div>
                 <div className="cashout-progress-bar-bg">
                   <div 
-                    className={`cashout-progress-bar-fill ${canCashout ? 'ready' : ''}`} 
+                    className={`cashout-progress-bar-fill ${reachedMinimum ? (isCashedOutToday ? 'cooldown' : 'ready') : ''}`} 
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
-                {canCashout ? (
-                  <div className="cashout-status ready" data-tooltip="Seu saldo atingiu o valor mínimo. Você pode solicitar o saque diretamente no site do Prolific.">
-                    <span>✅</span>
-                    <span>Saque Disponível</span>
-                  </div>
+                {reachedMinimum ? (
+                  isCashedOutToday ? (
+                    <div className="cashout-status cooldown" data-tooltip="Você atingiu o saldo mínimo, mas já fez um saque nas últimas 24 horas. O Prolific limita os saques instantâneos a uma vez por dia (reinicia à meia-noite UTC).">
+                      <span>⏸️</span>
+                      <span>Limite de 24h</span>
+                    </div>
+                  ) : (
+                    <div className="cashout-status ready" data-tooltip="Seu saldo atingiu o valor mínimo e você pode solicitar o saque instantâneo no site do Prolific.">
+                      <span>✅</span>
+                      <span>Saque Disponível</span>
+                    </div>
+                  )
                 ) : (
                   <div className="cashout-status pending" data-tooltip={`O mínimo para solicitar saque no Prolific é £${minWithdraw.toFixed(2)}. Continue completando estudos para atingir esse valor.`}>
                     <span>⏳</span>

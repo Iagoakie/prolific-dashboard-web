@@ -560,6 +560,10 @@
   background: linear-gradient(90deg, #30d158, #34c759);
 }
 
+.cashout-progress-bar-fill.cooldown {
+  background: linear-gradient(90deg, #ff9500, #ffcc00);
+}
+
 .cashout-status {
   display: flex;
   align-items: center;
@@ -572,6 +576,14 @@
 
 .cashout-status.ready {
   color: #30d158;
+}
+
+.cashout-status.cooldown {
+  color: #ff9500;
+}
+
+.dark .cashout-status.cooldown {
+  color: #ffcc00;
 }
 
 .cashout-status.pending {
