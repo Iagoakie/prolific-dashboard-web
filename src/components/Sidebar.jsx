@@ -153,19 +153,20 @@ export default function Sidebar({
 
       {/* Quick Stats Section */}
       {kpis && (
-        <div className="sidebar-quick-stats">
-          <div className="quick-stat-row">
+        <div className="sidebar-quick-stats-row">
+          <div className="quick-stat-col" data-tooltip="Sua sequência de dias ativos fazendo estudos no Prolific.">
             <span className="quick-stat-icon fire-icon">🔥</span>
             <div className="quick-stat-info">
               <span className="quick-stat-value">{streak} {streak === 1 ? 'dia' : 'dias'}</span>
               <span className="quick-stat-label">Streak</span>
             </div>
           </div>
-          <div className="quick-stat-row">
+          <div className="quick-stat-divider"></div>
+          <div className="quick-stat-col" data-tooltip="Total de ganhos acumulados em estudos aprovados hoje.">
             <span className="quick-stat-icon">💰</span>
             <div className="quick-stat-info">
               <span className="quick-stat-value">{formatBRL(ganhosHoje)}</span>
-              <span className="quick-stat-label">Ganhos Hoje</span>
+              <span className="quick-stat-label">Hoje</span>
             </div>
           </div>
         </div>
@@ -207,23 +208,19 @@ export default function Sidebar({
 
       {/* Gamification / Níveis */}
       {kpis && gamification && (
-        <div className="sidebar-achievements-linear" style={{ padding: '12px' }}>
-          <div className="achievements-progress-header" style={{ marginBottom: '6px' }}>
-            <span className="achievements-title" style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
-              ⭐ Lvl {gamification.currentLevel} • {gamification.levelTitle}
-            </span>
-            <span className="achievements-count" style={{ color: '#ff9500', fontWeight: 'bold' }}>
-              {gamification.totalXP.toLocaleString('pt-BR')} XP
-            </span>
+        <div 
+          className="sidebar-level-card" 
+          data-tooltip={`XP Total: ${gamification.totalXP.toLocaleString('pt-BR')} • Próximo nível em ${(gamification.nextLevelXP - gamification.totalXP).toLocaleString('pt-BR')} XP`}
+        >
+          <div className="level-card-info">
+            <span className="level-card-title">Lvl {gamification.currentLevel}</span>
+            <span className="level-card-subtitle">{gamification.levelTitle}</span>
           </div>
-          <div className="achievements-progress-bar-bg" style={{ height: '8px' }}>
+          <div className="level-card-progress-bg">
             <div 
-              className="achievements-progress-bar-fill" 
-              style={{ width: `${Math.min(100, gamification.levelProgress)}%`, background: 'linear-gradient(90deg, #ff9500, #ffcc00)' }}
+              className="level-card-progress-fill" 
+              style={{ width: `${Math.min(100, gamification.levelProgress)}%` }}
             ></div>
-          </div>
-          <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '6px', textAlign: 'right', fontWeight: '500' }}>
-            Faltam {(gamification.nextLevelXP - gamification.totalXP).toLocaleString('pt-BR')} XP para o Nível {gamification.currentLevel + 1}
           </div>
         </div>
       )}

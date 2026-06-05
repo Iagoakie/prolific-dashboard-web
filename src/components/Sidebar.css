@@ -68,44 +68,53 @@
 }
 
 /* ==========================================================================
-   QUICK STATS SECTION
+   QUICK STATS SECTION (Clean Side-by-Side)
    ========================================================================== */
-.sidebar-quick-stats {
+.sidebar-quick-stats-row {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
   margin: 0 4px 16px 4px;
-  background: rgba(120, 120, 128, 0.06);
+  background: rgba(120, 120, 128, 0.05);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 14px;
   animation: fadeSlideIn 0.5s ease forwards;
 }
 
-.dark .sidebar-quick-stats {
+.dark .sidebar-quick-stats-row {
   background: rgba(255, 255, 255, 0.03);
 }
 
-.quick-stat-row {
+.quick-stat-col {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 4px;
-  border-radius: 10px;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 8px;
   transition: background 0.2s ease;
 }
 
-.quick-stat-row:hover {
-  background: rgba(120, 120, 128, 0.08);
+.quick-stat-col:hover {
+  background: rgba(120, 120, 128, 0.06);
+}
+
+.quick-stat-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-color);
+  margin: 0 2px;
 }
 
 .quick-stat-icon {
-  font-size: 20px;
+  font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 22px;
+  height: 22px;
 }
 
 .quick-stat-icon.fire-icon {
@@ -124,15 +133,15 @@
 }
 
 .quick-stat-value {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   line-height: 1.2;
 }
 
 .quick-stat-label {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -140,60 +149,60 @@
 }
 
 /* ==========================================================================
-   ACHIEVEMENTS SECTION
+   ACHIEVEMENTS / GAMIFICATION CARD (Sleek Compact Capsule)
    ========================================================================== */
-.sidebar-achievements-linear {
-  padding: 12px 14px;
+.sidebar-level-card {
+  padding: 10px 12px;
   margin: 0 4px 12px 4px;
-  background: rgba(120, 120, 128, 0.06);
+  background: rgba(120, 120, 128, 0.05);
   border: 1px solid var(--border-color);
-  border-radius: 18px;
+  border-radius: 14px;
   animation: fadeSlideIn 0.6s ease forwards;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  cursor: help;
 }
 
-.dark .sidebar-achievements-linear {
+.dark .sidebar-level-card {
   background: rgba(255, 255, 255, 0.03);
 }
 
-.achievements-progress-header {
+.level-card-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.achievements-title {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.achievements-count {
+.level-card-title {
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent-color);
+  color: var(--text-primary);
 }
 
-.achievements-progress-bar-bg {
+.level-card-subtitle {
+  font-size: 9px;
+  font-weight: 600;
+  color: #ff9500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.level-card-progress-bg {
   width: 100%;
-  height: 6px;
+  height: 4px;
   background: rgba(120, 120, 128, 0.12);
   border-radius: 99px;
   overflow: hidden;
 }
 
-.dark .achievements-progress-bar-bg {
+.dark .level-card-progress-bg {
   background: rgba(255, 255, 255, 0.06);
 }
 
-.achievements-progress-bar-fill {
+.level-card-progress-fill {
   height: 100%;
-  background: var(--accent-gradient);
+  background: linear-gradient(90deg, #ff9500, #ffcc00);
   border-radius: 99px;
   transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -686,8 +695,10 @@
   .sidebar-footer .nav-item span,
   .sidebar-nav .nav-item span,
   .sidebar-quick-stats,
+  .sidebar-quick-stats-row,
   .sidebar-account-health,
   .sidebar-achievements,
+  .sidebar-level-card,
   .prolific-link {
     display: none;
   }
