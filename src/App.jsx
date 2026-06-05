@@ -142,10 +142,40 @@ export default function App() {
       localStorage.setItem('prolific_user_id', userId);
       localStorage.setItem('prolific_token', token);
 
+      // Sincronizar o CSV de submissions também (via proxy se local, ou direto)
+      let csvSynced = false;
+      try {
+        const csvUrl = isLocal 
+          ? '/api/prolific/api/v1/submissions/export/?ordering=-started_at' 
+          : 'https://internal-api.prolific.com/api/v1/submissions/export/?ordering=-started_at';
+
+        const csvRes = await fetch(csvUrl, {
+          headers: {
+            'Authorization': authHeader
+          }
+        });
+
+        if (csvRes.ok) {
+          const csvContent = await csvRes.text();
+          if (csvContent && csvContent.includes('Study')) {
+            setCsvText(csvContent);
+            setCsvSource('uploaded');
+            localStorage.setItem('prolific_csv_cache', csvContent);
+            localStorage.setItem('prolific_csv_date', new Date().toISOString());
+            csvSynced = true;
+          }
+        }
+      } catch (csvErr) {
+        console.warn("Could not sync CSV directly via API (likely CORS in hosted mode):", csvErr);
+      }
+
       if (account.frozen) {
         triggerNotification('⚠️ Atenção', 'Sua distribuição de estudos está congelada!', 'goal');
       } else {
-        triggerNotification('✅ Sincronizado', 'Dados do Prolific atualizados com sucesso!', 'success');
+        const syncMsg = csvSynced 
+          ? 'Dados e Histórico CSV atualizados com sucesso!' 
+          : 'Dados do Prolific atualizados com sucesso!';
+        triggerNotification('✅ Sincronizado', syncMsg, 'success');
       }
       return { success: true, account };
     } catch (err) {
@@ -353,8 +383,9 @@ export default function App() {
     }
   }, []);
 
-  // Verifica se há dados importados via URL (Atalho/Bookmarklet)
+  // Verifica se há dados importados via URL (Atalho/Bookmarklet) ou via postMessage (Cross-Origin Handshake)
   useEffect(() => {
+    // 1. Tratamento via URL (legado/fallback)
     const params = new URLSearchParams(window.location.search);
     const importData = params.get('import_data');
     const importCsv = params.get('import_csv');
@@ -392,6 +423,54 @@ export default function App() {
       const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
       window.history.pushState({ path: newUrl }, '', newUrl);
     }
+
+    // 2. Tratamento via postMessage (handshake moderno para evitar limites de URL)
+    const handleMessage = (event) => {
+      const { type, account, csv } = event.data || {};
+      
+      if (type === 'prolific_import') {
+        let msgSaved = false;
+        
+        if (account) {
+          try {
+            const accountStr = typeof account === 'string' ? account : JSON.stringify(account);
+            const result = handleSaveProlificData(accountStr);
+            if (result.success) {
+              msgSaved = true;
+            }
+          } catch (err) {
+            console.error("Falha ao salvar dados da conta via postMessage:", err);
+          }
+        }
+        
+        if (csv) {
+          try {
+            setCsvText(csv);
+            setCsvSource('uploaded');
+            localStorage.setItem('prolific_csv_cache', csv);
+            localStorage.setItem('prolific_csv_date', new Date().toISOString());
+            msgSaved = true;
+          } catch (err) {
+            console.error("Falha ao salvar CSV via postMessage:", err);
+          }
+        }
+
+        if (msgSaved) {
+          triggerNotification('🔄 Sync Completo', 'Conta + CSV atualizados via Bookmarklet!', 'success');
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Se fomos abertos por outra janela (ex: o bookmarklet no Prolific), avisa que estamos prontos!
+    if (window.opener) {
+      window.opener.postMessage('dashboard_ready', '*');
+    }
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   // Gerenciamento do Drag-and-Drop Global

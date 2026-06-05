@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DollarSign, CheckCircle, Clock, AlertTriangle, Percent, Calendar, TrendingUp } from 'lucide-react';
+import { DollarSign, CheckCircle, Clock, AlertTriangle, Percent, Calendar, TrendingUp, Info } from 'lucide-react';
 import './KPICards.css';
 
 // Componente de contagem animada
@@ -57,61 +57,71 @@ export default function KPICards({ kpis }) {
     }).format(val);
   };
 
+  const [activeTooltip, setActiveTooltip] = useState(null);
+
   const cards = [
     {
       title: 'Ganhos Aprovados',
       value: formatBRL(kpis.ganhosAprovadosBRL),
-      subtext: `Total de ${kpis.totalAprovados} estudos aprovados`,
+      subtext: `${kpis.totalAprovados} estudos aprovados de ${kpis.totalEstudos} enviados`,
       icon: <CheckCircle size={22} className="icon-approved" />,
-      bgClass: 'card-green'
+      bgClass: 'card-green',
+      tooltip: 'Total acumulado de todos os estudos aprovados pelos pesquisadores, convertido para R$ pela taxa de câmbio configurada. Inclui recompensas e bônus.'
     },
     {
       title: 'Ganhos Hoje',
       value: formatBRL(kpis.ganhosHojeBRL),
       subtext: `USD: $${kpis.ganhosHojeOriginalUSD.toFixed(2)} • GBP: £${kpis.ganhosHojeOriginalGBP.toFixed(2)}`,
       icon: <Calendar size={22} className="icon-today" />,
-      bgClass: 'card-blue'
+      bgClass: 'card-blue',
+      tooltip: 'Quanto você ganhou hoje em estudos já aprovados. Mostra também os valores originais em cada moeda antes da conversão.'
     },
     {
-      title: 'Valor Represado',
+      title: 'Aguardando Revisão',
       value: formatBRL(kpis.valorRepresadoBRL),
-      subtext: `${kpis.totalEmReview} estudos em revisão`,
+      subtext: `${kpis.totalEmReview} ${kpis.totalEmReview === 1 ? 'estudo aguardando' : 'estudos aguardando'} o pesquisador aprovar`,
       icon: <Clock size={22} className="icon-pending" />,
-      bgClass: 'card-purple'
+      bgClass: 'card-purple',
+      tooltip: 'Valor de estudos que você completou, mas o pesquisador ainda não aprovou. Isso é normal — geralmente leva até 14 dias. Não é dinheiro bloqueado.'
     },
     {
       title: 'Média por Estudo',
       value: formatBRL(kpis.mediaPorEstudoBRL),
-      subtext: 'Valor médio por envio aprovado',
+      subtext: `Ganho médio por estudo aprovado (em R$)`,
       icon: <DollarSign size={22} className="icon-average" />,
-      bgClass: 'card-orange'
+      bgClass: 'card-orange',
+      tooltip: 'Quanto você ganha em média por estudo aprovado. Calculado como: total de ganhos aprovados ÷ número de estudos aprovados.'
     },
     {
       title: 'Taxa de Aprovação',
       value: `${(kpis.taxaAprovacao * 100).toFixed(1)}%`,
       subtext: `Rejeitados: ${kpis.totalRejeitados} • Retornados: ${kpis.totalRetornados}`,
       icon: <Percent size={22} className="icon-percent" />,
-      bgClass: 'card-teal'
+      bgClass: 'card-teal',
+      tooltip: 'Percentual de estudos aprovados em relação ao total enviado (excluindo retornados). Acima de 95% é considerado excelente pelo Prolific.'
     },
     {
       title: 'Projeção (Fim do Mês)',
       value: kpis.projecaoMensalBRL > 0 ? formatBRL(kpis.projecaoMensalBRL) : 'R$ 0,00',
-      subtext: 'Projeção baseada na média diária atual',
-      bgClass: 'card-green'
+      subtext: `Baseada na média diária de ${formatBRL(kpis.currentMonthEarnings / Math.max(1, new Date().getDate()))}`,
+      bgClass: 'card-green',
+      tooltip: 'Estimativa de quanto você terá ao fim deste mês. Calculada com sua média diária do mês atual × dias restantes + o que já ganhou.'
     },
     {
       title: 'Melhor Dia',
       value: kpis.melhorDiaBRL > 0 ? formatBRL(kpis.melhorDiaBRL) : 'R$ 0,00',
       subtext: kpis.melhorDiaLabel !== '-' ? `Recorde em ${kpis.melhorDiaLabel.split(' • ')[0]}` : 'Sem registro',
       icon: <Calendar size={22} className="icon-best-day" />,
-      bgClass: 'card-pink'
+      bgClass: 'card-pink',
+      tooltip: 'Seu recorde de ganhos em um único dia. Dias com muitos estudos de alto valor tendem a gerar recordes.'
     },
     {
       title: 'Melhor Mês',
       value: kpis.melhorMesBRL > 0 ? formatBRL(kpis.melhorMesBRL) : 'R$ 0,00',
       subtext: kpis.melhorMesLabel !== '-' ? `Recorde em ${kpis.melhorMesLabel.split(' • ')[0].toUpperCase()}` : 'Sem registro',
       icon: <TrendingUp size={22} className="icon-best-month" />,
-      bgClass: 'card-indigo'
+      bgClass: 'card-indigo',
+      tooltip: 'Seu recorde de ganhos em um único mês. Acompanhe para ver se está superando seus próprios recordes!'
     }
   ];
 
@@ -136,6 +146,26 @@ export default function KPICards({ kpis }) {
             <span className="kpi-card-title">
               {card.title}
             </span>
+            {card.tooltip && (
+              <button 
+                className="kpi-info-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTooltip(activeTooltip === idx ? null : idx);
+                }}
+                onMouseEnter={() => setActiveTooltip(idx)}
+                onMouseLeave={() => setActiveTooltip(null)}
+                aria-label={`Informações sobre ${card.title}`}
+              >
+                <Info size={14} />
+                {activeTooltip === idx && (
+                  <div className="kpi-tooltip-popover">
+                    <div className="kpi-tooltip-arrow"></div>
+                    {card.tooltip}
+                  </div>
+                )}
+              </button>
+            )}
           </div>
           <div className="kpi-card-body">
             <span className="kpi-card-value">{card.value}</span>

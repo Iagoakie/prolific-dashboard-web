@@ -45,50 +45,102 @@ export default function Sidebar({
         <div className="sidebar-account-health">
           {/* Domain Expert Badge */}
           {prolificAccount.isSpecialised && (
-            <div className="account-health-badge expert">
+            <div className="account-health-badge expert" data-tooltip="Você foi qualificado como especialista em um domínio específico. Isso dá acesso a estudos exclusivos com remuneração geralmente superior.">
               <span className="health-badge-icon">⭐</span>
               <span className="health-badge-text">Domain Expert</span>
             </div>
           )}
           {/* Smart Frozen Logic */}
           {prolificAccount.frozen && prolificAccount.status === 'OK' && !prolificAccount.banned ? (
-            <div className="account-health-badge idle">
+            <div className="account-health-badge idle" data-tooltip="Não há estudos disponíveis para o seu perfil agora. Isso é normal e muda ao longo do dia conforme pesquisadores publicam novos estudos.">
               <span className="health-badge-icon">⏸️</span>
               <span className="health-badge-text">Sem estudos no momento</span>
             </div>
           ) : prolificAccount.frozen ? (
-            <div className="account-health-badge frozen">
+            <div className="account-health-badge frozen" data-tooltip="O Prolific pausou a distribuição de novos estudos para você. Verifique se há pendências ou restrições na sua conta.">
               <span className="health-badge-icon">❄️</span>
               <span className="health-badge-text">Distribuição Congelada</span>
             </div>
           ) : (
-            <div className="account-health-badge active">
+            <div className="account-health-badge active" data-tooltip="Sua conta está ativa e recebendo novos estudos normalmente. Fique de olho no Prolific para participar.">
               <span className="health-badge-icon">✅</span>
               <span className="health-badge-text">Distribuição Ativa</span>
             </div>
           )}
           {prolificAccount.banned && (
-            <div className="account-health-badge banned">
+            <div className="account-health-badge banned" data-tooltip="Sua conta foi banida pelo Prolific. Entre em contato com o suporte para mais informações.">
               <span className="health-badge-icon">🚫</span>
               <span className="health-badge-text">Conta Banida</span>
             </div>
           )}
+
+          {/* Saldo Detalhado */}
           <div className="account-health-details">
-            <div className="health-detail-row">
+            <div className="health-detail-row" data-tooltip="Valor já aprovado pelos pesquisadores e creditado na sua conta Prolific, pronto para saque.">
               <span className="health-detail-icon">💰</span>
               <div className="health-detail-info">
                 <span className="health-detail-value">£{(prolificAccount.balance / 100).toFixed(2)}</span>
-                <span className="health-detail-label">Disponível</span>
+                <span className="health-detail-label">Saldo Aprovado</span>
               </div>
             </div>
-            <div className="health-detail-row">
+            <div className="health-detail-row" data-tooltip="Valor de estudos concluídos aguardando aprovação do pesquisador. Geralmente é aprovado em até 14 dias úteis.">
               <span className="health-detail-icon">⏳</span>
               <div className="health-detail-info">
                 <span className="health-detail-value">£{(prolificAccount.pendingBalance / 100).toFixed(2)}</span>
-                <span className="health-detail-label">Represado</span>
+                <span className="health-detail-label">Aguardando Aprovação</span>
               </div>
             </div>
           </div>
+
+          {/* Barra de Progresso de Saque */}
+          {(() => {
+            const balancePounds = prolificAccount.balance / 100;
+            const minWithdraw = (prolificAccount.minWithdraw || 500) / 100;
+            const progress = Math.min(100, (balancePounds / minWithdraw) * 100);
+            const canCashout = prolificAccount.canCashout || balancePounds >= minWithdraw;
+            return (
+              <div className="cashout-progress-section">
+                <div className="cashout-progress-header">
+                  <span className="cashout-progress-label">Progresso p/ Saque</span>
+                  <span className="cashout-progress-amount">£{balancePounds.toFixed(2)} / £{minWithdraw.toFixed(2)}</span>
+                </div>
+                <div className="cashout-progress-bar-bg">
+                  <div 
+                    className={`cashout-progress-bar-fill ${canCashout ? 'ready' : ''}`} 
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                {canCashout ? (
+                  <div className="cashout-status ready" data-tooltip="Seu saldo atingiu o valor mínimo. Você pode solicitar o saque diretamente no site do Prolific.">
+                    <span>✅</span>
+                    <span>Saque Disponível</span>
+                  </div>
+                ) : (
+                  <div className="cashout-status pending" data-tooltip={`O mínimo para solicitar saque no Prolific é £${minWithdraw.toFixed(2)}. Continue completando estudos para atingir esse valor.`}>
+                    <span>⏳</span>
+                    <span>Faltam £{(minWithdraw - balancePounds).toFixed(2)} para sacar</span>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Timestamp */}
+          {prolificAccount.lastUpdated && (
+            <div className="health-last-updated">
+              Atualizado {(() => {
+                try {
+                  const diff = Date.now() - new Date(prolificAccount.lastUpdated).getTime();
+                  const mins = Math.floor(diff / 60000);
+                  if (mins < 1) return 'agora';
+                  if (mins < 60) return `há ${mins} min`;
+                  const hours = Math.floor(mins / 60);
+                  if (hours < 24) return `há ${hours}h`;
+                  return `há ${Math.floor(hours / 24)}d`;
+                } catch { return ''; }
+              })()}
+            </div>
+          )}
         </div>
       ) : (
         <div className="sidebar-account-health">
