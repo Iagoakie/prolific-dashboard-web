@@ -107,6 +107,7 @@ export default function ChartsSection({
                   dataKey="formattedDate" 
                   axisLine={false} 
                   tickLine={false} 
+                  minTickGap={50}
                   tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                 />
                 <YAxis 

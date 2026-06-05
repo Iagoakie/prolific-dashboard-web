@@ -106,22 +106,6 @@ export default function KPICards({ kpis }) {
       subtext: `Baseada na média diária de ${formatBRL(kpis.currentMonthEarnings / Math.max(1, new Date().getDate()))}`,
       bgClass: 'card-green',
       tooltip: 'Estimativa de quanto você terá ao fim deste mês. Calculada com sua média diária do mês atual × dias restantes + o que já ganhou.'
-    },
-    {
-      title: 'Melhor Dia',
-      value: kpis.melhorDiaBRL > 0 ? formatBRL(kpis.melhorDiaBRL) : 'R$ 0,00',
-      subtext: kpis.melhorDiaLabel !== '-' ? `Recorde em ${kpis.melhorDiaLabel.split(' • ')[0]}` : 'Sem registro',
-      icon: <Calendar size={22} className="icon-best-day" />,
-      bgClass: 'card-pink',
-      tooltip: 'Seu recorde de ganhos em um único dia. Dias com muitos estudos de alto valor tendem a gerar recordes.'
-    },
-    {
-      title: 'Melhor Mês',
-      value: kpis.melhorMesBRL > 0 ? formatBRL(kpis.melhorMesBRL) : 'R$ 0,00',
-      subtext: kpis.melhorMesLabel !== '-' ? `Recorde em ${kpis.melhorMesLabel.split(' • ')[0].toUpperCase()}` : 'Sem registro',
-      icon: <TrendingUp size={22} className="icon-best-month" />,
-      bgClass: 'card-indigo',
-      tooltip: 'Seu recorde de ganhos em um único mês. Acompanhe para ver se está superando seus próprios recordes!'
     }
   ];
 
