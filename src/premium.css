@@ -144,9 +144,9 @@ select {
   align-items: center;
   align-self: center;
   background: #ffffff;
-  border: 1px solid #e4e9f2;
+  border: 1px solid #e6ebf2;
   border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
   color: #0f172a;
   cursor: pointer;
   display: inline-flex;
@@ -208,9 +208,9 @@ select {
 .header-icon-button {
   align-items: center;
   background: #ffffff;
-  border: 1px solid #e5eaf2;
+  border: 1px solid #e6ebf2;
   border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   color: #64748b;
   cursor: pointer;
   display: inline-flex;
@@ -222,6 +222,7 @@ select {
 }
 
 .header-icon-button:hover {
+  background: #f8fafc;
   border-color: #cbd5e1;
   color: var(--accent-color);
   transform: translateY(-1px);
@@ -253,7 +254,7 @@ select {
   background: linear-gradient(180deg, #071b38 0%, #06162d 45%, #04101f 100%);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.16);
   color: #ffffff;
   height: calc(100vh - (var(--app-outer-padding) * 2));
   top: var(--app-outer-padding);
@@ -676,7 +677,7 @@ select {
 .nav-item.active,
 .nav-item.active:hover {
   background: linear-gradient(90deg, #2563eb, #6d5dfc);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.30);
   color: #ffffff;
   height: 38px;
 }
@@ -738,7 +739,7 @@ select {
   background: #ffffff;
   border: 1px solid #e6ebf2;
   border-radius: 14px;
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.045);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
   cursor: default;
   height: 136px;
   min-width: 0;
@@ -952,7 +953,7 @@ select {
 }
 
 .featured-sparkline {
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.20);
   height: 100%;
   margin-left: auto;
   max-width: none;
@@ -985,11 +986,18 @@ select {
 .chart-card {
   background: #ffffff;
   border: 1px solid #e6ebf2;
-  border-radius: 14px;
-  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.045);
+  border-radius: 15px;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
   padding: 18px 18px 12px 18px;
   position: relative;
   box-sizing: border-box;
+  transition: var(--transition-smooth);
+}
+
+.chart-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.07);
+  transform: translateY(-1px);
 }
 
 .main-chart-full {
@@ -1001,6 +1009,13 @@ select {
 .secondary-chart-split,
 .pacing-rings-card {
   height: 205px;
+  transition: var(--transition-smooth);
+}
+
+.pacing-rings-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.07);
+  transform: translateY(-1px);
 }
 
 .overview-row-two {
