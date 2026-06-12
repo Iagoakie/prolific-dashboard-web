@@ -72,6 +72,9 @@ select {
   padding: var(--app-outer-padding);
   min-height: 100vh;
   width: 100%;
+  max-width: none;
+  margin: 0;
+  margin-left: 0;
   box-sizing: border-box;
   background-color: var(--bg-primary);
 }
@@ -259,6 +262,7 @@ select {
   padding: 18px;
   scrollbar-width: none;
   width: var(--sidebar-width);
+  min-width: 0;
   flex-shrink: 0;
   z-index: 100;
   display: flex;

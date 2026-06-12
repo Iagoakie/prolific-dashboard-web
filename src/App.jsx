@@ -636,7 +636,7 @@ export default function App() {
         prolificAccount={prolificAccount}
       />
 
-      <main className="main-content-area min-w-0">
+      <main className="main-content-area min-w-0" style={{ margin: 0, marginLeft: 0 }}>
         {metrics && (
           <header className="main-header animate-fade-in">
             <div className="header-info">
