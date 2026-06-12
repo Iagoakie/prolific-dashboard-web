@@ -1,4 +1,3 @@
-import React from 'react';
 import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap, UploadCloud } from 'lucide-react';
 import './Sidebar.css';
 
@@ -31,8 +30,13 @@ export default function Sidebar({
     <aside className="sidebar glass-panel">
       <div className="sidebar-header">
         <div className="logo-container">
-          <div className="logo-dot"></div>
-          <span className="logo-text">Prolific<span className="logo-sub">Dash</span></span>
+          <div className="logo-dot" aria-hidden="true">
+            <span></span>
+          </div>
+          <div className="logo-copy">
+            <span className="logo-text">Prolific<span className="logo-sub">Dash</span></span>
+            <span className="logo-kicker">Insights workspace</span>
+          </div>
         </div>
         <div className="badge-csv">
           <span className={`status-dot ${loadedCount > 0 ? 'active' : ''}`}></span>

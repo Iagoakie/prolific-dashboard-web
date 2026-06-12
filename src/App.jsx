@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import KPICards from './components/KPICards';
 import ChartsSection from './components/ChartsSection';
@@ -7,50 +7,13 @@ import SettingsModal from './components/SettingsModal';
 import { parseProlificCSV, calculateDashboardMetrics } from './utils/dataParser';
 import { audioManager } from './utils/audio';
 import html2canvas from 'html2canvas';
-import { CloudUpload, User, Sun, Moon, Sliders, RefreshCw, ChevronRight, Sparkles, DownloadCloud } from 'lucide-react';
+import { CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight } from 'lucide-react';
 import './App.css';
-
-// === FLOATING EMOJIS COMPONENT ===
-const FLOAT_EMOJIS = ['💰', '📊', '🎯', '🚀', '💎', '⭐', '🔥', '💸', '📈', '🏆'];
-
-function FloatingEmojis() {
-  const emojis = useMemo(() => {
-    return Array.from({ length: 12 }).map((_, i) => ({
-      id: i,
-      emoji: FLOAT_EMOJIS[i % FLOAT_EMOJIS.length],
-      left: `${Math.random() * 90 + 5}%`,
-      size: Math.random() * 18 + 16,
-      duration: Math.random() * 15 + 20,
-      delay: Math.random() * 20,
-      drift: Math.random() * 60 - 30
-    }));
-  }, []);
-
-  return (
-    <div className="floating-emojis-container" aria-hidden="true">
-      {emojis.map((e) => (
-        <span
-          key={e.id}
-          className="floating-emoji"
-          style={{
-            left: e.left,
-            fontSize: `${e.size}px`,
-            animationDuration: `${e.duration}s`,
-            animationDelay: `${e.delay}s`,
-            '--drift': `${e.drift}px`
-          }}
-        >
-          {e.emoji}
-        </span>
-      ))}
-    </div>
-  );
-}
+import './premium.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [theme, setTheme] = useState('light');
-  const [rgbActive, setRgbActive] = useState(false);
   const [exchangeRates, setExchangeRates] = useState({ usd: 4.9128, gbp: 6.6638 });
   const [exchangeSource, setExchangeSource] = useState('default'); // 'default', 'api', 'fallback', 'manual'
   const [lastExchangeFetch, setLastExchangeFetch] = useState(null);
@@ -558,15 +521,6 @@ export default function App() {
     };
   }, [islandState]);
 
-  // Alterna o efeito RGB
-  useEffect(() => {
-    if (rgbActive) {
-      document.documentElement.classList.add('rgb-gaming-mode');
-    } else {
-      document.documentElement.classList.remove('rgb-gaming-mode');
-    }
-  }, [rgbActive]);
-
   const handleSaveRates = (newRates, source = 'manual') => {
     setExchangeRates(newRates);
     setExchangeSource(source);
@@ -676,9 +630,6 @@ export default function App() {
         <div className="aurora aurora-3"></div>
       </div>
 
-      {/* Emojis Flutuantes Animados */}
-      <FloatingEmojis />
-
       {/* Confetes de Celebração */}
       {showConfetti && (
         <div className="confetti-container" aria-hidden="true">
@@ -719,6 +670,7 @@ export default function App() {
         {metrics && (
           <header className="main-header animate-fade-in">
             <div className="header-info">
+              <span className="header-eyebrow">Performance workspace</span>
               <h1>{getPageTitle()}</h1>
               <span className="period-label">
                 Período: {metrics.kpis.dataRangeLabel || 'N/A'}
@@ -726,6 +678,7 @@ export default function App() {
             </div>
             <div className="header-actions">
               <span className="last-updated">
+                <span className="live-status-dot"></span>
                 Atualizado às {new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
               </span>
               
@@ -779,29 +732,6 @@ export default function App() {
                           type="button" 
                           className={`segmented-button ${theme === 'dark' ? 'active' : ''}`}
                           onClick={() => { if (theme === 'light') toggleTheme(); }}
-                        >
-                          Sim
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="theme-popover-row" style={{ marginTop: '8px' }}>
-                      <div className="theme-popover-lbl">
-                        <Sparkles size={15} style={{ color: rgbActive ? '#ff007f' : 'var(--text-secondary)' }} />
-                        <span>Modo RGB</span>
-                      </div>
-                      <div className="segmented-control theme-segmented">
-                        <button 
-                          type="button" 
-                          className={`segmented-button ${!rgbActive ? 'active' : ''}`}
-                          onClick={() => setRgbActive(false)}
-                        >
-                          Não
-                        </button>
-                        <button 
-                          type="button" 
-                          className={`segmented-button ${rgbActive ? 'active' : ''}`}
-                          onClick={() => setRgbActive(true)}
                         >
                           Sim
                         </button>

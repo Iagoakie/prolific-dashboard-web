@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DollarSign, CheckCircle, Clock, AlertTriangle, Percent, Calendar, TrendingUp, Info } from 'lucide-react';
 import './KPICards.css';
 
@@ -130,26 +130,33 @@ export default function KPICards({ kpis }) {
             <span className="kpi-card-title">
               {card.title}
             </span>
-            {card.tooltip && (
-              <button 
-                className="kpi-info-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveTooltip(activeTooltip === idx ? null : idx);
-                }}
-                onMouseEnter={() => setActiveTooltip(idx)}
-                onMouseLeave={() => setActiveTooltip(null)}
-                aria-label={`Informações sobre ${card.title}`}
-              >
-                <Info size={14} />
-                {activeTooltip === idx && (
-                  <div className="kpi-tooltip-popover">
-                    <div className="kpi-tooltip-arrow"></div>
-                    {card.tooltip}
-                  </div>
-                )}
-              </button>
-            )}
+            <div className="kpi-card-actions">
+              {card.icon && (
+                <div className={`kpi-card-icon-container ${card.bgClass}`}>
+                  {card.icon}
+                </div>
+              )}
+              {card.tooltip && (
+                <button
+                  className="kpi-info-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTooltip(activeTooltip === idx ? null : idx);
+                  }}
+                  onMouseEnter={() => setActiveTooltip(idx)}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  aria-label={`Informações sobre ${card.title}`}
+                >
+                  <Info size={14} />
+                  {activeTooltip === idx && (
+                    <div className="kpi-tooltip-popover">
+                      <div className="kpi-tooltip-arrow"></div>
+                      {card.tooltip}
+                    </div>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
           <div className="kpi-card-body">
             <span className="kpi-card-value">{card.value}</span>
