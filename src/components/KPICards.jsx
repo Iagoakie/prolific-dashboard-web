@@ -1,53 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { DollarSign, CheckCircle, Clock, AlertTriangle, Percent, Calendar, TrendingUp, Info } from 'lucide-react';
+import { useState } from 'react';
+import { domAnimation, LazyMotion, m } from 'motion/react';
+import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, DollarSign, Info, Percent } from 'lucide-react';
 import './KPICards.css';
-
-// Componente de contagem animada
-function AnimatedValue({ value, prefix = '', suffix = '' }) {
-  const [display, setDisplay] = useState(value);
-  const prevRef = useRef(value);
-  const frameRef = useRef(null);
-
-  useEffect(() => {
-    const from = prevRef.current;
-    const to = value;
-    prevRef.current = value;
-
-    // Se é um número, anima
-    const numFrom = typeof from === 'string' ? parseFloat(from.replace(/[^\d.,-]/g, '').replace(',', '.')) : from;
-    const numTo = typeof to === 'string' ? parseFloat(to.replace(/[^\d.,-]/g, '').replace(',', '.')) : to;
-
-    if (!isNaN(numFrom) && !isNaN(numTo) && numFrom !== numTo) {
-      const duration = 800;
-      const startTime = performance.now();
-
-      const animate = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        // Easing out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = numFrom + (numTo - numFrom) * eased;
-        
-        setDisplay(typeof to === 'string' ? to : current);
-        
-        if (progress < 1) {
-          frameRef.current = requestAnimationFrame(animate);
-        } else {
-          setDisplay(value);
-        }
-      };
-      frameRef.current = requestAnimationFrame(animate);
-    } else {
-      setDisplay(value);
-    }
-
-    return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    };
-  }, [value]);
-
-  return <>{typeof display === 'number' ? `${prefix}${display.toFixed(2)}${suffix}` : value}</>;
-}
 
 export default function KPICards({ kpis }) {
   const formatBRL = (val) => {
@@ -64,24 +18,27 @@ export default function KPICards({ kpis }) {
       title: 'Ganhos Aprovados',
       value: formatBRL(kpis.ganhosAprovadosBRL),
       subtext: `${kpis.totalAprovados} estudos aprovados de ${kpis.totalEstudos} enviados`,
-      icon: <CheckCircle size={22} className="icon-approved" />,
+      icon: <CheckCircle2 size={22} className="icon-approved" />,
       bgClass: 'card-green',
+      label: 'Saldo consolidado',
       tooltip: 'Total acumulado de todos os estudos aprovados pelos pesquisadores, convertido para R$ pela taxa de câmbio configurada. Inclui recompensas e bônus.'
     },
     {
       title: 'Ganhos Hoje',
       value: formatBRL(kpis.ganhosHojeBRL),
       subtext: `USD: $${kpis.ganhosHojeOriginalUSD.toFixed(2)} • GBP: £${kpis.ganhosHojeOriginalGBP.toFixed(2)}`,
-      icon: <Calendar size={22} className="icon-today" />,
+      icon: <CalendarDays size={22} className="icon-today" />,
       bgClass: 'card-blue',
+      label: 'Movimento diário',
       tooltip: 'Quanto você ganhou hoje em estudos já aprovados. Mostra também os valores originais em cada moeda antes da conversão.'
     },
     {
       title: 'Aguardando Revisão',
       value: formatBRL(kpis.valorRepresadoBRL),
       subtext: `${kpis.totalEmReview} ${kpis.totalEmReview === 1 ? 'estudo aguardando' : 'estudos aguardando'} o pesquisador aprovar`,
-      icon: <Clock size={22} className="icon-pending" />,
+      icon: <Clock3 size={22} className="icon-pending" />,
       bgClass: 'card-purple',
+      label: 'Em processamento',
       tooltip: 'Valor de estudos que você completou, mas o pesquisador ainda não aprovou. Isso é normal — geralmente leva até 14 dias. Não é dinheiro bloqueado.'
     },
     {
@@ -90,6 +47,7 @@ export default function KPICards({ kpis }) {
       subtext: `Ganho médio por estudo aprovado (em R$)`,
       icon: <DollarSign size={22} className="icon-average" />,
       bgClass: 'card-orange',
+      label: 'Ticket médio',
       tooltip: 'Quanto você ganha em média por estudo aprovado. Calculado como: total de ganhos aprovados ÷ número de estudos aprovados.'
     },
     {
@@ -98,6 +56,7 @@ export default function KPICards({ kpis }) {
       subtext: `Rejeitados: ${kpis.totalRejeitados} • Retornados: ${kpis.totalRetornados}`,
       icon: <Percent size={22} className="icon-percent" />,
       bgClass: 'card-teal',
+      label: 'Qualidade da conta',
       tooltip: 'Percentual de estudos aprovados em relação ao total enviado (excluindo retornados). Acima de 95% é considerado excelente pelo Prolific.'
     },
     {
@@ -105,6 +64,7 @@ export default function KPICards({ kpis }) {
       value: kpis.projecaoMensalBRL > 0 ? formatBRL(kpis.projecaoMensalBRL) : 'R$ 0,00',
       subtext: `Baseada na média diária de ${formatBRL(kpis.currentMonthEarnings / Math.max(1, new Date().getDate()))}`,
       bgClass: 'card-green',
+      label: 'Forecast mensal',
       tooltip: 'Estimativa de quanto você terá ao fim deste mês. Calculada com sua média diária do mês atual × dias restantes + o que já ganhou.'
     }
   ];
@@ -118,18 +78,23 @@ export default function KPICards({ kpis }) {
   };
 
   return (
-    <div className="kpi-grid animate-fade-in">
-      {cards.map((card, idx) => (
-        <div 
-          key={idx} 
-          className="kpi-card glass-panel spring-click"
+    <LazyMotion features={domAnimation}>
+      <div className="kpi-grid animate-fade-in">
+        {cards.map((card, idx) => (
+          <m.article
+          key={card.title}
+          className={`kpi-card metric-card metric-card-${idx} ${idx === 0 ? 'metric-card-featured' : ''}`}
           onMouseMove={handleMouseMove}
-          style={{ animationDelay: `${idx * 0.06}s` }}
+          initial={{ opacity: 0, y: 14, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, delay: idx * 0.055, ease: [0.22, 1, 0.36, 1] }}
+          whileHover={{ y: idx === 0 ? -4 : -3 }}
         >
           <div className="kpi-card-header">
-            <span className="kpi-card-title">
-              {card.title}
-            </span>
+            <div className="metric-heading">
+              <span className="metric-label">{card.label}</span>
+              <span className="kpi-card-title">{card.title}</span>
+            </div>
             <div className="kpi-card-actions">
               {card.icon && (
                 <div className={`kpi-card-icon-container ${card.bgClass}`}>
@@ -161,9 +126,28 @@ export default function KPICards({ kpis }) {
           <div className="kpi-card-body">
             <span className="kpi-card-value">{card.value}</span>
             <span className="kpi-card-subtext">{card.subtext}</span>
+            {idx === 0 && (
+              <div className="featured-metric-footer">
+                <span className="featured-metric-chip">
+                  <ArrowUpRight size={13} />
+                  {(kpis.taxaAprovacao * 100).toFixed(1)}% de aprovação
+                </span>
+                <svg className="featured-sparkline" viewBox="0 0 180 54" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="featuredSparklineFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="currentColor" stopOpacity="0.26" />
+                      <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path className="featured-sparkline-fill" d="M2 48 C22 45, 24 39, 42 40 S66 31, 82 33 S107 22, 124 24 S146 10, 178 8 L178 54 L2 54 Z" />
+                  <path className="featured-sparkline-line" d="M2 48 C22 45, 24 39, 42 40 S66 31, 82 33 S107 22, 124 24 S146 10, 178 8" />
+                </svg>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
-    </div>
+          </m.article>
+        ))}
+      </div>
+    </LazyMotion>
   );
 }

@@ -216,6 +216,14 @@ export default function Sidebar({
           <List size={20} />
           <span>Estudos ({loadedCount})</span>
         </button>
+
+        <button
+          className="nav-item spring-click mobile-settings-item"
+          onClick={onSettingsOpen}
+        >
+          <Settings size={20} />
+          <span>Ajustes</span>
+        </button>
       </nav>
 
       {/* Gamification / Níveis */}

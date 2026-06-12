@@ -297,10 +297,13 @@ export default function App() {
     setIslandState('expanded');
     playiOSChime(type);
     
-    // Auto-hide e voltar para compacto
+    // Volta ao estado compacto e remove o alerta após a leitura.
     setTimeout(() => {
       setIslandState(prev => prev === 'expanded' ? 'compact' : prev);
     }, 4500);
+    setTimeout(() => {
+      setDynamicIsland(prev => ({ ...prev, show: false }));
+    }, 5200);
   };
 
 
@@ -670,7 +673,7 @@ export default function App() {
         {metrics && (
           <header className="main-header animate-fade-in">
             <div className="header-info">
-              <span className="header-eyebrow">Performance workspace</span>
+              <span className="header-eyebrow">Prolific intelligence / 2026</span>
               <h1>{getPageTitle()}</h1>
               <span className="period-label">
                 Período: {metrics.kpis.dataRangeLabel || 'N/A'}
@@ -900,7 +903,7 @@ export default function App() {
 
       {/* Dynamic Island */}
       <div 
-        className={`dynamic-island-container show type-${dynamicIsland.type}`}
+        className={`dynamic-island-container ${dynamicIsland.show || islandState === 'menu' ? 'show' : ''} type-${dynamicIsland.type}`}
         style={{ cursor: islandState === 'compact' ? 'pointer' : 'default' }}
         onClick={() => {
           if (islandState === 'compact') {

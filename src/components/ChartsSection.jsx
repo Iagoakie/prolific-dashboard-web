@@ -1,27 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell, PieChart, Pie, Legend
+  BarChart, Bar, Cell, Legend
 } from 'recharts';
-import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign, Coins, Target } from 'lucide-react';
+import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign, Target } from 'lucide-react';
 import './ChartsSection.css';
 import './KPICards.css';
 
 // Cores base para os gráficos matching com o CSS
-const COLOR_APPROVED = '#34c759';
-const COLOR_PENDING = '#5856d6';
-const COLOR_RETURNED = '#8e8e93';
-const COLOR_REJECTED = '#ff3b30';
-const COLOR_OTHER = '#ff9500';
-
-const STATUS_COLORS = {
-  'Aprovado': COLOR_APPROVED,
-  'Em review': COLOR_PENDING,
-  'Retornado': COLOR_RETURNED,
-  'Rejeitado': COLOR_REJECTED,
-  'Outro': COLOR_OTHER
-};
-
 // Custom Tooltip estilo Apple (Frosted Glass)
 const CustomTooltip = ({ active, payload, label, prefix = 'R$ ' }) => {
   if (active && payload && payload.length) {
@@ -94,7 +80,7 @@ export default function ChartsSection({
             <span className="chart-subtitle">Progresso em BRL ao longo do tempo</span>
           </div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartsData.acumulado} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAcumulado" x1="0" y1="0" x2="0" y2="1">
@@ -146,12 +132,12 @@ export default function ChartsSection({
               {!chartsData.faturamentoDiaSemana || chartsData.faturamentoDiaSemana.length === 0 ? (
                 <div className="no-data-placeholder">Nenhum faturamento registrado ainda.</div>
               ) : (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#30d158" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#30d158" stopOpacity={0.25}/>
+                        <stop offset="5%" stopColor="#7c5cff" stopOpacity={0.95}/>
+                        <stop offset="95%" stopColor="#7c5cff" stopOpacity={0.28}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
@@ -172,8 +158,8 @@ export default function ChartsSection({
                       dataKey="valor" 
                       name="Faturamento" 
                       fill="url(#colorFaturamentoDia)" 
-                      stroke="#30d158"
-                      strokeWidth={1}
+                      stroke="#7c5cff"
+                      strokeWidth={0}
                       radius={[8, 8, 0, 0]}
                     />
                   </BarChart>
@@ -198,12 +184,12 @@ export default function ChartsSection({
                   {/* Defs de gradiente */}
                   <defs>
                     <linearGradient id="gradientDaily" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#30d158" />
-                      <stop offset="100%" stopColor="#34c759" />
+                      <stop offset="0%" stopColor="#171812" />
+                      <stop offset="100%" stopColor="#303126" />
                     </linearGradient>
                     <linearGradient id="gradientWeekly" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#0a84ff" />
-                      <stop offset="100%" stopColor="#007aff" />
+                      <stop offset="0%" stopColor="#6f4fff" />
+                      <stop offset="100%" stopColor="#8d73ff" />
                     </linearGradient>
                   </defs>
 
@@ -213,7 +199,7 @@ export default function ChartsSection({
                     cy={center}
                     r={r1}
                     fill="none"
-                    stroke="rgba(48, 209, 88, 0.12)"
+                    stroke="rgba(23, 24, 18, 0.12)"
                     strokeWidth={strokeWidth}
                   />
                   {/* Anel Diário (Verde) */}
@@ -237,7 +223,7 @@ export default function ChartsSection({
                     cy={center}
                     r={r2}
                     fill="none"
-                    stroke="rgba(10, 132, 255, 0.12)"
+                    stroke="rgba(111, 79, 255, 0.18)"
                     strokeWidth={strokeWidth}
                   />
                   {/* Anel Semanal (Azul) */}
@@ -257,14 +243,14 @@ export default function ChartsSection({
                 </svg>
 
                 <div className="rings-legend-percentage">
-                  <span className="legend-p-daily" style={{ color: '#30d158' }}>{(dailyProgress * 100).toFixed(0)}%</span>
-                  <span className="legend-p-weekly" style={{ color: '#0a84ff' }}>{(weeklyProgress * 100).toFixed(0)}%</span>
+                  <span className="legend-p-daily" style={{ color: '#171812' }}>{(dailyProgress * 100).toFixed(0)}%</span>
+                  <span className="legend-p-weekly" style={{ color: '#6f4fff' }}>{(weeklyProgress * 100).toFixed(0)}%</span>
                 </div>
               </div>
 
               <div className="rings-text-legend">
                 <div className="ring-legend-item">
-                  <span className="ring-marker-bullet" style={{ backgroundColor: '#30d158' }}></span>
+                  <span className="ring-marker-bullet" style={{ backgroundColor: '#171812' }}></span>
                   <div className="ring-item-data">
                     <span className="ring-item-title">Hoje</span>
                     <span className="ring-item-vals">
@@ -275,7 +261,7 @@ export default function ChartsSection({
                 </div>
 
                 <div className="ring-legend-item">
-                  <span className="ring-marker-bullet" style={{ backgroundColor: '#0a84ff' }}></span>
+                  <span className="ring-marker-bullet" style={{ backgroundColor: '#6f4fff' }}></span>
                   <div className="ring-item-data">
                     <span className="ring-item-title">Semana</span>
                     <span className="ring-item-vals">
