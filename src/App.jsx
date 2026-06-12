@@ -7,7 +7,7 @@ import SettingsModal from './components/SettingsModal';
 import { parseProlificCSV, calculateDashboardMetrics } from './utils/dataParser';
 import { audioManager } from './utils/audio';
 import html2canvas from 'html2canvas';
-import { CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight } from 'lucide-react';
+import { Bell, CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight, Zap } from 'lucide-react';
 import './App.css';
 import './premium.css';
 
@@ -673,26 +673,49 @@ export default function App() {
         {metrics && (
           <header className="main-header animate-fade-in">
             <div className="header-info">
-              <span className="header-eyebrow">Prolific intelligence / 2026</span>
               <h1>{getPageTitle()}</h1>
               <span className="period-label">
                 Período: {metrics.kpis.dataRangeLabel || 'N/A'}
               </span>
             </div>
+
+            <button
+              type="button"
+              className="exchange-status-pill"
+              onClick={fetchRealTimeRates}
+              title="Atualizar cotação"
+            >
+              <span className="exchange-status-icon"><Zap size={17} fill="currentColor" /></span>
+              <span className="exchange-status-copy">
+                <strong>Câmbio Sincronizado</strong>
+                <small>Dólar: R$ {exchangeRates.usd.toFixed(2)} | Libra: R$ {exchangeRates.gbp.toFixed(2)}</small>
+              </span>
+            </button>
+
             <div className="header-actions">
               <span className="last-updated">
-                <span className="live-status-dot"></span>
                 Atualizado às {new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
               </span>
-              
-              {/* Contêiner do Popover de Perfil */}
+
+              <button
+                type="button"
+                className="header-icon-button spring-click"
+                onClick={fetchRealTimeRates}
+                title="Atualizar dados"
+                aria-label="Atualizar dados"
+              >
+                <RefreshCw size={18} />
+              </button>
+
               <div className="avatar-popover-container">
                 <button 
-                  className="user-profile-avatar spring-click" 
+                  className="header-icon-button notification-button spring-click"
                   onClick={() => setShowProfilePopover(!showProfilePopover)}
-                  title="Menu de Perfil e Ajustes"
+                  title="Notificações e perfil"
+                  aria-label="Notificações e perfil"
                 >
-                  I
+                  <Bell size={18} />
+                  <span className="notification-dot"></span>
                 </button>
                 
                 {showProfilePopover && (

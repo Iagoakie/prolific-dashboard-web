@@ -15,7 +15,7 @@ export default function KPICards({ kpis }) {
 
   const cards = [
     {
-      title: 'Ganhos Aprovados',
+      title: 'Ganhos aprovados',
       value: formatBRL(kpis.ganhosAprovadosBRL),
       subtext: `${kpis.totalAprovados} estudos aprovados de ${kpis.totalEstudos} enviados`,
       icon: <CheckCircle2 size={22} className="icon-approved" />,
@@ -24,7 +24,7 @@ export default function KPICards({ kpis }) {
       tooltip: 'Total acumulado de todos os estudos aprovados pelos pesquisadores, convertido para R$ pela taxa de câmbio configurada. Inclui recompensas e bônus.'
     },
     {
-      title: 'Ganhos Hoje',
+      title: 'Ganhos hoje',
       value: formatBRL(kpis.ganhosHojeBRL),
       subtext: `USD: $${kpis.ganhosHojeOriginalUSD.toFixed(2)} • GBP: £${kpis.ganhosHojeOriginalGBP.toFixed(2)}`,
       icon: <CalendarDays size={22} className="icon-today" />,
@@ -33,7 +33,7 @@ export default function KPICards({ kpis }) {
       tooltip: 'Quanto você ganhou hoje em estudos já aprovados. Mostra também os valores originais em cada moeda antes da conversão.'
     },
     {
-      title: 'Aguardando Revisão',
+      title: 'Aguardando revisão',
       value: formatBRL(kpis.valorRepresadoBRL),
       subtext: `${kpis.totalEmReview} ${kpis.totalEmReview === 1 ? 'estudo aguardando' : 'estudos aguardando'} o pesquisador aprovar`,
       icon: <Clock3 size={22} className="icon-pending" />,
@@ -42,7 +42,7 @@ export default function KPICards({ kpis }) {
       tooltip: 'Valor de estudos que você completou, mas o pesquisador ainda não aprovou. Isso é normal — geralmente leva até 14 dias. Não é dinheiro bloqueado.'
     },
     {
-      title: 'Média por Estudo',
+      title: 'Média por estudo',
       value: formatBRL(kpis.mediaPorEstudoBRL),
       subtext: `Ganho médio por estudo aprovado (em R$)`,
       icon: <DollarSign size={22} className="icon-average" />,
@@ -51,7 +51,7 @@ export default function KPICards({ kpis }) {
       tooltip: 'Quanto você ganha em média por estudo aprovado. Calculado como: total de ganhos aprovados ÷ número de estudos aprovados.'
     },
     {
-      title: 'Taxa de Aprovação',
+      title: 'Taxa de aprovação',
       value: `${(kpis.taxaAprovacao * 100).toFixed(1)}%`,
       subtext: `Rejeitados: ${kpis.totalRejeitados} • Retornados: ${kpis.totalRetornados}`,
       icon: <Percent size={22} className="icon-percent" />,
@@ -60,7 +60,7 @@ export default function KPICards({ kpis }) {
       tooltip: 'Percentual de estudos aprovados em relação ao total enviado (excluindo retornados). Acima de 95% é considerado excelente pelo Prolific.'
     },
     {
-      title: 'Projeção (Fim do Mês)',
+      title: 'Projeção (fim do mês)',
       value: kpis.projecaoMensalBRL > 0 ? formatBRL(kpis.projecaoMensalBRL) : 'R$ 0,00',
       subtext: `Baseada na média diária de ${formatBRL(kpis.currentMonthEarnings / Math.max(1, new Date().getDate()))}`,
       bgClass: 'card-green',

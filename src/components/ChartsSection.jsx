@@ -3,7 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell, Legend
 } from 'recharts';
-import { TrendingUp, Clock, Calendar, CheckCircle, DollarSign, Target } from 'lucide-react';
+import { TrendingUp, Clock, Calendar, CheckCircle, ChevronDown, DollarSign, Target } from 'lucide-react';
 import './ChartsSection.css';
 import './KPICards.css';
 
@@ -54,6 +54,7 @@ export default function ChartsSection({
   if (activeTab === 'overview') {
     const dailyProgress = Math.min(1.5, Math.max(0, (kpis.ganhosHojeBRL || 0) / (dailyGoal || 25)));
     const weeklyProgress = Math.min(1.5, Math.max(0, (kpis.ganhosSemanaBRL || 0) / (weeklyGoal || 150)));
+    const overallProgress = Math.round(((Math.min(1, dailyProgress) + Math.min(1, weeklyProgress)) / 2) * 100);
 
     // Anéis SVG
     const ringsSize = 150;
@@ -75,9 +76,10 @@ export default function ChartsSection({
           <div className="chart-header">
             <div className="chart-header-left">
               <TrendingUp size={18} className="chart-title-icon" />
-              <h3>Curva de Ganhos (Acumulado)</h3>
+              <h3>Curva de ganhos (acumulado)</h3>
             </div>
             <span className="chart-subtitle">Progresso em BRL ao longo do tempo</span>
+            <button type="button" className="chart-filter">BRL <ChevronDown size={13} /></button>
           </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height="100%">
@@ -107,6 +109,7 @@ export default function ChartsSection({
                   type="monotone" 
                   dataKey="ganhoAcumulado" 
                   name="Total Acumulado"
+                  isAnimationActive={false}
                   stroke="var(--accent-color)" 
                   strokeWidth={3} 
                   fillOpacity={1} 
@@ -124,9 +127,10 @@ export default function ChartsSection({
             <div className="chart-header">
               <div className="chart-header-left">
                 <Calendar size={18} className="chart-title-icon" />
-                <h3>Faturamento por Dia da Semana</h3>
+                <h3>Faturamento por dia da semana</h3>
               </div>
               <span className="chart-subtitle">Ganhos acumulados em BRL para cada dia da semana</span>
+              <button type="button" className="chart-filter">Por dia da semana <ChevronDown size={13} /></button>
             </div>
             <div className="chart-container">
               {!chartsData.faturamentoDiaSemana || chartsData.faturamentoDiaSemana.length === 0 ? (
@@ -136,8 +140,8 @@ export default function ChartsSection({
                   <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#7c5cff" stopOpacity={0.95}/>
-                        <stop offset="95%" stopColor="#7c5cff" stopOpacity={0.28}/>
+                        <stop offset="5%" stopColor="#2f6bff" stopOpacity={1}/>
+                        <stop offset="95%" stopColor="#5c8dff" stopOpacity={0.82}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
@@ -157,8 +161,9 @@ export default function ChartsSection({
                     <Bar 
                       dataKey="valor" 
                       name="Faturamento" 
+                      isAnimationActive={false}
                       fill="url(#colorFaturamentoDia)" 
-                      stroke="#7c5cff"
+                      stroke="#2f6bff"
                       strokeWidth={0}
                       radius={[8, 8, 0, 0]}
                     />
@@ -173,9 +178,10 @@ export default function ChartsSection({
             <div className="chart-header">
               <div className="chart-header-left">
                 <Target size={18} className="chart-title-icon" />
-                <h3>Metas de Atividade</h3>
+                <h3>Metas de atividade</h3>
               </div>
               <span className="chart-subtitle">Progresso em tempo real das suas metas</span>
+              <button type="button" className="chart-filter">Esta semana <ChevronDown size={13} /></button>
             </div>
 
             <div className="pacing-rings-content">
@@ -184,12 +190,12 @@ export default function ChartsSection({
                   {/* Defs de gradiente */}
                   <defs>
                     <linearGradient id="gradientDaily" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#171812" />
-                      <stop offset="100%" stopColor="#303126" />
+                      <stop offset="0%" stopColor="#315bff" />
+                      <stop offset="100%" stopColor="#5d88ff" />
                     </linearGradient>
                     <linearGradient id="gradientWeekly" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#6f4fff" />
-                      <stop offset="100%" stopColor="#8d73ff" />
+                      <stop offset="0%" stopColor="#8d70ff" />
+                      <stop offset="100%" stopColor="#b7a6ff" />
                     </linearGradient>
                   </defs>
 
@@ -199,7 +205,7 @@ export default function ChartsSection({
                     cy={center}
                     r={r1}
                     fill="none"
-                    stroke="rgba(23, 24, 18, 0.12)"
+                    stroke="rgba(49, 91, 255, 0.14)"
                     strokeWidth={strokeWidth}
                   />
                   {/* Anel Diário (Verde) */}
@@ -223,7 +229,7 @@ export default function ChartsSection({
                     cy={center}
                     r={r2}
                     fill="none"
-                    stroke="rgba(111, 79, 255, 0.18)"
+                    stroke="rgba(141, 112, 255, 0.16)"
                     strokeWidth={strokeWidth}
                   />
                   {/* Anel Semanal (Azul) */}
@@ -243,14 +249,14 @@ export default function ChartsSection({
                 </svg>
 
                 <div className="rings-legend-percentage">
-                  <span className="legend-p-daily" style={{ color: '#171812' }}>{(dailyProgress * 100).toFixed(0)}%</span>
-                  <span className="legend-p-weekly" style={{ color: '#6f4fff' }}>{(weeklyProgress * 100).toFixed(0)}%</span>
+                  <span className="legend-p-daily">{overallProgress}%</span>
+                  <span className="legend-p-weekly">de 2 metas</span>
                 </div>
               </div>
 
               <div className="rings-text-legend">
                 <div className="ring-legend-item">
-                  <span className="ring-marker-bullet" style={{ backgroundColor: '#171812' }}></span>
+                  <span className="ring-marker-bullet" style={{ backgroundColor: '#315bff' }}></span>
                   <div className="ring-item-data">
                     <span className="ring-item-title">Hoje</span>
                     <span className="ring-item-vals">
@@ -261,7 +267,7 @@ export default function ChartsSection({
                 </div>
 
                 <div className="ring-legend-item">
-                  <span className="ring-marker-bullet" style={{ backgroundColor: '#6f4fff' }}></span>
+                  <span className="ring-marker-bullet" style={{ backgroundColor: '#8d70ff' }}></span>
                   <div className="ring-item-data">
                     <span className="ring-item-title">Semana</span>
                     <span className="ring-item-vals">

@@ -1,5 +1,8 @@
 import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap, UploadCloud } from 'lucide-react';
+import { fallbackProlificAccount } from '../data/dashboard';
 import './Sidebar.css';
+
+const PAGE_LOADED_AT = Date.now();
 
 export default function Sidebar({ 
   activeTab, 
@@ -25,6 +28,7 @@ export default function Sidebar({
   const streak = kpis?.streak || 0;
   const ganhosHoje = kpis?.ganhosHojeBRL || 0;
   const gamification = kpis?.gamification || null;
+  const displayAccount = prolificAccount || fallbackProlificAccount;
 
   return (
     <aside className="sidebar glass-panel">
@@ -45,22 +49,22 @@ export default function Sidebar({
       </div>
 
       {/* Saúde da Conta Prolific */}
-      {prolificAccount ? (
+      {displayAccount ? (
         <div className="sidebar-account-health">
           {/* Domain Expert Badge */}
-          {prolificAccount.isSpecialised && (
+          {displayAccount.isSpecialised && (
             <div className="account-health-badge expert" data-tooltip="Você foi qualificado como especialista em um domínio específico. Isso dá acesso a estudos exclusivos com remuneração geralmente superior.">
               <span className="health-badge-icon">⭐</span>
               <span className="health-badge-text">Domain Expert</span>
             </div>
           )}
           {/* Smart Frozen Logic */}
-          {prolificAccount.frozen && prolificAccount.status === 'OK' && !prolificAccount.banned ? (
+          {displayAccount.frozen && displayAccount.status === 'OK' && !displayAccount.banned ? (
             <div className="account-health-badge idle" data-tooltip="Não há estudos disponíveis para o seu perfil agora. Isso é normal e muda ao longo do dia conforme pesquisadores publicam novos estudos.">
               <span className="health-badge-icon">⏸️</span>
               <span className="health-badge-text">Sem estudos no momento</span>
             </div>
-          ) : prolificAccount.frozen ? (
+          ) : displayAccount.frozen ? (
             <div className="account-health-badge frozen" data-tooltip="O Prolific pausou a distribuição de novos estudos para você. Verifique se há pendências ou restrições na sua conta.">
               <span className="health-badge-icon">❄️</span>
               <span className="health-badge-text">Distribuição Congelada</span>
@@ -71,7 +75,7 @@ export default function Sidebar({
               <span className="health-badge-text">Distribuição Ativa</span>
             </div>
           )}
-          {prolificAccount.banned && (
+          {displayAccount.banned && (
             <div className="account-health-badge banned" data-tooltip="Sua conta foi banida pelo Prolific. Entre em contato com o suporte para mais informações.">
               <span className="health-badge-icon">🚫</span>
               <span className="health-badge-text">Conta Banida</span>
@@ -83,14 +87,14 @@ export default function Sidebar({
             <div className="health-detail-row" data-tooltip="Valor já aprovado pelos pesquisadores e creditado na sua conta Prolific, pronto para saque.">
               <span className="health-detail-icon">💰</span>
               <div className="health-detail-info">
-                <span className="health-detail-value">£{(prolificAccount.balance / 100).toFixed(2)}</span>
+                <span className="health-detail-value">£{(displayAccount.balance / 100).toFixed(2)}</span>
                 <span className="health-detail-label">Saldo Aprovado</span>
               </div>
             </div>
             <div className="health-detail-row" data-tooltip="Valor de estudos concluídos aguardando aprovação do pesquisador. Geralmente é aprovado em até 14 dias úteis.">
               <span className="health-detail-icon">⏳</span>
               <div className="health-detail-info">
-                <span className="health-detail-value">£{(prolificAccount.pendingBalance / 100).toFixed(2)}</span>
+                <span className="health-detail-value">£{(displayAccount.pendingBalance / 100).toFixed(2)}</span>
                 <span className="health-detail-label">Aguardando Aprovação</span>
               </div>
             </div>
@@ -98,11 +102,11 @@ export default function Sidebar({
 
           {/* Barra de Progresso de Saque */}
           {(() => {
-            const balancePounds = prolificAccount.balance / 100;
-            const minWithdraw = (prolificAccount.minWithdraw || 500) / 100;
+            const balancePounds = displayAccount.balance / 100;
+            const minWithdraw = (displayAccount.minWithdraw || 500) / 100;
             const progress = Math.min(100, (balancePounds / minWithdraw) * 100);
             const reachedMinimum = balancePounds >= minWithdraw;
-            const isCashedOutToday = prolificAccount.canInstantCashoutEnabled === false;
+            const isCashedOutToday = displayAccount.canInstantCashoutEnabled === false;
             return (
               <div className="cashout-progress-section">
                 <div className="cashout-progress-header">
@@ -138,11 +142,13 @@ export default function Sidebar({
           })()}
 
           {/* Timestamp */}
-          {prolificAccount.lastUpdated && (
+          {displayAccount.isMock ? (
+            <div className="health-last-updated">Atualizado há 1d</div>
+          ) : displayAccount.lastUpdated && (
             <div className="health-last-updated">
               Atualizado {(() => {
                 try {
-                  const diff = Date.now() - new Date(prolificAccount.lastUpdated).getTime();
+                  const diff = PAGE_LOADED_AT - new Date(displayAccount.lastUpdated).getTime();
                   const mins = Math.floor(diff / 60000);
                   if (mins < 1) return 'agora';
                   if (mins < 60) return `há ${mins} min`;
