@@ -1,4 +1,4 @@
-import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap, UploadCloud } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap, UploadCloud, ChevronDown } from 'lucide-react';
 import { fallbackProlificAccount } from '../data/dashboard';
 import './Sidebar.css';
 
@@ -44,7 +44,8 @@ export default function Sidebar({
         </div>
         <div className="badge-csv">
           <span className={`status-dot ${loadedCount > 0 ? 'active' : ''}`}></span>
-          {csvSource === 'uploaded' ? 'CSV Importado' : 'CSV Padrão'}
+          <span>{csvSource === 'uploaded' ? 'CSV Importado' : 'CSV Padrão'}</span>
+          <ChevronDown size={11} className="csv-chevron" />
         </div>
       </div>
 
@@ -92,7 +93,7 @@ export default function Sidebar({
               </div>
             </div>
             <div className="health-detail-row" data-tooltip="Valor de estudos concluídos aguardando aprovação do pesquisador. Geralmente é aprovado em até 14 dias úteis.">
-              <span className="health-detail-icon">⏳</span>
+              <span className="health-detail-icon">🏆</span>
               <div className="health-detail-info">
                 <span className="health-detail-value">£{(displayAccount.pendingBalance / 100).toFixed(2)}</span>
                 <span className="health-detail-label">Aguardando Aprovação</span>
@@ -119,46 +120,48 @@ export default function Sidebar({
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
-                {reachedMinimum ? (
-                  isCashedOutToday ? (
-                    <div className="cashout-status cooldown" data-tooltip="Você atingiu o saldo mínimo, mas já fez um saque nas últimas 24 horas. O Prolific limita os saques instantâneos a uma vez por dia (reinicia à meia-noite UTC).">
-                      <span>⏸️</span>
-                      <span>Limite de 24h</span>
-                    </div>
+                <div className="cashout-footer-row">
+                  {reachedMinimum ? (
+                    isCashedOutToday ? (
+                      <div className="cashout-status cooldown" data-tooltip="Você atingiu o saldo mínimo, mas já fez um saque nas últimas 24 horas. O Prolific limita os saques instantâneos a uma vez por dia (reinicia à meia-noite UTC).">
+                        <span>⏸️</span>
+                        <span>Limite de 24h</span>
+                      </div>
+                    ) : (
+                      <div className="cashout-status ready" data-tooltip="Seu saldo atingiu o valor mínimo e você pode solicitar o saque instantâneo no site do Prolific.">
+                        <span>✅</span>
+                        <span>Saque Disponível</span>
+                      </div>
+                    )
                   ) : (
-                    <div className="cashout-status ready" data-tooltip="Seu saldo atingiu o valor mínimo e você pode solicitar o saque instantâneo no site do Prolific.">
-                      <span>✅</span>
-                      <span>Saque Disponível</span>
+                    <div className="cashout-status pending" data-tooltip={`O mínimo para solicitar saque no Prolific é £${minWithdraw.toFixed(2)}. Continue completando estudos para atingir esse valor.`}>
+                      <span>⏳</span>
+                      <span>Faltam £{(minWithdraw - balancePounds).toFixed(2)} para sacar</span>
                     </div>
-                  )
-                ) : (
-                  <div className="cashout-status pending" data-tooltip={`O mínimo para solicitar saque no Prolific é £${minWithdraw.toFixed(2)}. Continue completando estudos para atingir esse valor.`}>
-                    <span>⏳</span>
-                    <span>Faltam £{(minWithdraw - balancePounds).toFixed(2)} para sacar</span>
-                  </div>
-                )}
+                  )}
+
+                  {/* Timestamp */}
+                  {displayAccount.isMock ? (
+                    <div className="health-last-updated">Atualizado há 1d</div>
+                  ) : displayAccount.lastUpdated && (
+                    <div className="health-last-updated">
+                      Atualizado {(() => {
+                        try {
+                          const diff = PAGE_LOADED_AT - new Date(displayAccount.lastUpdated).getTime();
+                          const mins = Math.floor(diff / 60000);
+                          if (mins < 1) return 'agora';
+                          if (mins < 60) return `há ${mins} min`;
+                          const hours = Math.floor(mins / 60);
+                          if (hours < 24) return `há ${hours}h`;
+                          return `há ${Math.floor(hours / 24)}d`;
+                        } catch { return ''; }
+                      })()}
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })()}
-
-          {/* Timestamp */}
-          {displayAccount.isMock ? (
-            <div className="health-last-updated">Atualizado há 1d</div>
-          ) : displayAccount.lastUpdated && (
-            <div className="health-last-updated">
-              Atualizado {(() => {
-                try {
-                  const diff = PAGE_LOADED_AT - new Date(displayAccount.lastUpdated).getTime();
-                  const mins = Math.floor(diff / 60000);
-                  if (mins < 1) return 'agora';
-                  if (mins < 60) return `há ${mins} min`;
-                  const hours = Math.floor(mins / 60);
-                  if (hours < 24) return `há ${hours}h`;
-                  return `há ${Math.floor(hours / 24)}d`;
-                } catch { return ''; }
-              })()}
-            </div>
-          )}
         </div>
       ) : (
         <div className="sidebar-account-health">
@@ -169,25 +172,30 @@ export default function Sidebar({
         </div>
       )}
 
+      <div className="sidebar-divider" />
+
       {/* Quick Stats Section */}
       {kpis && (
-        <div className="sidebar-quick-stats-row">
-          <div className="quick-stat-col" data-tooltip="Sua sequência de dias ativos fazendo estudos no Prolific.">
-            <span className="quick-stat-icon fire-icon">🔥</span>
-            <div className="quick-stat-info">
-              <span className="quick-stat-value">{streak} {streak === 1 ? 'dia' : 'dias'}</span>
-              <span className="quick-stat-label">Streak</span>
+        <>
+          <div className="sidebar-quick-stats-row">
+            <div className="quick-stat-col" data-tooltip="Sua sequência de dias ativos fazendo estudos no Prolific.">
+              <span className="quick-stat-icon fire-icon">🔥</span>
+              <div className="quick-stat-info">
+                <span className="quick-stat-value">{streak} {streak === 1 ? 'dia' : 'dias'}</span>
+                <span className="quick-stat-label">Streak</span>
+              </div>
+            </div>
+            <div className="quick-stat-divider"></div>
+            <div className="quick-stat-col" data-tooltip="Total de ganhos acumulados em estudos aprovados hoje.">
+              <span className="quick-stat-icon">📅</span>
+              <div className="quick-stat-info">
+                <span className="quick-stat-value">{formatBRL(ganhosHoje)}</span>
+                <span className="quick-stat-label">Hoje</span>
+              </div>
             </div>
           </div>
-          <div className="quick-stat-divider"></div>
-          <div className="quick-stat-col" data-tooltip="Total de ganhos acumulados em estudos aprovados hoje.">
-            <span className="quick-stat-icon">💰</span>
-            <div className="quick-stat-info">
-              <span className="quick-stat-value">{formatBRL(ganhosHoje)}</span>
-              <span className="quick-stat-label">Hoje</span>
-            </div>
-          </div>
-        </div>
+          <div className="sidebar-divider" />
+        </>
       )}
 
       <nav className="sidebar-nav">
@@ -251,6 +259,8 @@ export default function Sidebar({
         </div>
       )}
 
+      <div className="sidebar-divider" />
+
       <div className="sidebar-footer">
         <label className="upload-btn nav-item spring-click">
           <UploadCloud size={20} />
@@ -273,7 +283,9 @@ export default function Sidebar({
           <span>Ajustes</span>
         </button>
 
-        <button className="nav-item spring-click" onClick={onExport} style={{ color: 'var(--accent-color)' }}>
+        <div className="sidebar-divider" style={{ margin: '4px 0' }} />
+
+        <button className="nav-item spring-click export-btn" onClick={onExport}>
           <UploadCloud size={20} style={{ transform: 'rotate(180deg)' }} />
           <span>Exportar Resumo</span>
         </button>
