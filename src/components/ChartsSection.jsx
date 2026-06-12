@@ -15,7 +15,7 @@ const CustomTooltip = ({ active, payload, label, prefix = 'R$ ' }) => {
       <div className="custom-tooltip glass-panel">
         <p className="tooltip-label">{label}</p>
         {payload.map((item, index) => (
-          <p key={index} className="tooltip-value" style={{ color: item.color || '#007aff' }}>
+          <p key={index} className="tooltip-value" style={{ color: item.color || '#038c8c' }}>
             {item.name}: {prefix}{typeof item.value === 'number' ? item.value.toFixed(2) : item.value}
           </p>
         ))}
@@ -81,24 +81,24 @@ export default function ChartsSection({
               <AreaChart data={chartsData.acumulado} margin={{ top: 12, right: 8, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#16c784" stopOpacity={0.28}/>
-                    <stop offset="95%" stopColor="#16c784" stopOpacity={0.02}/>
+                    <stop offset="5%" stopColor="#12c7bd" stopOpacity={0.28}/>
+                    <stop offset="95%" stopColor="#12c7bd" stopOpacity={0.02}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#e8edf5" />
+                <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#dfeceb" />
                 <XAxis 
                   dataKey="formattedDate" 
                   axisLine={false} 
                   tickLine={false} 
                   minTickGap={50}
-                  tick={{ fill: '#64748b', fontSize: 10 }}
+                  tick={{ fill: '#6b7f82', fontSize: 10 }}
                   dy={8}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
                   tickFormatter={(val) => `R$ ${val}`} 
-                  tick={{ fill: '#64748b', fontSize: 10 }}
+                  tick={{ fill: '#6b7f82', fontSize: 10 }}
                   width={44}
                 />
                 <Tooltip content={<CustomTooltip />} />
@@ -107,7 +107,7 @@ export default function ChartsSection({
                   dataKey="ganhoAcumulado" 
                   name="Total Acumulado"
                   isAnimationActive={false}
-                  stroke="#16c784" 
+                  stroke="#038c8c"
                   strokeWidth={2.5} 
                   fillOpacity={1} 
                   fill="url(#earningsGradient)" 
@@ -137,22 +137,22 @@ export default function ChartsSection({
                   <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#2563eb" stopOpacity={1}/>
-                        <stop offset="95%" stopColor="#7aa7ff" stopOpacity={0.85}/>
+                        <stop offset="5%" stopColor="#038c8c" stopOpacity={1}/>
+                        <stop offset="95%" stopColor="#8ee7df" stopOpacity={0.9}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#e8edf5" />
+                    <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#dfeceb" />
                     <XAxis 
                       dataKey="name" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: '#64748b', fontSize: 10 }}
+                      tick={{ fill: '#6b7f82', fontSize: 10 }}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
                       tickFormatter={(val) => `R$ ${val}`} 
-                      tick={{ fill: '#64748b', fontSize: 10 }}
+                      tick={{ fill: '#6b7f82', fontSize: 10 }}
                     />
                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                     <Bar 
@@ -160,7 +160,7 @@ export default function ChartsSection({
                       name="Faturamento" 
                       isAnimationActive={false}
                       fill="url(#colorFaturamentoDia)" 
-                      stroke="#2563eb"
+                      stroke="#038c8c"
                       strokeWidth={0}
                       radius={[4, 4, 0, 0]}
                     />
@@ -187,8 +187,9 @@ export default function ChartsSection({
                   {/* Defs de gradiente */}
                   <defs>
                     <linearGradient id="gradientOverall" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#2563eb" />
-                      <stop offset="100%" stopColor="#8b5cf6" />
+                      <stop offset="0%" stopColor="#038c8c" />
+                      <stop offset="68%" stopColor="#12c7bd" />
+                      <stop offset="100%" stopColor="#f2cbbd" />
                     </linearGradient>
                   </defs>
 
@@ -198,7 +199,7 @@ export default function ChartsSection({
                     cy={center}
                     r={r}
                     fill="none"
-                    stroke="#e8edff"
+                    stroke="#d9f4f1"
                     strokeWidth={strokeWidth}
                   />
                   {/* Anel de Progresso */}
@@ -226,7 +227,7 @@ export default function ChartsSection({
               <div className="rings-text-legend">
                 <div className="ring-legend-item">
                   <div className="ring-legend-item-left">
-                    <span className="ring-marker-bullet" style={{ backgroundColor: '#2563eb' }}></span>
+                    <span className="ring-marker-bullet" style={{ backgroundColor: '#038c8c' }}></span>
                     <span className="ring-item-title">Hoje</span>
                   </div>
                   <span className="ring-item-vals">
@@ -237,7 +238,7 @@ export default function ChartsSection({
 
                 <div className="ring-legend-item">
                   <div className="ring-legend-item-left">
-                    <span className="ring-marker-bullet" style={{ backgroundColor: '#8b5cf6' }}></span>
+                    <span className="ring-marker-bullet" style={{ backgroundColor: '#f2cbbd' }}></span>
                     <span className="ring-item-title">Semana</span>
                   </div>
                   <span className="ring-item-vals">

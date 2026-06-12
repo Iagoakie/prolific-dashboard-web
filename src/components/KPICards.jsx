@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { domAnimation, LazyMotion, m } from 'motion/react';
-import { ArrowUpRight, Calendar, Clock, TrendingUp, ShieldCheck, Target, Info, Wallet } from 'lucide-react';
+import { Calendar, Clock, TrendingUp, ShieldCheck, Target, Info, Wallet } from 'lucide-react';
 import './KPICards.css';
 
 export default function KPICards({ kpis }) {
@@ -89,7 +89,7 @@ export default function KPICards({ kpis }) {
           initial={{ opacity: 0, y: 14, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, delay: idx * 0.055, ease: [0.22, 1, 0.36, 1] }}
-          whileHover={{ y: idx === 0 ? -4 : -3 }}
+          whileHover={{ y: -1 }}
         >
           <div className="kpi-card-header">
             <div className="metric-heading">
@@ -129,10 +129,6 @@ export default function KPICards({ kpis }) {
             <span className="kpi-card-subtext">{card.subtext}</span>
             {idx === 0 && (
               <div className="featured-metric-footer">
-                <span className="featured-metric-chip">
-                  <ArrowUpRight size={13} />
-                  {(kpis.taxaAprovacao * 100).toFixed(1)}% de aprovação
-                </span>
                 <svg className="featured-sparkline" viewBox="0 0 180 54" aria-hidden="true">
                   <defs>
                     <linearGradient id="featuredSparklineFill" x1="0" y1="0" x2="0" y2="1">

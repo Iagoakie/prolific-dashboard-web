@@ -205,14 +205,6 @@ export default function App() {
   const [weeklyGoal, setWeeklyGoal] = useState(150); // Meta semanal em BRL
 
   // Estado da Dynamic Island
-  const [islandState, setIslandState] = useState('compact'); // 'compact', 'expanded', 'menu'
-  const [dynamicIsland, setDynamicIsland] = useState({
-    show: false,
-    title: '',
-    message: '',
-    type: 'success' // 'success', 'rate', 'goal'
-  });
-
   // Som Sintetizado via Web Audio API (iOS Chime)
   const playiOSChime = (type = 'success') => {
     try {
@@ -289,18 +281,8 @@ export default function App() {
   };
 
   // Dispara Dynamic Island Alert
-  const triggerNotification = (title, message, type = 'success') => {
-    setDynamicIsland({ show: true, title, message, type });
-    setIslandState('expanded');
-    playiOSChime(type);
-    
-    // Volta ao estado compacto e remove o alerta após a leitura.
-    setTimeout(() => {
-      setIslandState(prev => prev === 'expanded' ? 'compact' : prev);
-    }, 4500);
-    setTimeout(() => {
-      setDynamicIsland(prev => ({ ...prev, show: false }));
-    }, 5200);
+  const triggerNotification = (...notification) => {
+    playiOSChime(notification[2] || 'success');
   };
 
 
@@ -507,19 +489,6 @@ export default function App() {
       window.removeEventListener('click', handleClickOutside);
     };
   }, [showProfilePopover]);
-
-  // Fecha o menu da Dynamic Island ao clicar fora
-  useEffect(() => {
-    const handleClickOutsideIsland = (e) => {
-      if (islandState === 'menu' && !e.target.closest('.dynamic-island-container')) {
-        setIslandState('compact');
-      }
-    };
-    window.addEventListener('click', handleClickOutsideIsland);
-    return () => {
-      window.removeEventListener('click', handleClickOutsideIsland);
-    };
-  }, [islandState]);
 
   const handleSaveRates = (newRates, source = 'manual') => {
     setExchangeRates(newRates);
@@ -890,80 +859,6 @@ export default function App() {
           onSyncProlific={handleSyncProlific}
         />
       )}
-
-      {/* Dynamic Island */}
-      <div 
-        className={`dynamic-island-container ${dynamicIsland.show || islandState === 'menu' ? 'show' : ''} type-${dynamicIsland.type}`}
-        style={{ cursor: islandState === 'compact' ? 'pointer' : 'default' }}
-        onClick={() => {
-          if (islandState === 'compact') {
-            setIslandState('menu');
-          }
-        }}
-      >
-        <div className={`dynamic-island-bubble state-${islandState}`}>
-          {islandState === 'compact' && (
-            <div className="island-compact-content animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="island-dot pulse-green" style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#30d158', display: 'inline-block' }}></span>
-              <span className="island-compact-text" style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.2px', textTransform: 'uppercase' }}>Prolific Live</span>
-            </div>
-          )}
-
-          {islandState === 'expanded' && (
-            <div className="island-expanded-content animate-fade-in" style={{ display: 'flex', alignItems: 'center' }}>
-              <div className="dynamic-island-icon">
-                {dynamicIsland.type === 'goal' ? '🎉' : dynamicIsland.type === 'rate' ? '⚡' : '💰'}
-              </div>
-              <div className="dynamic-island-info">
-                <span className="dynamic-island-title">{dynamicIsland.title}</span>
-                <span className="dynamic-island-message">{dynamicIsland.message}</span>
-              </div>
-            </div>
-          )}
-
-          {islandState === 'menu' && (
-            <div className="island-menu-content animate-fade-in" style={{ width: '100%' }}>
-              <div className="island-menu-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span className="island-dot pulse-green" style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#30d158', display: 'inline-block' }}></span>
-                  <span style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '0.5px', textTransform: 'uppercase', opacity: 0.6 }}>Status Live</span>
-                </div>
-                <button 
-                  type="button" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIslandState('compact');
-                  }}
-                  style={{ background: 'transparent', border: 'none', color: '#ffffff', fontSize: '18px', cursor: 'pointer', lineHeight: 1, opacity: 0.6 }}
-                >
-                  ×
-                </button>
-              </div>
-              
-              <div className="island-menu-body" style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
-                <div className="island-mini-progress">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
-                    <span>Meta de Hoje:</span>
-                    <span>{Math.round((metrics?.kpis.ganhosHojeBRL / dailyGoal) * 100)}%</span>
-                  </div>
-                  <div className="island-progress-bar" style={{ width: '100%', height: '5px', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '99px', overflow: 'hidden' }}>
-                    <div 
-                      className="island-progress-fill" 
-                      style={{ 
-                        height: '100%', 
-                        backgroundColor: '#30d158', 
-                        borderRadius: '99px',
-                        width: `${Math.min(100, ((metrics?.kpis.ganhosHojeBRL || 0) / (dailyGoal || 25)) * 100)}%`,
-                        transition: 'width 0.4s ease'
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Overlay global para Drag and Drop */}
       {isDraggingFile && (
