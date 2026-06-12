@@ -13,7 +13,11 @@ import './premium.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('prolific_theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [exchangeRates, setExchangeRates] = useState({ usd: 4.9128, gbp: 6.6638 });
   const [exchangeSource, setExchangeSource] = useState('default'); // 'default', 'api', 'fallback', 'manual'
   const [lastExchangeFetch, setLastExchangeFetch] = useState(null);
@@ -203,6 +207,14 @@ export default function App() {
   // Metas do Usuário
   const [dailyGoal, setDailyGoal] = useState(25); // Meta diária em BRL
   const [weeklyGoal, setWeeklyGoal] = useState(150); // Meta semanal em BRL
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+    root.dataset.theme = theme;
+    root.style.colorScheme = theme;
+    localStorage.setItem('prolific_theme', theme);
+  }, [theme]);
 
   // Estado da Dynamic Island
   // Som Sintetizado via Web Audio API (iOS Chime)
@@ -540,14 +552,8 @@ export default function App() {
 
   // Alterna o tema
   const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
+    setTheme((currentTheme) => currentTheme === 'light' ? 'dark' : 'light');
     audioManager.playToggle();
-    if (nextTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
   };
 
   // Upload manual de novo CSV
@@ -567,7 +573,7 @@ export default function App() {
     try {
       const element = document.querySelector('.main-content-area');
       if (!element) return;
-      const canvas = await html2canvas(element, { backgroundColor: theme === 'dark' ? '#09090b' : '#f9f9fb', scale: 2 });
+      const canvas = await html2canvas(element, { backgroundColor: theme === 'dark' ? '#071416' : '#f3f8f7', scale: 2 });
       const link = document.createElement('a');
       link.download = `ProlificDash_Resumo_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.png`;
       link.href = canvas.toDataURL('image/png');
