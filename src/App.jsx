@@ -669,7 +669,7 @@ export default function App() {
   };
 
   return (
-    <div className="app-layout">
+    <div className="app-layout min-h-screen">
       <div className="aurora-container">
         <div className="aurora aurora-1"></div>
         <div className="aurora aurora-2"></div>
@@ -715,7 +715,7 @@ export default function App() {
         prolificAccount={prolificAccount}
       />
 
-      <main className="main-content-area">
+      <main className="main-content-area min-w-0">
         {metrics && (
           <header className="main-header animate-fade-in">
             <div className="header-info">
@@ -899,7 +899,7 @@ export default function App() {
             </div>
           </div>
         ) : (
-          <div className="page-content">
+          <div className="page-content w-full">
             {activeTab === 'overview' && (
               <>
                 <KPICards kpis={metrics.kpis} />
