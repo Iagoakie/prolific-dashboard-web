@@ -213,9 +213,6 @@ export default function App() {
     type: 'success' // 'success', 'rate', 'goal'
   });
 
-  // Estado dos confetes
-  const [showConfetti, setShowConfetti] = useState(false);
-
   // Som Sintetizado via Web Audio API (iOS Chime)
   const playiOSChime = (type = 'success') => {
     try {
@@ -562,8 +559,6 @@ export default function App() {
       if (metrics && computed && computed.kpis.gamification.currentLevel > metrics.kpis.gamification.currentLevel) {
         audioManager.playLevelUp();
         triggerNotification('Parabéns! Nível Subiu', `Você alcançou o Nível ${computed.kpis.gamification.currentLevel}`, 'goal');
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 5000);
       }
 
       setSubmissions(parsed);
@@ -627,34 +622,6 @@ export default function App() {
 
   return (
     <div className="app-layout min-h-screen">
-      <div className="aurora-container">
-        <div className="aurora aurora-1"></div>
-        <div className="aurora aurora-2"></div>
-        <div className="aurora aurora-3"></div>
-      </div>
-
-      {/* Confetes de Celebração */}
-      {showConfetti && (
-        <div className="confetti-container" aria-hidden="true">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <div
-              key={i}
-              className="confetti-piece"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 0.5}s`,
-                animationDuration: `${Math.random() * 2 + 2}s`,
-                backgroundColor: ['#ff2d55', '#007aff', '#30d158', '#ff9500', '#5856d6', '#ffcc00', '#00c7be'][i % 7],
-                width: `${Math.random() * 8 + 4}px`,
-                height: `${Math.random() * 12 + 6}px`,
-                '--confetti-rotate': `${Math.random() * 720 - 360}deg`,
-                '--confetti-drift': `${Math.random() * 200 - 100}px`
-              }}
-            />
-          ))}
-        </div>
-      )}
-      
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab}

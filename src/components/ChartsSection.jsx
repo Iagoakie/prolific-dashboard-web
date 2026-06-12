@@ -57,8 +57,8 @@ export default function ChartsSection({
     const overallProgress = Math.round(((Math.min(1, dailyProgress) + Math.min(1, weeklyProgress)) / 2) * 100);
 
     // Anéis SVG
-    const ringsSize = 130;
-    const strokeWidth = 12;
+    const ringsSize = 125;
+    const strokeWidth = 13;
     const center = ringsSize / 2;
     const r = 52;
     const c = 2 * Math.PI * r;

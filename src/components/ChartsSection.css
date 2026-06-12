@@ -1,48 +1,4 @@
-.chart-card {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  height: 235px;
-}
-
-.chart-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 14px;
-}
-
-.chart-header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.chart-title-icon {
-  color: var(--accent-color);
-}
-
-.chart-card h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: -0.3px;
-}
-
-.chart-subtitle {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.chart-container {
-  flex-grow: 1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Tooltip Custom Glassmorphic */
+/* Custom Tooltip */
 .custom-tooltip {
   padding: 12px;
   border-radius: 12px;
@@ -60,7 +16,7 @@
   margin: 2px 0;
 }
 
-/* Donut specific layout */
+/* Donut container */
 .donut-container {
   flex-direction: column;
   justify-content: space-around;
@@ -98,7 +54,7 @@
   color: var(--text-primary);
 }
 
-/* Analytics sub page layout */
+/* Analytics sub page */
 .analytics-layout {
   display: flex;
   flex-direction: column;
@@ -108,10 +64,6 @@
 .analytics-layout .kpi-grid,
 .analytics-layout .charts-grid {
   margin-bottom: 0;
-}
-
-.top-studies-card {
-  height: auto;
 }
 
 .highlights-row {
@@ -169,169 +121,16 @@
   }
 }
 
-/* Adjustments for Recharts axes default labels */
-.recharts-cartesian-grid-horizontal line {
-  stroke-dasharray: 4;
+.top-studies-card {
+  height: auto;
 }
 
-.recharts-text {
-  font-family: var(--font-apple) !important;
-}
-
-/* Visão Geral Stacked Layout */
-.overview-layout-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.main-chart-full {
-  width: 100%;
-  height: 290px;
-}
-
-/* Row 2 layout split */
-.overview-row-two {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  width: 100%;
-}
-
-@media (max-width: 1024px) {
-  .overview-row-two {
-    grid-template-columns: 1fr;
-  }
-}
-
-.secondary-chart-split {
-  height: 290px;
-}
-
-.pacing-rings-card {
-  height: 290px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.pacing-rings-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  gap: 18px;
-}
-
-.rings-container {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.activity-rings-svg {
-  transform: rotate(0deg);
-}
-
+/* Ring transition */
 .ring-circle {
   transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.rings-legend-percentage {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.1;
-  font-family: var(--font-apple);
-}
-
-.legend-p-daily {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.legend-p-weekly {
-  font-size: 13px;
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-/* Legend items below rings */
-.rings-text-legend {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 10px;
-}
-
-.ring-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-}
-
-.ring-marker-bullet {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.ring-item-data {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.ring-item-title {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.ring-item-vals {
-  color: var(--text-primary);
-}
-
-.ring-item-vals strong {
-  font-weight: 700;
-}
-
-.ring-item-vals .subtext {
-  color: var(--text-secondary);
-  font-size: 11px;
-  margin-left: 3px;
-}
-
-/* Adjust goals button */
-.adjust-goals-btn {
-  background: var(--border-color);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  width: 100%;
-  margin-top: 4px;
-}
-
-.adjust-goals-btn:hover {
-  background: var(--border-hover);
-}
-
-/* Adjust Goals Popover */
+/* Goal settings popover */
 .goal-settings-popover {
   position: absolute;
   bottom: 50px;
