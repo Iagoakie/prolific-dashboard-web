@@ -83,7 +83,15 @@ select {
 }
 
 .app-layout {
-  background: transparent;
+  display: flex;
+  gap: var(--sidebar-gap);
+  padding: var(--app-outer-padding);
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
 }
 
 .glass-panel {
@@ -254,22 +262,23 @@ select {
 
 /* Sidebar */
 .sidebar {
-  background: linear-gradient(180deg, #071a36 0%, #06152a 45%, #041223 100%);
+  background: linear-gradient(180deg, #071b38 0%, #06162d 45%, #04101f 100%);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
   color: #ffffff;
   height: calc(100vh - (var(--app-outer-padding) * 2));
-  left: var(--app-outer-padding);
   top: var(--app-outer-padding);
-  position: fixed;
+  position: sticky;
   overflow-y: auto;
   padding: 18px;
   scrollbar-width: none;
   width: var(--sidebar-width);
+  flex-shrink: 0;
   z-index: 100;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -670,7 +679,7 @@ select {
 .kpi-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: 1.7fr repeat(5, 1fr);
+  grid-template-columns: 1.75fr repeat(5, 1fr);
   margin-bottom: 12px;
   width: 100%;
 }
@@ -679,12 +688,12 @@ select {
   background: #ffffff;
   border: 1px solid #e6ebf2;
   border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.045);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.045);
   cursor: default;
-  height: 138px;
+  height: 132px;
   min-width: 0;
   overflow: hidden;
-  padding: 22px 16px;
+  padding: 20px 16px;
   position: relative;
   box-sizing: border-box;
   display: flex;
@@ -695,7 +704,7 @@ select {
 
 .kpi-card:hover {
   border-color: #cbd5e1;
-  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.075);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.07);
   transform: translateY(-1px);
 }
 
@@ -706,11 +715,11 @@ select {
 }
 
 .metric-card-featured {
-  background: linear-gradient(135deg, #2868ff 0%, #6157f5 45%, #20d0c0 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #5b5df7 48%, #24c7c2 100%);
   border-color: transparent;
-  box-shadow: 0 18px 35px rgba(37, 99, 235, 0.22);
+  box-shadow: 0 18px 36px rgba(37, 99, 235, 0.22);
   color: #ffffff;
-  padding: 24px 20px;
+  padding: 22px 20px;
 }
 
 .metric-card-featured::after {
@@ -737,14 +746,15 @@ select {
 
 .kpi-card-title {
   color: #334155;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .metric-card-featured .kpi-card-title {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .kpi-card-actions {
@@ -757,18 +767,18 @@ select {
   align-items: center;
   border-radius: 50%;
   display: flex;
-  height: 30px;
+  height: 32px;
   justify-content: center;
-  width: 30px;
+  width: 32px;
   position: absolute;
   top: 18px;
   right: 16px;
 }
 
 .kpi-card-icon-container svg {
-  height: 16px;
+  height: 15px;
   stroke-width: 2;
-  width: 16px;
+  width: 15px;
 }
 
 .metric-card-featured .kpi-card-icon-container {
@@ -777,8 +787,8 @@ select {
   height: 40px;
   width: 40px;
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 28px;
+  right: 20px;
 }
 
 .metric-card-featured .kpi-card-icon-container svg {
@@ -846,7 +856,7 @@ select {
   font-size: 23px;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   line-height: 1;
   margin-top: 4px;
 }
@@ -855,7 +865,7 @@ select {
   color: #ffffff;
   font-size: 34px;
   font-weight: 800;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.04em;
   margin-top: 2px;
 }
 
@@ -863,7 +873,7 @@ select {
   color: #64748b;
   font-size: 9.5px;
   font-weight: 450;
-  line-height: 1.4;
+  line-height: 1.35;
   overflow: visible;
   white-space: normal;
 }
@@ -892,7 +902,7 @@ select {
 }
 
 .featured-sparkline {
-  color: rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.22);
   height: 100%;
   margin-left: auto;
   max-width: none;
@@ -901,13 +911,13 @@ select {
 }
 
 .featured-sparkline-fill {
-  fill: url(#featuredSparklineFill);
+  display: none !important;
 }
 
 .featured-sparkline-line {
   fill: none;
-  stroke: currentColor;
-  stroke-width: 1.2;
+  stroke: currentColor !important;
+  stroke-width: 1.5;
 }
 
 /* Chart cards */
@@ -933,7 +943,7 @@ select {
 }
 
 .main-chart-full {
-  height: 220px;
+  height: 230px;
   width: 100%;
   margin-top: 12px;
 }
@@ -1000,7 +1010,8 @@ select {
   position: absolute;
   right: 18px;
   top: 18px;
-  width: 70px;
+  min-width: 68px;
+  width: auto;
 }
 
 .chart-filter:hover {
@@ -1212,6 +1223,13 @@ select {
 }
 
 @media (max-width: 768px) {
+  .app-layout {
+    display: block;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+  }
+
   .main-content-area {
     margin-left: 0;
     padding: 24px 14px 92px;
