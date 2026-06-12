@@ -57,17 +57,12 @@ export default function ChartsSection({
     const overallProgress = Math.round(((Math.min(1, dailyProgress) + Math.min(1, weeklyProgress)) / 2) * 100);
 
     // Anéis SVG
-    const ringsSize = 150;
-    const strokeWidth = 14;
+    const ringsSize = 130;
+    const strokeWidth = 12;
     const center = ringsSize / 2;
-
-    const r1 = 58;
-    const c1 = 2 * Math.PI * r1;
-    const offset1 = c1 * (1 - Math.min(1, dailyProgress));
-
-    const r2 = 41;
-    const c2 = 2 * Math.PI * r2;
-    const offset2 = c2 * (1 - Math.min(1, weeklyProgress));
+    const r = 52;
+    const c = 2 * Math.PI * r;
+    const offset = c * (1 - Math.min(1, overallProgress / 100));
 
     return (
       <div className="overview-layout-stack animate-fade-in">
@@ -83,26 +78,28 @@ export default function ChartsSection({
           </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartsData.acumulado} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={chartsData.acumulado} margin={{ top: 12, right: 8, left: -10, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorAcumulado" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--accent-color)" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="var(--accent-color)" stopOpacity={0.0}/>
+                  <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#16c784" stopOpacity={0.28}/>
+                    <stop offset="95%" stopColor="#16c784" stopOpacity={0.02}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#e8edf5" />
                 <XAxis 
                   dataKey="formattedDate" 
                   axisLine={false} 
                   tickLine={false} 
                   minTickGap={50}
-                  tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                  tick={{ fill: '#64748b', fontSize: 10 }}
+                  dy={8}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
                   tickFormatter={(val) => `R$ ${val}`} 
-                  tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                  tick={{ fill: '#64748b', fontSize: 10 }}
+                  width={44}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Area 
@@ -110,10 +107,10 @@ export default function ChartsSection({
                   dataKey="ganhoAcumulado" 
                   name="Total Acumulado"
                   isAnimationActive={false}
-                  stroke="var(--accent-color)" 
-                  strokeWidth={3} 
+                  stroke="#16c784" 
+                  strokeWidth={2.5} 
                   fillOpacity={1} 
-                  fill="url(#colorAcumulado)" 
+                  fill="url(#earningsGradient)" 
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -140,22 +137,22 @@ export default function ChartsSection({
                   <BarChart data={chartsData.faturamentoDiaSemana} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorFaturamentoDia" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#2f6bff" stopOpacity={1}/>
-                        <stop offset="95%" stopColor="#5c8dff" stopOpacity={0.82}/>
+                        <stop offset="5%" stopColor="#2563eb" stopOpacity={1}/>
+                        <stop offset="95%" stopColor="#7aa7ff" stopOpacity={0.85}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                    <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#e8edf5" />
                     <XAxis 
                       dataKey="name" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                      tick={{ fill: '#64748b', fontSize: 10 }}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
                       tickFormatter={(val) => `R$ ${val}`} 
-                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                      tick={{ fill: '#64748b', fontSize: 10 }}
                     />
                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 120, 128, 0.08)' }} />
                     <Bar 
@@ -163,9 +160,9 @@ export default function ChartsSection({
                       name="Faturamento" 
                       isAnimationActive={false}
                       fill="url(#colorFaturamentoDia)" 
-                      stroke="#2f6bff"
+                      stroke="#2563eb"
                       strokeWidth={0}
-                      radius={[8, 8, 0, 0]}
+                      radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -189,59 +186,31 @@ export default function ChartsSection({
                 <svg width={ringsSize} height={ringsSize} viewBox={`0 0 ${ringsSize} ${ringsSize}`} className="activity-rings-svg">
                   {/* Defs de gradiente */}
                   <defs>
-                    <linearGradient id="gradientDaily" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#315bff" />
-                      <stop offset="100%" stopColor="#5d88ff" />
-                    </linearGradient>
-                    <linearGradient id="gradientWeekly" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#8d70ff" />
-                      <stop offset="100%" stopColor="#b7a6ff" />
+                    <linearGradient id="gradientOverall" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#2563eb" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
                     </linearGradient>
                   </defs>
 
-                  {/* Sombra de fundo Diário */}
+                  {/* Fundo do Anel (Lilás Claro / Azul Claro) */}
                   <circle
                     cx={center}
                     cy={center}
-                    r={r1}
+                    r={r}
                     fill="none"
-                    stroke="rgba(49, 91, 255, 0.14)"
+                    stroke="#e8edff"
                     strokeWidth={strokeWidth}
                   />
-                  {/* Anel Diário (Verde) */}
+                  {/* Anel de Progresso */}
                   <circle
                     cx={center}
                     cy={center}
-                    r={r1}
+                    r={r}
                     fill="none"
-                    stroke="url(#gradientDaily)"
+                    stroke="url(#gradientOverall)"
                     strokeWidth={strokeWidth}
-                    strokeDasharray={c1}
-                    strokeDashoffset={offset1}
-                    strokeLinecap="round"
-                    transform={`rotate(-90 ${center} ${center})`}
-                    className="ring-circle"
-                  />
-
-                  {/* Sombra de fundo Semanal */}
-                  <circle
-                    cx={center}
-                    cy={center}
-                    r={r2}
-                    fill="none"
-                    stroke="rgba(141, 112, 255, 0.16)"
-                    strokeWidth={strokeWidth}
-                  />
-                  {/* Anel Semanal (Azul) */}
-                  <circle
-                    cx={center}
-                    cy={center}
-                    r={r2}
-                    fill="none"
-                    stroke="url(#gradientWeekly)"
-                    strokeWidth={strokeWidth}
-                    strokeDasharray={c2}
-                    strokeDashoffset={offset2}
+                    strokeDasharray={c}
+                    strokeDashoffset={offset}
                     strokeLinecap="round"
                     transform={`rotate(-90 ${center} ${center})`}
                     className="ring-circle"
@@ -256,25 +225,25 @@ export default function ChartsSection({
 
               <div className="rings-text-legend">
                 <div className="ring-legend-item">
-                  <span className="ring-marker-bullet" style={{ backgroundColor: '#315bff' }}></span>
-                  <div className="ring-item-data">
+                  <div className="ring-legend-item-left">
+                    <span className="ring-marker-bullet" style={{ backgroundColor: '#2563eb' }}></span>
                     <span className="ring-item-title">Hoje</span>
-                    <span className="ring-item-vals">
-                      <strong>{formatBRL(kpis.ganhosHojeBRL)}</strong>
-                      <span className="subtext">/ {formatBRL(dailyGoal)}</span>
-                    </span>
                   </div>
+                  <span className="ring-item-vals">
+                    <strong>{formatBRL(kpis.ganhosHojeBRL)}</strong>
+                    <span className="subtext"> / {formatBRL(dailyGoal)}</span>
+                  </span>
                 </div>
 
                 <div className="ring-legend-item">
-                  <span className="ring-marker-bullet" style={{ backgroundColor: '#8d70ff' }}></span>
-                  <div className="ring-item-data">
+                  <div className="ring-legend-item-left">
+                    <span className="ring-marker-bullet" style={{ backgroundColor: '#8b5cf6' }}></span>
                     <span className="ring-item-title">Semana</span>
-                    <span className="ring-item-vals">
-                      <strong>{formatBRL(kpis.ganhosSemanaBRL)}</strong>
-                      <span className="subtext">/ {formatBRL(weeklyGoal)}</span>
-                    </span>
                   </div>
+                  <span className="ring-item-vals">
+                    <strong>{formatBRL(kpis.ganhosSemanaBRL)}</strong>
+                    <span className="subtext"> / {formatBRL(weeklyGoal)}</span>
+                  </span>
                 </div>
               </div>
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { domAnimation, LazyMotion, m } from 'motion/react';
-import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, DollarSign, Info, Percent } from 'lucide-react';
+import { ArrowUpRight, Calendar, Clock, TrendingUp, ShieldCheck, Target, Info, Wallet } from 'lucide-react';
 import './KPICards.css';
 
 export default function KPICards({ kpis }) {
@@ -18,7 +18,7 @@ export default function KPICards({ kpis }) {
       title: 'Ganhos aprovados',
       value: formatBRL(kpis.ganhosAprovadosBRL),
       subtext: `${kpis.totalAprovados} estudos aprovados de ${kpis.totalEstudos} enviados`,
-      icon: <CheckCircle2 size={22} className="icon-approved" />,
+      icon: <Wallet size={18} className="icon-approved" />,
       bgClass: 'card-green',
       label: 'Saldo consolidado',
       tooltip: 'Total acumulado de todos os estudos aprovados pelos pesquisadores, convertido para R$ pela taxa de câmbio configurada. Inclui recompensas e bônus.'
@@ -27,7 +27,7 @@ export default function KPICards({ kpis }) {
       title: 'Ganhos hoje',
       value: formatBRL(kpis.ganhosHojeBRL),
       subtext: `USD: $${kpis.ganhosHojeOriginalUSD.toFixed(2)} • GBP: £${kpis.ganhosHojeOriginalGBP.toFixed(2)}`,
-      icon: <CalendarDays size={22} className="icon-today" />,
+      icon: <Calendar size={18} className="icon-today" />,
       bgClass: 'card-blue',
       label: 'Movimento diário',
       tooltip: 'Quanto você ganhou hoje em estudos já aprovados. Mostra também os valores originais em cada moeda antes da conversão.'
@@ -36,8 +36,8 @@ export default function KPICards({ kpis }) {
       title: 'Aguardando revisão',
       value: formatBRL(kpis.valorRepresadoBRL),
       subtext: `${kpis.totalEmReview} ${kpis.totalEmReview === 1 ? 'estudo aguardando' : 'estudos aguardando'} o pesquisador aprovar`,
-      icon: <Clock3 size={22} className="icon-pending" />,
-      bgClass: 'card-purple',
+      icon: <Clock size={18} className="icon-pending" />,
+      bgClass: 'card-green',
       label: 'Em processamento',
       tooltip: 'Valor de estudos que você completou, mas o pesquisador ainda não aprovou. Isso é normal — geralmente leva até 14 dias. Não é dinheiro bloqueado.'
     },
@@ -45,8 +45,8 @@ export default function KPICards({ kpis }) {
       title: 'Média por estudo',
       value: formatBRL(kpis.mediaPorEstudoBRL),
       subtext: `Ganho médio por estudo aprovado (em R$)`,
-      icon: <DollarSign size={22} className="icon-average" />,
-      bgClass: 'card-orange',
+      icon: <TrendingUp size={18} className="icon-average" />,
+      bgClass: 'card-blue',
       label: 'Ticket médio',
       tooltip: 'Quanto você ganha em média por estudo aprovado. Calculado como: total de ganhos aprovados ÷ número de estudos aprovados.'
     },
@@ -54,8 +54,8 @@ export default function KPICards({ kpis }) {
       title: 'Taxa de aprovação',
       value: `${(kpis.taxaAprovacao * 100).toFixed(1)}%`,
       subtext: `Rejeitados: ${kpis.totalRejeitados} • Retornados: ${kpis.totalRetornados}`,
-      icon: <Percent size={22} className="icon-percent" />,
-      bgClass: 'card-teal',
+      icon: <ShieldCheck size={18} className="icon-percent" />,
+      bgClass: 'card-purple',
       label: 'Qualidade da conta',
       tooltip: 'Percentual de estudos aprovados em relação ao total enviado (excluindo retornados). Acima de 95% é considerado excelente pelo Prolific.'
     },
@@ -63,7 +63,8 @@ export default function KPICards({ kpis }) {
       title: 'Projeção (fim do mês)',
       value: kpis.projecaoMensalBRL > 0 ? formatBRL(kpis.projecaoMensalBRL) : 'R$ 0,00',
       subtext: `Baseada na média diária de ${formatBRL(kpis.currentMonthEarnings / Math.max(1, new Date().getDate()))}`,
-      bgClass: 'card-green',
+      icon: <Target size={18} className="icon-projection" />,
+      bgClass: 'card-purple',
       label: 'Forecast mensal',
       tooltip: 'Estimativa de quanto você terá ao fim deste mês. Calculada com sua média diária do mês atual × dias restantes + o que já ganhou.'
     }
