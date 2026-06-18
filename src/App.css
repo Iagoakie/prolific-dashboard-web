@@ -6,27 +6,32 @@
 
 /* ---- App Shell ---- */
 .app-layout {
-  display: flex;
-  min-height: 100vh;
+  display: block;
+  min-height: calc(100vh - 16px);
+  min-width: 1280px;
+  padding: 8px;
   width: 100%;
   background-color: var(--bg-primary);
   transition: background-color 0.5s var(--ease-spring);
 }
 
 .main-content-area {
-  flex: 1 1 0%;
   margin-left: var(--sidebar-width);
-  padding: 28px 36px 40px;
-  min-height: 100vh;
+  padding: 20px 20px 12px;
+  min-height: calc(100vh - 16px);
+  min-width: 0;
+  width: calc(100% - var(--sidebar-width));
   transition: margin-left 0.4s var(--ease-spring), padding 0.3s var(--ease-spring);
 }
 
 /* ---- Main Header ---- */
 .main-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  margin-bottom: 16px;
+  min-height: 60px;
   position: relative;
   z-index: 10;
 }
@@ -49,22 +54,75 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 /* Exchange rate status pill */
 .exchange-status-pill {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: var(--border-radius-pill);
+  width: 286px;
+  height: 60px;
+  padding: 0 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background: var(--bg-card-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  color: var(--text-primary);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 12px;
   white-space: nowrap;
+  transition: var(--transition-fast);
+}
+
+.exchange-status-pill:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-1px);
+}
+
+.exchange-status-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 34px;
+  color: #ff9f0a;
+  background: rgba(255, 159, 10, 0.14);
+  border: 1px solid rgba(255, 159, 10, 0.2);
+}
+
+.exchange-status-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  text-align: left;
+}
+
+.exchange-status-copy strong {
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.exchange-status-copy small {
+  color: var(--accent-color);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.1;
 }
 
 /* Header icon buttons */
-.header-icon-btn {
+.header-icon-btn,
+.header-icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -80,15 +138,32 @@
   transition: var(--transition-smooth);
 }
 
-.header-icon-btn:hover {
+.header-icon-btn:hover,
+.header-icon-button:hover {
   background: var(--bg-tertiary);
   border-color: var(--border-hover);
   color: var(--text-primary);
   box-shadow: var(--shadow-elevated);
 }
 
-.header-icon-btn:active {
+.header-icon-btn:active,
+.header-icon-button:active {
   transform: scale(0.92);
+}
+
+.notification-button {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid var(--bg-elevated);
+  border-radius: 50%;
+  background: #ff453a;
 }
 
 .last-updated {
@@ -489,42 +564,4 @@
 
 .ring-circle {
   transition: stroke-dashoffset 0.8s var(--ease-spring);
-}
-
-/* ---- Responsive Breakpoints ---- */
-@media (max-width: 1200px) {
-  .main-content-area { padding: 24px 24px 32px; }
-  .header-info h1 { font-size: 28px; }
-}
-
-@media (max-width: 1024px) {
-  .skeleton-charts-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 768px) {
-  .main-content-area {
-    margin-left: 0;
-    padding: 20px 16px 100px;
-  }
-
-  .main-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .header-info h1 { font-size: 26px; letter-spacing: -1px; }
-}
-
-@media (max-width: 540px) {
-  .header-actions { gap: 8px; }
-  .header-icon-btn { width: 34px; height: 34px; }
-  .user-profile-avatar { width: 32px; height: 32px; font-size: 13px; }
 }

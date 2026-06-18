@@ -138,6 +138,7 @@
 }
 
 html, body, #root {
+  min-width: 1280px;
   min-height: 100%;
   background: var(--bg-primary);
 }
@@ -155,7 +156,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   transition: background-color 0.5s var(--ease-spring), color 0.3s ease;
-  overflow-x: hidden;
+  overflow-x: auto;
   min-height: 100vh;
   position: relative;
 }
@@ -339,16 +340,4 @@ button, input, textarea, select {
   grid-template-columns: 2fr 1fr;
   gap: 18px;
   margin-bottom: 18px;
-}
-
-@media (max-width: 1024px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  :root {
-    --sidebar-width: 0px;
-  }
 }

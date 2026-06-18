@@ -68,14 +68,15 @@
 /* ---- Sidebar shell ---- */
 .sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  top: 8px;
+  left: 8px;
+  bottom: 8px;
   width: var(--sidebar-width);
   background: var(--bg-secondary);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border-right: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
   padding: 20px 16px 16px;
   display: flex;
   flex-direction: column;
@@ -328,23 +329,6 @@
 
 /* ---- Mobile ---- */
 .mobile-settings-item { display: none !important; }
-
-@media (max-width: 768px) {
-  :root { --sidebar-width: 0px; }
-
-  .sidebar {
-    transform: translateX(-100%);
-    width: 280px;
-    --sidebar-width: 280px;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-    box-shadow: var(--shadow-modal);
-  }
-
-  .mobile-settings-item { display: flex !important; }
-}
 
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(8px); }

@@ -4,19 +4,19 @@
 
 /* ---- Chart Card layout ---- */
 .chart-card {
-  padding: 22px 24px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  min-height: 360px;
+  min-height: 0;
 }
 
 .chart-header {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 10px;
+  position: relative;
 }
 
 .chart-header-left {
@@ -31,7 +31,7 @@
 }
 
 .chart-header h3 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.3px;
   color: var(--text-primary);
@@ -52,10 +52,14 @@
   color: var(--text-secondary);
   background: var(--bg-grouped);
   border: 1px solid var(--border-color);
-  padding: 4px 10px;
-  border-radius: var(--border-radius-pill);
+  padding: 0 10px;
+  height: 28px;
+  border-radius: 9px;
   cursor: pointer;
   transition: var(--transition-fast);
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .chart-filter:hover {
@@ -66,27 +70,30 @@
 .chart-container {
   flex: 1;
   width: 100%;
-  min-height: 200px;
+  min-height: 0;
 }
 
-.main-chart-full { min-height: 380px; }
+.main-chart-full {
+  height: 318px;
+  min-height: 318px;
+}
 
 .overview-layout-stack {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
 }
 
 .overview-row-two {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 1fr);
+  gap: 12px;
 }
 
-.secondary-chart-split { min-height: 300px; }
-
-@media (max-width: 1024px) {
-  .overview-row-two { grid-template-columns: 1fr; }
+.secondary-chart-split,
+.pacing-rings-card {
+  height: 270px;
+  min-height: 270px;
 }
 
 /* ---- Custom Tooltip (frosted glass) ---- */
@@ -147,10 +154,6 @@
   gap: 18px;
 }
 
-@media (max-width: 1024px) {
-  .charts-grid { grid-template-columns: 1fr; }
-}
-
 .highlights-row {
   display: flex;
   border-top: 1px solid var(--border-color);
@@ -183,20 +186,16 @@
   gap: 20px;
 }
 
-@media (max-width: 1024px) {
-  .analytics-equal-grid { grid-template-columns: 1fr; }
-}
-
 .top-studies-card { height: auto; }
 
 /* ---- Pacing Rings ---- */
-.pacing-rings-card { min-height: 300px; }
-
 .pacing-rings-content {
   display: flex;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex: 1;
+  min-height: 0;
 }
 
 .rings-container {
