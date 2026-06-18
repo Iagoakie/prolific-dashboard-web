@@ -9,6 +9,7 @@ import { audioManager } from './utils/audio';
 import html2canvas from 'html2canvas';
 import { Bell, CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight, Zap } from 'lucide-react';
 import './App.css';
+import './ios-modern.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
