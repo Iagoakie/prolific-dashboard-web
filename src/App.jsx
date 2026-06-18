@@ -9,7 +9,6 @@ import { audioManager } from './utils/audio';
 import html2canvas from 'html2canvas';
 import { Bell, CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight, Zap } from 'lucide-react';
 import './App.css';
-import './premium.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -573,7 +572,7 @@ export default function App() {
     try {
       const element = document.querySelector('.main-content-area');
       if (!element) return;
-      const canvas = await html2canvas(element, { backgroundColor: theme === 'dark' ? '#071416' : '#f3f8f7', scale: 2 });
+      const canvas = await html2canvas(element, { backgroundColor: theme === 'dark' ? '#000000' : '#fbfbfd', scale: 2 });
       const link = document.createElement('a');
       link.download = `ProlificDash_Resumo_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.png`;
       link.href = canvas.toDataURL('image/png');

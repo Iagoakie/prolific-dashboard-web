@@ -1,4 +1,160 @@
-/* KPI Info Tooltip - unique to this component */
+/* ==========================================================================
+   KPI CARDS — iOS glass cards with accent featured
+   ========================================================================== */
+
+/* ---- KPI Grid ---- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+/* ---- KPI Card ---- */
+.kpi-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.metric-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: -0.2px;
+}
+
+.kpi-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ---- Icon container ---- */
+.kpi-card-icon-container {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-card-icon-container.card-green { background: var(--color-approved-bg); color: var(--color-approved); }
+.kpi-card-icon-container.card-blue { background: var(--accent-light); color: var(--accent-color); }
+.kpi-card-icon-container.card-purple { background: var(--color-pending-bg); color: var(--color-pending); }
+.kpi-card-icon-container.card-indigo { background: var(--color-pending-bg); color: var(--color-pending); }
+.kpi-card-icon-container.card-pink { background: var(--color-other-bg); color: var(--color-other); }
+.kpi-card-icon-container.card-orange { background: var(--color-other-bg); color: var(--color-other); }
+
+/* ---- Card Body ---- */
+.kpi-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.kpi-card-value {
+  font-size: 26px;
+  font-weight: 750;
+  color: var(--text-primary);
+  letter-spacing: -0.8px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-card-subtext {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* ---- Featured (first) card with accent gradient ---- */
+.metric-card-featured {
+  background: var(--accent-gradient) !important;
+  color: var(--accent-on) !important;
+  border-color: transparent !important;
+}
+
+.metric-card-featured::before { display: none; }
+
+.metric-card-featured .metric-label,
+.metric-card-featured .kpi-card-title,
+.metric-card-featured .kpi-card-subtext {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.metric-card-featured .kpi-card-value {
+  color: #ffffff;
+}
+
+.metric-card-featured .kpi-card-icon-container {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.metric-card-featured .kpi-info-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.metric-card-featured .kpi-info-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ---- Featured sparkline ---- */
+.featured-metric-footer {
+  margin-top: 8px;
+}
+
+.featured-sparkline {
+  width: 100%;
+  height: 36px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.featured-sparkline-fill { fill: currentColor; }
+
+.featured-sparkline-line {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- Info button ---- */
 .kpi-info-btn {
   display: flex;
   align-items: center;
@@ -6,7 +162,7 @@
   width: 22px;
   height: 22px;
   border: none;
-  background: rgba(120, 120, 128, 0.08);
+  background: rgba(120, 120, 128, 0.1);
   border-radius: 50%;
   cursor: pointer;
   color: var(--text-secondary);
@@ -16,35 +172,32 @@
   flex-shrink: 0;
 }
 
-.kpi-card:hover .kpi-info-btn {
-  opacity: 1;
-}
+.kpi-card:hover .kpi-info-btn { opacity: 1; }
 
 .kpi-info-btn:hover {
-  background: rgba(120, 120, 128, 0.15);
+  background: rgba(120, 120, 128, 0.18);
   color: var(--accent-color);
   transform: scale(1.1);
 }
 
+/* ---- Info Tooltip popover (frosted glass) ---- */
 .kpi-tooltip-popover {
   position: absolute;
   top: calc(100% + 10px);
   right: -8px;
   width: 240px;
-  padding: 10px 14px;
+  padding: 12px 14px;
   background: rgba(28, 28, 30, 0.95);
   color: #f5f5f7;
   font-size: 11px;
   font-weight: 500;
   line-height: 1.55;
-  letter-spacing: 0;
-  text-transform: none;
   text-align: left;
   border-radius: 12px;
   z-index: 1000;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   animation: tooltipFadeIn 0.15s ease forwards;
   pointer-events: none;
 }
@@ -65,11 +218,19 @@
   border-radius: 2px;
 }
 
-.dark .kpi-tooltip-arrow {
-  background: rgba(44, 44, 46, 0.95);
-}
+.dark .kpi-tooltip-arrow { background: rgba(44, 44, 46, 0.95); }
 
 @keyframes tooltipFadeIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 540px) {
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .kpi-card-value { font-size: 22px; }
 }
