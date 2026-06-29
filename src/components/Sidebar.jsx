@@ -1,5 +1,4 @@
 import { LayoutDashboard, TrendingUp, List, Sun, Moon, Settings, Zap, UploadCloud, ChevronDown } from 'lucide-react';
-import { fallbackProlificAccount } from '../data/dashboard';
 import './Sidebar.css';
 
 const PAGE_LOADED_AT = Date.now();
@@ -28,7 +27,7 @@ export default function Sidebar({
   const streak = kpis?.streak || 0;
   const ganhosHoje = kpis?.ganhosHojeBRL || 0;
   const gamification = kpis?.gamification || null;
-  const displayAccount = prolificAccount || fallbackProlificAccount;
+  const displayAccount = prolificAccount;
 
   return (
     <aside className="sidebar glass-panel">

@@ -4,10 +4,11 @@ import KPICards from './components/KPICards';
 import ChartsSection from './components/ChartsSection';
 import SubmissionsTable from './components/SubmissionsTable';
 import SettingsModal from './components/SettingsModal';
+import AccountDiagnostics from './components/AccountDiagnostics';
 import { parseProlificCSV, calculateDashboardMetrics } from './utils/dataParser';
 import { audioManager } from './utils/audio';
 import html2canvas from 'html2canvas';
-import { Bell, CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight, Zap } from 'lucide-react';
+import { Bell, CloudUpload, Sun, Moon, Sliders, RefreshCw, ChevronRight, Zap, Users } from 'lucide-react';
 import './App.css';
 import './ios-modern.css';
 
@@ -635,6 +636,19 @@ export default function App() {
             </button>
 
             <div className="header-actions">
+              <button
+                type="button"
+                className="community-radar-pill"
+                title="Fonte externa ainda não conectada. Preparado para receber a contagem do ProlificTea quando houver uma fonte confiável."
+                aria-label="Radar de usuários ativos"
+              >
+                <Users size={14} />
+                <span className="community-radar-copy">
+                  <strong>Ativos</strong>
+                  <small>--</small>
+                </span>
+              </button>
+
               <span className="last-updated">
                 Atualizado às {new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
               </span>
@@ -801,6 +815,12 @@ export default function App() {
             {activeTab === 'overview' && (
               <>
                 <KPICards kpis={metrics.kpis} />
+                <AccountDiagnostics
+                  kpis={metrics.kpis}
+                  prolificAccount={prolificAccount}
+                  exchangeRates={exchangeRates}
+                  onSettingsOpen={() => setShowSettings(true)}
+                />
                 <ChartsSection 
                   activeTab="overview" 
                   chartsData={metrics.charts} 

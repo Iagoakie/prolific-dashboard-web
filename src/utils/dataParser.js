@@ -190,6 +190,7 @@ export function parseProlificCSV(csvText, rates = { usd: 4.9128, gbp: 6.6638 }, 
 export function calculateDashboardMetrics(submissions) {
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
   let totalEstudos = 0;
   let totalAprovados = 0;
@@ -206,6 +207,11 @@ export function calculateDashboardMetrics(submissions) {
   let ganhosSemanaBRL = 0;
   let ganhosHojeOriginalUSD = 0;
   let ganhosHojeOriginalGBP = 0;
+  let estudosHoje = 0;
+  let estudosAprovadosSemana = 0;
+  let oldestReviewDays = 0;
+  let lastApprovedAt = null;
+  let lastActivityAt = null;
 
   const nowTime = new Date();
   const startOfWeek = new Date(nowTime.getFullYear(), nowTime.getMonth(), nowTime.getDate());
@@ -238,12 +244,31 @@ export function calculateDashboardMetrics(submissions) {
 
   submissions.forEach((sub) => {
     totalEstudos++;
+
+    const activityAt = sub.completedAt || sub.startedAt;
+    if (activityAt && (!lastActivityAt || activityAt > lastActivityAt)) {
+      lastActivityAt = activityAt;
+    }
+
+    if (activityAt) {
+      const activityDayStr = [
+        activityAt.getFullYear(),
+        String(activityAt.getMonth() + 1).padStart(2, '0'),
+        String(activityAt.getDate()).padStart(2, '0')
+      ].join('-');
+      if (activityDayStr === todayStr) {
+        estudosHoje++;
+      }
+    }
     
     // Contagem por Status
     porStatus[sub.statusResumo] = (porStatus[sub.statusResumo] || 0) + 1;
     
     if (sub.statusResumo === 'Aprovado') {
       totalAprovados++;
+      if (sub.completedAt && (!lastApprovedAt || sub.completedAt > lastApprovedAt)) {
+        lastApprovedAt = sub.completedAt;
+      }
       ganhosAprovadosBRL += sub.valorTotalBRL;
       if (sub.moeda === 'USD') {
         ganhosUSD_BRL += sub.valorTotalBRL;
@@ -256,6 +281,12 @@ export function calculateDashboardMetrics(submissions) {
     } else if (sub.statusResumo === 'Em review') {
       totalEmReview++;
       valorRepresadoBRL += sub.valorTotalBRL;
+      const reviewStart = sub.completedAt || sub.startedAt;
+      if (reviewStart) {
+        const reviewStartDay = new Date(reviewStart.getFullYear(), reviewStart.getMonth(), reviewStart.getDate());
+        const daysInReview = Math.max(0, Math.floor((todayStart - reviewStartDay) / 86400000));
+        oldestReviewDays = Math.max(oldestReviewDays, daysInReview);
+      }
     } else if (sub.statusResumo === 'Rejeitado') {
       totalRejeitados++;
     }
@@ -275,6 +306,7 @@ export function calculateDashboardMetrics(submissions) {
     // Ganhos da semana atual
     if (sub.statusResumo === 'Aprovado' && sub.completedAt && sub.completedAt >= startOfWeek) {
       ganhosSemanaBRL += sub.valorTotalBRL;
+      estudosAprovadosSemana++;
     }
 
     // Agregações por dia de conclusão
@@ -515,10 +547,18 @@ export function calculateDashboardMetrics(submissions) {
   
   const currentMonthKey = `${currentYear}${String(currentMonth + 1).padStart(2, '0')}`;
   const currentMonthEarnings = porMesAno[currentMonthKey]?.valor || 0;
+  const currentMonthPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+  const currentMonthActiveDays = Object.keys(ganhosPorDia).filter((dayStr) => dayStr.startsWith(currentMonthPrefix)).length;
   
   // Calcular média diária apenas do mês atual (ganhos do mês / dia atual)
   const mediaDiariaMesAtual = currentDayOfMonth > 0 ? (currentMonthEarnings / currentDayOfMonth) : 0;
   const projecaoMensalBRL = currentMonthEarnings + (mediaDiariaMesAtual * remainingDays);
+
+  const getDaysAgo = (date) => {
+    if (!date) return null;
+    const dateStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return Math.max(0, Math.floor((todayStart - dateStart) / 86400000));
+  };
 
   // Gráfico Eficiência Mensal (Evolução do R$/Hora)
   const graficoEficienciaMensal = Object.keys(porMesAnoEficiencia)
@@ -598,6 +638,12 @@ export function calculateDashboardMetrics(submissions) {
       reaisPorHora,
       tempoMedioEstudoMinutos,
       estudosPorDia,
+      estudosHoje,
+      estudosAprovadosSemana,
+      oldestReviewDays,
+      lastApprovedDaysAgo: getDaysAgo(lastApprovedAt),
+      lastActivityDaysAgo: getDaysAgo(lastActivityAt),
+      currentMonthActiveDays,
       currentMonthEarnings,
       projecaoMensalBRL
     },

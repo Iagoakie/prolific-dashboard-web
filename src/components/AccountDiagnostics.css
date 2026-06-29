@@ -1,0 +1,385 @@
+/* ==========================================================================
+   ACCOUNT DIAGNOSTICS - compact iOS account intelligence panel
+   ========================================================================== */
+
+.account-diagnostics-panel {
+  display: grid;
+  grid-template-columns: minmax(310px, 0.95fr) minmax(360px, 1.55fr);
+  gap: 14px;
+  margin: 0 0 14px;
+  padding: 16px;
+  border-radius: 30px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.16), transparent 34%),
+    var(--bg-card);
+}
+
+.account-diagnostics-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+.account-diagnostics-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.account-diagnostics-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  color: var(--accent-color);
+  background: var(--accent-light);
+  border: 1px solid rgba(10, 132, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.account-state-danger .account-diagnostics-icon {
+  color: var(--color-rejected);
+  background: var(--color-rejected-bg);
+  border-color: rgba(255, 69, 58, 0.2);
+}
+
+.account-state-warning .account-diagnostics-icon,
+.account-state-idle .account-diagnostics-icon {
+  color: var(--color-other);
+  background: var(--color-other-bg);
+  border-color: rgba(255, 159, 10, 0.22);
+}
+
+.account-diagnostics-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.account-diagnostics-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.account-diagnostics-copy h2 {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+.account-diagnostics-copy strong {
+  color: var(--text-primary);
+  font-size: 19px;
+  font-weight: 720;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.account-diagnostics-copy p {
+  max-width: 470px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 450;
+  line-height: 1.35;
+}
+
+.account-state-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-grouped);
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.account-state-badge.healthy {
+  color: var(--color-approved);
+  background: var(--color-approved-bg);
+  border-color: rgba(52, 199, 89, 0.2);
+}
+
+.account-state-badge.warning,
+.account-state-badge.idle {
+  color: var(--color-other);
+  background: var(--color-other-bg);
+  border-color: rgba(255, 159, 10, 0.2);
+}
+
+.account-state-badge.danger {
+  color: var(--color-rejected);
+  background: var(--color-rejected-bg);
+  border-color: rgba(255, 69, 58, 0.2);
+}
+
+.account-health-score {
+  width: 70px;
+  height: 70px;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 70px;
+  background:
+    radial-gradient(circle at 35% 20%, rgba(255, 255, 255, 0.34), transparent 42%),
+    linear-gradient(145deg, var(--accent-light), rgba(94, 92, 230, 0.12));
+  border: 1px solid var(--glass-border);
+}
+
+.health-score-value {
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 760;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.health-score-label {
+  margin-top: -16px;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.account-signal-strip {
+  grid-column: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.account-signal {
+  min-width: 0;
+  min-height: 38px;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 0.72fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--bg-card-strong) 50%, transparent);
+}
+
+.account-signal svg {
+  color: var(--text-muted);
+}
+
+.account-signal span {
+  color: var(--text-muted);
+  font-size: 9.5px;
+  font-weight: 610;
+}
+
+.account-signal strong {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 10.5px;
+  font-weight: 720;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-signal.healthy svg,
+.account-signal.healthy strong { color: var(--color-approved); }
+
+.account-signal.warning svg,
+.account-signal.warning strong,
+.account-signal.idle svg,
+.account-signal.idle strong { color: var(--color-other); }
+
+.account-signal.danger svg,
+.account-signal.danger strong { color: var(--color-rejected); }
+
+.account-diagnostics-grid {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.diagnostic-metric-row {
+  min-width: 0;
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--bg-card-strong) 58%, transparent);
+}
+
+.diagnostic-metric-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--accent-color);
+  background: var(--accent-light);
+}
+
+.diagnostic-metric-icon.approved {
+  color: var(--color-approved);
+  background: var(--color-approved-bg);
+}
+
+.diagnostic-metric-icon.pending {
+  color: var(--color-pending);
+  background: var(--color-pending-bg);
+}
+
+.diagnostic-metric-icon.growth {
+  color: var(--chart-line);
+  background: var(--accent-light);
+}
+
+.diagnostic-metric-icon.quality {
+  color: var(--color-other);
+  background: var(--color-other-bg);
+}
+
+.diagnostic-metric-row div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diagnostic-metric-row span {
+  color: var(--text-muted);
+  font-size: 9.5px;
+  font-weight: 630;
+  line-height: 1.1;
+}
+
+.diagnostic-metric-row strong {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 740;
+  letter-spacing: -0.05em;
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diagnostic-metric-row small {
+  color: var(--text-secondary);
+  font-size: 9.5px;
+  font-weight: 470;
+  line-height: 1.25;
+}
+
+.account-diagnostics-footer {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(240px, 1.3fr) minmax(170px, 0.8fr);
+  gap: 8px;
+}
+
+.community-status-inline,
+.account-balance-inline,
+.connect-account-btn {
+  min-width: 0;
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: 18px auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: rgba(120, 120, 128, 0.055);
+}
+
+.account-balance-inline {
+  grid-template-columns: 18px auto minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.connect-account-btn {
+  border-color: rgba(10, 132, 255, 0.16);
+  color: var(--accent-color);
+  background: var(--accent-light);
+  cursor: pointer;
+}
+
+.community-status-inline svg,
+.account-balance-inline svg,
+.connect-account-btn svg {
+  color: var(--accent-color);
+}
+
+.community-status-inline span,
+.account-balance-inline span,
+.connect-account-btn span {
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.community-status-inline strong,
+.account-balance-inline strong {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 760;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-status-inline small,
+.account-balance-inline small {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1500px) {
+  .account-diagnostics-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .account-diagnostics-grid,
+  .account-signal-strip,
+  .account-diagnostics-footer {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 920px) {
+  .account-diagnostics-grid,
+  .account-diagnostics-footer {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .account-balance-inline,
+  .connect-account-btn {
+    grid-column: 1 / -1;
+  }
+}
