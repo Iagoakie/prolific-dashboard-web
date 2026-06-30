@@ -818,7 +818,6 @@ export default function App() {
                 <AccountDiagnostics
                   kpis={metrics.kpis}
                   prolificAccount={prolificAccount}
-                  exchangeRates={exchangeRates}
                   onSettingsOpen={() => setShowSettings(true)}
                 />
                 <ChartsSection 

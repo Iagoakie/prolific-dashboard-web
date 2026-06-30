@@ -821,3 +821,157 @@ body {
     transform: none;
   }
 }
+
+/* Clean scrollbars and compact account status */
+body {
+  overflow-x: hidden;
+}
+
+.sidebar {
+  scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.sidebar-account-health {
+  gap: 6px;
+  padding: 10px;
+}
+
+.account-health-badge {
+  min-height: 28px;
+  padding: 0 8px;
+}
+
+.account-health-details {
+  gap: 5px;
+}
+
+.health-detail-row {
+  padding: 7px 8px;
+}
+
+.cashout-progress-section {
+  gap: 5px;
+}
+
+.account-diagnostics-panel {
+  grid-template-columns: minmax(360px, 0.95fr) minmax(520px, 1.45fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 92px;
+  padding: 12px 14px;
+  border-radius: 28px;
+}
+
+.account-diagnostics-main {
+  align-items: center;
+  gap: 14px;
+}
+
+.account-diagnostics-summary {
+  align-items: center;
+}
+
+.account-diagnostics-copy p {
+  max-width: 420px;
+  overflow: hidden;
+  font-size: 10.5px;
+  line-height: 1.28;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-health-score {
+  width: 58px;
+  height: 58px;
+  flex-basis: 58px;
+  border-radius: 21px;
+}
+
+.health-score-value {
+  font-size: 22px;
+}
+
+.health-score-label {
+  margin-top: -14px;
+  font-size: 8px;
+}
+
+.account-signal-strip {
+  grid-column: auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.account-signal {
+  min-height: 58px;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: 18px;
+}
+
+.account-signal div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-signal span {
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 680;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-signal small {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-signal strong {
+  font-size: 11.5px;
+  letter-spacing: -0.025em;
+}
+
+.account-diagnostics-grid,
+.account-diagnostics-footer {
+  display: none;
+}
+
+.connect-account-btn {
+  min-width: 146px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 17px;
+  font-size: 11px;
+}
+
+@media (max-width: 1500px) {
+  .account-diagnostics-panel {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .account-signal-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
